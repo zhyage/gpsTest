@@ -40,7 +40,7 @@
 char *pollstr = "SPAMDQTV\n";
 char *host = "127.0.0.1";
 char *port = "2947";
-unsigned int sl = 2;
+unsigned int sl = 1;
 
 struct gps_data_t *gpsdata;
 
