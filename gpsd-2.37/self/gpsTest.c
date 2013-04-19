@@ -33,6 +33,8 @@
 
 #include "gpsd_config.h"
 #include "gps.h"
+#include "queue.h"
+
 
 #define BS 512
 
@@ -43,6 +45,9 @@ char *port = "2947";
 unsigned int sl = 2;
 
 struct gps_data_t *gpsdata;
+
+QUEUE Queue = {0};
+
 
 char *progname;
 
@@ -194,7 +199,11 @@ void bye(int signum){
 }
 
 void process(struct gps_data_t *gpsdata,
-	     char *buf UNUSED, size_t len UNUSED, int level UNUSED){
+	     char *buf UNUSED, size_t len UNUSED, int level UNUSED)
+{
+	static int i = 0;
+	i = i + 1;
+	
 #if 0
 	if ((gpsdata->fix.mode > 1) && (gpsdata->status > 0))
 		write_record(gpsdata);
@@ -202,6 +211,16 @@ void process(struct gps_data_t *gpsdata,
 		track_end();
 #endif
 	printf("process gps data\r\n");
+
+	if(QUEUE_SUCCESS !=
+         QueueAdd(&Queue, 0, &i, sizeof(int)))
+      {
+        printf("Insufficient memory.\n");
+        
+      }
+
+	printf("now queue num = %d\r\n", QueueCount(&Queue));
+	
 }
 
 void write_record(struct gps_data_t *gpsdata){
