@@ -1,126 +1,104 @@
-/*  queue.c - source code for queue library
- *
- *  QUEUE - Queue Library
- *
- *  Copyright (C) 2000  Richard Heathfield
- *                      Eton Computer Systems Ltd
- *                      Macmillan Computer Publishing
- *
- *  This program is free software; you can redistribute it
- *  and/or modify it under the terms of the GNU General
- *  Public License as published by the Free Software
- *  Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will
- *  be useful, but WITHOUT ANY WARRANTY; without even the
- *  implied warranty of MERCHANTABILITY or FITNESS FOR A
- *  PARTICULAR PURPOSE.  See the GNU General Public License
- *  for more details.
- *
- *  You should have received a copy of the GNU General
- *  Public License along with this program; if not, write
- *  to the Free Software Foundation, Inc., 675 Mass Ave,
- *  Cambridge, MA 02139, USA.
- *
- *  Richard Heathfield may be contacted by email at:
- *     binary@eton.powernet.co.uk
- *
- */
-
-
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include <assert.h>
+#include "gpsTest.h"
 
-#include "queue.h"
 
-int QueueAdd(QUEUE *Queue,
-             int Tag,
-             void *Object,
-             size_t Size)
+
+BOOL IsQueueEmpty(gpsSourceData* queue)
 {
-  int Result = QUEUE_ADD_FAILURE;
-  int ListResult;
-  assert(Queue != NULL);
-  assert(0 == Queue->CheckInit1 && 0 == Queue->CheckInit2);
-
-  ListResult = SLAdd(&Queue->TailPtr, Tag, Object, Size);
-
-  if(SL_SUCCESS == ListResult)
-  {
-    if(0 == Queue->NumItems)
+    if(queue->head == queue->tail)        
     {
-      Queue->HeadPtr = Queue->TailPtr;
+        return TRUE;
+    }
+    return FALSE;
+}
+
+
+void SetQueueEmpty(gpsSourceData* queue)
+{
+    queue->tail = 0;        
+    queue->head = 0;
+    return;
+}
+
+
+BOOL IsQueueFull(gpsSourceData* queue)
+{
+
+    if((queue->tail + 1) % MISC_BUF_SIZE == queue->head)
+    {
+        return TRUE;
+    }
+    return FALSE;
+
+}
+
+
+void EnQueue(gpsSourceData* queue, void* data, size_t sizeOfData)
+{
+    if(IsQueueFull(queue))
+    {
+        DeQueue(queue);
+    }
+    //queue->data[queue->tail] = data;
+    memcpy(&queue->data[queue->tail], data, sizeOfData);
+    queue->tail = (queue->tail + 1) % MISC_BUF_SIZE;
+}
+
+
+void DeQueue(gpsSourceData* queue)
+{
+    if(IsQueueEmpty(queue))
+    {
+        return;
+    }
+    queue->head = (queue->head + 1) % MISC_BUF_SIZE;
+    return;
+}
+
+int GetQueueNum(gpsSourceData* queue)
+{
+    int n = queue->tail - queue->head;
+    if(IsQueueEmpty(queue))
+    {
+        return 0;
+    }
+    if(n >= 0)
+    {
+        return n + 1;
     }
     else
     {
-      Queue->TailPtr = Queue->TailPtr->Next;
+        return (MISC_BUF_SIZE + 1 + n);
     }
-
-    Result = QUEUE_SUCCESS;
-    ++Queue->NumItems;
-  }
-
-  return Result;
 }
 
-int QueueRemove(void *Object, QUEUE *Queue)
+void* GetNewestDataFirst(gpsSourceData* queue)
 {
-  size_t Size;
-  void *p;
-  int Result = QUEUE_SUCCESS;
-
-  assert(Queue != NULL);
-  assert(0 == Queue->CheckInit1 && 0 == Queue->CheckInit2);
-
-  if(Queue->NumItems > 0)
-  {
-    p = SLGetData(Queue->HeadPtr, NULL, &Size);
-    if(p != NULL)
+    if(queue->tail == 0)
     {
-      if(Object != NULL)
-      {
-        memcpy(Object, p, Size);
-      }
+        return &queue->data[MISC_BUF_SIZE - 1];
     }
     else
     {
-      Result = QUEUE_DEL_FAILURE;
+        return &queue->data[(queue->tail)-1];
     }
-    Queue->HeadPtr = SLDeleteThis(Queue->HeadPtr);
-    --Queue->NumItems;
-    if(0 == Queue->NumItems)
+
+}
+
+void* GetNewestDataSecond(gpsSourceData* queue)
+{
+    if(queue->tail == 0)
     {
-      Queue->TailPtr = NULL;
+        return &queue->data[MISC_BUF_SIZE - 2];
     }
-  }
-  else
-  {
-    Result = QUEUE_EMPTY;
-  }
-
-  return Result;
-}
-
-void *QueueGetData(QUEUE *Queue, int *Tag, size_t *Size)
-{
-  assert(Queue != NULL);
-  assert(0 == Queue->CheckInit1 && 0 == Queue->CheckInit2);
-
-  return SLGetData(Queue->HeadPtr, Tag, Size);
-}
-
-size_t QueueCount(QUEUE *Queue)
-{
-  assert(Queue != NULL);
-  assert(0 == Queue->CheckInit1 && 0 == Queue->CheckInit2);
-  return Queue->NumItems;
-}
-
-void QueueDestroy(QUEUE *Queue)
-{
-  while(QueueCount(Queue) > 0)
-  {
-    QueueRemove(NULL, Queue);
-  }
+    if(queue->tail - 1 == 0)
+    {
+        return &queue->data[MISC_BUF_SIZE - 1];
+    }
+    else
+    {
+        return &queue->data[(queue->tail -1 ) -1 ];
+    }
 }

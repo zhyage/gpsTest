@@ -34,6 +34,7 @@
 #include "gpsd_config.h"
 #include "gps.h"
 #include "queue.h"
+#include "gpsTest.h"
 
 
 #define BS 512
@@ -42,11 +43,11 @@
 char *pollstr = "SPAMDQTV\n";
 char *host = "127.0.0.1";
 char *port = "2947";
-unsigned int sl = 2;
+unsigned int sl = 1;
 
 struct gps_data_t *gpsdata;
 
-QUEUE Queue = {0};
+gpsSourceData gpsSource;
 
 
 char *progname;
@@ -80,6 +81,7 @@ main(int argc, char **argv){
 	int ch;
 	fd_set fds;
 	int casoc = 0;
+    pthread_t positionReport_id;
 
 	progname = argv[0];
 	while ((ch = getopt(argc, argv, "hVi:j:s:p:")) != -1){
@@ -149,6 +151,8 @@ main(int argc, char **argv){
 	signal(SIGHUP, bye);
 
 //	header();
+    SetQueueEmpty(&gpsSource);
+    pthread_create(&positionReport_id, NULL, positionReport, NULL);
 
 	if (casoc)
 		gps_query(gpsdata, "j1\n");
@@ -201,8 +205,7 @@ void bye(int signum){
 void process(struct gps_data_t *gpsdata,
 	     char *buf UNUSED, size_t len UNUSED, int level UNUSED)
 {
-	static int i = 0;
-	i = i + 1;
+    
 	
 #if 0
 	if ((gpsdata->fix.mode > 1) && (gpsdata->status > 0))
@@ -212,15 +215,13 @@ void process(struct gps_data_t *gpsdata,
 #endif
 	printf("process gps data\r\n");
 
-	if(QUEUE_SUCCESS !=
-         QueueAdd(&Queue, 0, &i, sizeof(int)))
-      {
-        printf("Insufficient memory.\n");
-        
-      }
+    EnQueue(&gpsSource, &gpsdata->fix, sizeof(struct gps_fix_t));
+    
+    
+    //printf("tail = %d\r\n", gpsSource.tail);
 
-	printf("now queue num = %d\r\n", QueueCount(&Queue));
-	
+    
+
 }
 
 void write_record(struct gps_data_t *gpsdata){
