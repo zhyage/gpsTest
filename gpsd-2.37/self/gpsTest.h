@@ -2,6 +2,7 @@
 #define GPSTEST_H
 #include "gps.h"
 #include "position.h"
+#include "stopAnnounce.h"
 
 #define FALSE 0
 #define TRUE  1

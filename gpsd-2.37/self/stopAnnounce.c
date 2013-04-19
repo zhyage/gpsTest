@@ -4,20 +4,23 @@
 #include <pthread.h>
 #include "gpsTest.h"
 #include "queue.h"
-#include "position.h"
+#include "stopAnnounce.h"
 
 extern gpsSourceData gpsSource;
 
-void* positionReport()
+
+
+
+void* stopAnnounce()
 {
     struct gps_fix_t *newest = NULL;
     struct gps_fix_t *second = NULL;
     
     for(;;)
     {
-        sleep(5);
+        sleep(2);
         
-        printf("positionReport \r\n");
+        printf("stopAnnounce \r\n");
         
         newest = GetNewestDataFirst(&gpsSource);
         second = GetNewestDataSecond(&gpsSource);

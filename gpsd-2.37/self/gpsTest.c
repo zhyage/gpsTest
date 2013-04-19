@@ -82,6 +82,7 @@ main(int argc, char **argv){
 	fd_set fds;
 	int casoc = 0;
     pthread_t positionReport_id;
+    pthread_t stopAnnounce_id;
 
 	progname = argv[0];
 	while ((ch = getopt(argc, argv, "hVi:j:s:p:")) != -1){
@@ -153,6 +154,7 @@ main(int argc, char **argv){
 //	header();
     SetQueueEmpty(&gpsSource);
     pthread_create(&positionReport_id, NULL, positionReport, NULL);
+    pthread_create(&stopAnnounce_id, NULL, stopAnnounce, NULL);
 
 	if (casoc)
 		gps_query(gpsdata, "j1\n");
