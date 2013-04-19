@@ -33,6 +33,9 @@
 
 #include "gpsd_config.h"
 #include "gps.h"
+#include "queue.h"
+#include "gpsTest.h"
+
 
 #define BS 512
 
@@ -43,6 +46,9 @@ char *port = "2947";
 unsigned int sl = 1;
 
 struct gps_data_t *gpsdata;
+
+gpsSourceData gpsSource;
+
 
 char *progname;
 
@@ -75,6 +81,8 @@ main(int argc, char **argv){
 	int ch;
 	fd_set fds;
 	int casoc = 0;
+    pthread_t positionReport_id;
+    pthread_t stopAnnounce_id;
 
 	progname = argv[0];
 	while ((ch = getopt(argc, argv, "hVi:j:s:p:")) != -1){
@@ -144,6 +152,9 @@ main(int argc, char **argv){
 	signal(SIGHUP, bye);
 
 //	header();
+    SetQueueEmpty(&gpsSource);
+    pthread_create(&positionReport_id, NULL, positionReport, NULL);
+    pthread_create(&stopAnnounce_id, NULL, stopAnnounce, NULL);
 
 	if (casoc)
 		gps_query(gpsdata, "j1\n");
@@ -194,7 +205,10 @@ void bye(int signum){
 }
 
 void process(struct gps_data_t *gpsdata,
-	     char *buf UNUSED, size_t len UNUSED, int level UNUSED){
+	     char *buf UNUSED, size_t len UNUSED, int level UNUSED)
+{
+    
+	
 #if 0
 	if ((gpsdata->fix.mode > 1) && (gpsdata->status > 0))
 		write_record(gpsdata);
@@ -202,6 +216,14 @@ void process(struct gps_data_t *gpsdata,
 		track_end();
 #endif
 	printf("process gps data\r\n");
+
+    EnQueue(&gpsSource, &gpsdata->fix, sizeof(struct gps_fix_t));
+    
+    
+    //printf("tail = %d\r\n", gpsSource.tail);
+
+    
+
 }
 
 void write_record(struct gps_data_t *gpsdata){

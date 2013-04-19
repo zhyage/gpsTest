@@ -1,6 +1,9 @@
 /* gpsd_config.h.  Generated from gpsd_config.h.in by configure.  */
 /* gpsd_config.h.in.  Generated from configure.ac by autoheader.  */
 
+/* Define if building universal (internal helper macro) */
+/* #undef AC_APPLE_UNIVERSAL_BUILD */
+
 /* Allow gpsd to reconfigure device */
 #define ALLOW_RECONFIGURE 1
 
@@ -69,7 +72,7 @@
 #define HAVE_INTTYPES_H 1
 
 /* pthread libraries are present */
-#define HAVE_LIBPTHREAD 
+#define HAVE_LIBPTHREAD /**/
 
 /* Define to 1 if you have the <memory.h> header file. */
 #define HAVE_MEMORY_H 1
@@ -122,7 +125,7 @@
 /* Define to 1 if you have the `strtonum' function. */
 /* #undef HAVE_STRTONUM */
 
-/* Define to 1 if `tm_zone' is member of `struct tm'. */
+/* Define to 1 if `tm_zone' is a member of `struct tm'. */
 #define HAVE_STRUCT_TM_TM_ZONE 1
 
 /* Define to 1 if you have the <sys/ipc.h> header file. */
@@ -156,7 +159,7 @@
 #define HAVE_TERMIOS_H 1
 
 /* Have timezone variable */
-#define HAVE_TIMEZONE 
+#define HAVE_TIMEZONE /**/
 
 /* struct tm has tm_gmtoff */
 /* #undef HAVE_TM_GMTOFF */
@@ -193,6 +196,10 @@
 /* Maximum gps devices */
 /* #undef LIMITED_MAX_DEVICES */
 
+/* Define to the sub-directory in which libtool stores uninstalled libraries.
+   */
+#define LT_OBJDIR ".libs/"
+
 /* Navcom support */
 #define NAVCOM_ENABLE 1
 
@@ -219,6 +226,9 @@
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME ""
+
+/* Define to the home page for this package. */
+#define PACKAGE_URL ""
 
 /* Define to the version of this package. */
 #define PACKAGE_VERSION ""
@@ -251,7 +261,7 @@
 #define SIZEOF_INT 4
 
 /* The size of `long', as computed by sizeof. */
-#define SIZEOF_LONG 8
+#define SIZEOF_LONG 4
 
 /* The size of `short', as computed by sizeof. */
 #define SIZEOF_SHORT 2
@@ -291,12 +301,20 @@
 /* Version number of package */
 #define VERSION "2.37"
 
-/* Define to 1 if your processor stores words with the most significant byte
-   first (like Motorola and SPARC, unlike Intel and VAX). */
-/* #undef WORDS_BIGENDIAN */
+/* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
+   significant byte first (like Motorola and SPARC, unlike Intel). */
+#if defined AC_APPLE_UNIVERSAL_BUILD
+# if defined __BIG_ENDIAN__
+#  define WORDS_BIGENDIAN 1
+# endif
+#else
+# ifndef WORDS_BIGENDIAN
+/* #  undef WORDS_BIGENDIAN */
+# endif
+#endif
 
 /* Define to 1 if the X Window System is missing or not being used. */
-/* #undef X_DISPLAY_MISSING */
+#define X_DISPLAY_MISSING 1
 
 /* Macro for declaring function arguments unused. */
 #if defined(__GNUC__)
@@ -315,3 +333,6 @@ size_t strlcpy(/*@out@*/char *dst, /*@in@*/const char *src, size_t size);
 
 /* Define to empty if `const' does not conform to ANSI C. */
 /* #undef const */
+
+/* Define to `unsigned int' if <sys/types.h> does not define. */
+/* #undef size_t */
