@@ -24,5 +24,10 @@ void* positionReport()
         
         printf("tail latitude = %f\r\n", newest->latitude);
         printf("tail latitude = %f\r\n", second->latitude);
+		
+		printf("sizeof int = %d\r\n", sizeof(int));
+		printf("sizeof short = %d\r\n", sizeof(short));
+		printf("sizeof long = %d\r\n", sizeof(long));
+		
     }
 }
