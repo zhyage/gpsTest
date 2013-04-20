@@ -22,6 +22,8 @@ int WalkReport(int Tag, void *p, void *Parms)
 
 void FillReportAddToList(struct gps_fix_t* gpsSrouce)
 {
+    positionReport_t report;
+    
 }
 
 void* positionReport()
