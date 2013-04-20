@@ -19,11 +19,7 @@
 
 extern DLLIST * reportList;
 
-DLLIST * reportListArr[] = 
-{
-	reportList, 
-	NULL			
-};
+DLLIST * reportListArr[REPORT_END] = {NULL};
 
 void* transferData()
 {
@@ -34,10 +30,14 @@ void* transferData()
 	struct timeval timeout;
 	fd_set set;
 	int j=0;
-	reportSendNotic_t reportNotic = -1;
+	reportSendNotic_t reportNotic;
 	int n=0;
 	int i = 0;
+	int s = 0;
+	int sock_opt = 1;
+	reportListArr[POSITION_REPORT] = (reportList);
 	
+	reportNotic.reportType = -1;
 
 	s = socket(AF_INET, SOCK_DGRAM, 0);
 	if (s < 0){
@@ -75,7 +75,7 @@ void* transferData()
 	{
 		FD_ZERO(&set);
 		FD_SET(s,&set);
-		timeout.tv_sec=1;
+		timeout.tv_sec=100;
 		timeout.tv_usec=0;
 
 		clilen=sizeof(struct sockaddr);
@@ -85,8 +85,8 @@ void* transferData()
 			n=recvfrom(s, &reportNotic,sizeof(reportSendNotic_t),0,(struct sockaddr *)&cli_addr,&clilen);
 				
 		}
-
-
+#if 0
+		printf("get notic  = %d\r\n", reportNotic.reportType);
 		if(NULL == reportListArr[reportNotic.reportType])
 		{
 			printf("no such report type\r\n");
@@ -95,7 +95,20 @@ void* transferData()
 		{
 			DLWalk(reportListArr[reportNotic.reportType], WalkPositionReport, NULL);
 		}
-		
+#endif
+
+		printf("get notic  = %d\r\n", reportNotic.reportType);
+		switch (reportNotic.reportType)
+		{
+			case POSITION_REPORT:
+			{
+				DLWalk(reportList, WalkPositionReport, NULL);
+			}
+			break;
+			default:
+				break;
+	
+		}		
 	}
 
 }

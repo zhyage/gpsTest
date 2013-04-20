@@ -37,6 +37,7 @@
 #include "gpsTest.h"
 #include "position.h"
 #include "stopAnnounce.h"
+#include "transferData.h"
 
 
 #define BS 512

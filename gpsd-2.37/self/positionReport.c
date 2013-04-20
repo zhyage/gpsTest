@@ -7,16 +7,18 @@
 #include "position.h"
 #include "dllist.h"
 #include "transferData.h"
+#include "utils.h"
 
 extern gpsSourceData gpsSource;
+extern DLLIST * reportListArr[REPORT_END];
 
 DLLIST *reportList = NULL;
 
 int WalkPositionReport(int Tag, void *p, void *Parms)
 {
-    struct positionReport_t *Arg = p;
+    positionReport_t *Arg = p;
     
-    printf("in report = %f\r\n", Arg->latitude);
+    printf("in report = %u\r\n", Arg->longitude);
     
   return 0;
 }
@@ -53,6 +55,13 @@ typedef struct
 
 */
     positionReport_t report;
+    unsigned int DD;
+    unsigned int MM;
+    unsigned int SSSS;
+
+
+	getDDMMSSSS(gpsData->longitude, &DD, &MM, &SSSS);
+	printf("longitude = %f, DDMMSSSS = %d %d %d\r\n", gpsData->longitude, DD, MM, SSSS);
 
 	memset(&report, 0, sizeof(positionReport_t));
 	
@@ -76,10 +85,7 @@ typedef struct
 	report.SIMType = 0;
 	report.baseStatus = 0;
 
-	DLAppend(&reportList, 0, &report, sizeof(struct positionReport_t));
-	
-	
-	DLWalk(reportList, WalkReport, NULL);
+	DLAppend(&reportList, 0, &report, sizeof(positionReport_t));
     
 }
 

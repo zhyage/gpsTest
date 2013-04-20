@@ -1,7 +1,6 @@
 #ifndef TRANSFERDATA_H
 #define TRANSFERDATA_H
 
-#define 
 typedef enum
 {
 	POSITION_REPORT = 0,
