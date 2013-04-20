@@ -17,9 +17,21 @@ FILE *posFd = NULL;
 
 DLLIST *reportList = NULL;
 
+int getNumOfList()
+{
+	int i = 0;
+	DLLIST *thisItem = reportList;
+	for(thisItem = reportList; thisItem != NULL; thisItem = thisItem->Next)
+	{
+		i = i + 1;
+	}
+	return i;
+}
+
 void *sendPositionReport(DLLIST *list)
 {
 	pthread_mutex_lock(&positionReportMutex);
+	printf("111 num = %d\r\n", getNumOfList());
 	DLLIST *thisItem;
 	for(thisItem = list; thisItem != NULL; thisItem = thisItem->Next)
 	{
@@ -29,7 +41,6 @@ void *sendPositionReport(DLLIST *list)
 		memset(&string, 0, sizeof(string));
 		sprintf(string, "time : %s longitude : %x latitude : %x\r\n", ctime(&tt), arg->longitude, arg->latitude);
 		thisItem->Tag = 1;//already sent
-		//printf("%s", string);
 		fputs(string, posFd);
 		fflush(posFd);
 	}
@@ -37,9 +48,14 @@ void *sendPositionReport(DLLIST *list)
 	{
 		if(thisItem->Tag == 1)
 		{
+			if(NULL == thisItem->Next && NULL == thisItem->Prev)
+			{
+				reportList = NULL;
+			}
 			DLDelete(thisItem);
 		}
 	}
+	printf("222 num = %d\r\n", getNumOfList());
 	pthread_mutex_unlock(&positionReportMutex);
 }
 
@@ -121,7 +137,9 @@ typedef struct
 	report.baseStatus = 0;
 
 	pthread_mutex_lock(&positionReportMutex);
+	printf("333 num = %d\r\n", getNumOfList());
 	DLAppend(&reportList, 0, &report, sizeof(positionReport_t));
+	printf("444 num = %d\r\n", getNumOfList());
 	pthread_mutex_unlock(&positionReportMutex);
     
 }
