@@ -5,8 +5,24 @@
 #include "gpsTest.h"
 #include "arrQueue.h"
 #include "position.h"
+#include "dllist.h"
 
 extern gpsSourceData gpsSource;
+
+DLLIST *reportList = NULL;
+
+int WalkReport(int Tag, void *p, void *Parms)
+{
+    struct gps_fix_t *Arg = p;
+    
+    printf("in report = %f\r\n", Arg->latitude);
+    
+  return 0;
+}
+
+void FillReportAddToList(struct gps_fix_t* gpsSrouce)
+{
+}
 
 void* positionReport()
 {
@@ -24,10 +40,11 @@ void* positionReport()
         
         printf("tail latitude = %f\r\n", newest->latitude);
         printf("tail latitude = %f\r\n", second->latitude);
-		
-		printf("sizeof int = %d\r\n", sizeof(int));
-		printf("sizeof short = %d\r\n", sizeof(short));
-		printf("sizeof long = %d\r\n", sizeof(long));
+		                   
+        DLAppend(&reportList, 0, newest, sizeof(struct gps_fix_t));
+
+        DLWalk(reportList, WalkReport, NULL);
+        
 		
     }
 }
