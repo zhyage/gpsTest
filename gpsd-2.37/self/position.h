@@ -29,5 +29,9 @@ typedef struct
 }positionReport_t;
 
 void* positionReport();
+int WalkPositionReport(int Tag, void *p, void *Parms);
+void FillReportAddToList(struct gps_fix_t* gpsData);
+
+
 
 #endif
