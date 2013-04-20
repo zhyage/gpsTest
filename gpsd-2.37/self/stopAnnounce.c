@@ -3,7 +3,7 @@
 #include <string.h>
 #include <pthread.h>
 #include "gpsTest.h"
-#include "queue.h"
+#include "arrQueue.h"
 #include "stopAnnounce.h"
 
 extern gpsSourceData gpsSource;

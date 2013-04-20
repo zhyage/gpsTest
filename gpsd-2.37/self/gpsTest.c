@@ -33,7 +33,7 @@
 
 #include "gpsd_config.h"
 #include "gps.h"
-#include "queue.h"
+#include "arrQueue.h"
 #include "gpsTest.h"
 #include "position.h"
 #include "stopAnnounce.h"
