@@ -12,8 +12,15 @@ typedef struct
 	int reportType;
 }reportSendNotic_t;
 
+typedef struct
+{
+	DLLIST **list;
+	void (*sendFunc)(DLLIST *list);
+}reportListRegister_t;
+
 void sendReportNotic(reportSendNotic_t notic );
 void* transferData();
+void registerReportList(int reportType, DLLIST *list, void *func);
 
 
 

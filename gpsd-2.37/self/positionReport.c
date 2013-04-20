@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
+#include <time.h>
 #include "gpsTest.h"
 #include "arrQueue.h"
 #include "position.h"
@@ -9,20 +10,54 @@
 #include "transferData.h"
 #include "utils.h"
 
+pthread_mutex_t	positionReportMutex = PTHREAD_MUTEX_INITIALIZER;
+
 extern gpsSourceData gpsSource;
-extern DLLIST * reportListArr[REPORT_END];
+FILE *posFd = NULL;
 
 DLLIST *reportList = NULL;
 
+void *sendPositionReport(DLLIST *list)
+{
+	pthread_mutex_lock(&positionReportMutex);
+	DLLIST *thisItem;
+	for(thisItem = list; thisItem != NULL; thisItem = thisItem->Next)
+	{
+    		char string[256];
+		time_t tt = time(NULL);
+		positionReport_t *arg = thisItem->Object;
+		memset(&string, 0, sizeof(string));
+		sprintf(string, "time : %s longitude : %x latitude : %x\r\n", ctime(&tt), arg->longitude, arg->latitude);
+		thisItem->Tag = 1;//already sent
+		//printf("%s", string);
+		fputs(string, posFd);
+		fflush(posFd);
+	}
+	for(thisItem = list; thisItem != NULL; thisItem = thisItem->Next)
+	{
+		if(thisItem->Tag == 1)
+		{
+			DLDelete(thisItem);
+		}
+	}
+	pthread_mutex_unlock(&positionReportMutex);
+}
+
+#if 0
 int WalkPositionReport(int Tag, void *p, void *Parms)
 {
     positionReport_t *Arg = p;
+    char string[256];
+	time_t tt = time(NULL);
+	memset(&string, 0, sizeof(string));
+	sprintf(string, "time : %s longitude : %x latitude : %x\r\n", ctime(&tt), Arg->longitude, Arg->latitude);
+
     
-    printf("in report = %u\r\n", Arg->longitude);
+    printf("%s", string);
     
   return 0;
 }
-
+#endif
 
 void FillReportAddToList(struct gps_fix_t* gpsData)
 {
@@ -60,14 +95,14 @@ typedef struct
     unsigned int SSSS;
 
 
-	getDDMMSSSS(gpsData->longitude, &DD, &MM, &SSSS);
-	printf("longitude = %f, DDMMSSSS = %d %d %d\r\n", gpsData->longitude, DD, MM, SSSS);
 
 	memset(&report, 0, sizeof(positionReport_t));
 	
 	report.commandId = 0x14;
-	report.longitude = gpsData->longitude;
-	report.latitude = gpsData->latitude;
+	getDDMMSSSS(gpsData->longitude, &DD, &MM, &SSSS);
+	report.longitude = (DD<<24) | (MM<<16) | (SSSS);
+	getDDMMSSSS(gpsData->latitude, &DD, &MM, &SSSS);
+	report.latitude = (DD<<24) | (MM<<16) | (SSSS);
 	report.speed = gpsData->speed;
 	report.azimuth = 0;//TODO
 	report.vehicleStatus = 0;//TODO
@@ -85,7 +120,9 @@ typedef struct
 	report.SIMType = 0;
 	report.baseStatus = 0;
 
+	pthread_mutex_lock(&positionReportMutex);
 	DLAppend(&reportList, 0, &report, sizeof(positionReport_t));
+	pthread_mutex_unlock(&positionReportMutex);
     
 }
 
@@ -96,8 +133,12 @@ void* positionReport()
     struct gps_fix_t *newest = NULL;
     struct gps_fix_t *second = NULL;
 	reportSendNotic_t notic;
+	
+	posFd = fopen("positionReport.log", "a+");
 
 	notic.reportType = POSITION_REPORT;
+	//registerReportList(POSITION_REPORT, &reportList);
+	registerReportList(POSITION_REPORT, &reportList, sendPositionReport);
     
     for(;;)
     {

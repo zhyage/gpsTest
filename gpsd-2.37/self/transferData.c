@@ -17,9 +17,16 @@
 #include "transferData.h"
 #include "position.h"
 
-extern DLLIST * reportList;
 
-DLLIST * reportListArr[REPORT_END] = {NULL};
+reportListRegister_t reportListArr[REPORT_END] = {NULL, NULL};
+
+void registerReportList(int reportType, DLLIST *list, void *func)
+{
+	reportListArr[reportType].list = list;
+	reportListArr[reportType].sendFunc = func;
+	
+	return;
+}
 
 void* transferData()
 {
@@ -35,7 +42,6 @@ void* transferData()
 	int i = 0;
 	int s = 0;
 	int sock_opt = 1;
-	reportListArr[POSITION_REPORT] = (reportList);
 	
 	reportNotic.reportType = -1;
 
@@ -85,30 +91,18 @@ void* transferData()
 			n=recvfrom(s, &reportNotic,sizeof(reportSendNotic_t),0,(struct sockaddr *)&cli_addr,&clilen);
 				
 		}
-#if 0
+#if 1 
 		printf("get notic  = %d\r\n", reportNotic.reportType);
-		if(NULL == reportListArr[reportNotic.reportType])
+		if(NULL == reportListArr[reportNotic.reportType].list)
 		{
 			printf("no such report type\r\n");
 		}
 		else
 		{
-			DLWalk(reportListArr[reportNotic.reportType], WalkPositionReport, NULL);
+			reportListArr[reportNotic.reportType].sendFunc(*(reportListArr[reportNotic.reportType].list));	
+			//DLWalk((*(reportListArr[reportNotic.reportType])), WalkPositionReport, NULL);
 		}
 #endif
-
-		printf("get notic  = %d\r\n", reportNotic.reportType);
-		switch (reportNotic.reportType)
-		{
-			case POSITION_REPORT:
-			{
-				DLWalk(reportList, WalkPositionReport, NULL);
-			}
-			break;
-			default:
-				break;
-	
-		}		
 	}
 
 }
