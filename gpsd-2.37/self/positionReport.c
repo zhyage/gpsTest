@@ -157,6 +157,7 @@ float getAngle(struct gps_fix_t *newestPoint, struct gps_fix_t *prevPoint)
 	dy = newestPoint->latitude - prevPoint->latitude;
 	dx = cosf(M_PI/180*prevPoint->latitude)*(newestPoint->longitude - prevPoint->longitude);
 	angle = atan2f(dy, dx);
+	printf("angle = %f\r\n", angle);
 	return angle;
 	
 }
