@@ -3,6 +3,7 @@
 #include <string.h>
 #include <pthread.h>
 #include <time.h>
+#include <math.h>
 #include "gpsTest.h"
 #include "arrQueue.h"
 #include "position.h"
@@ -144,12 +145,29 @@ typedef struct
     
 }
 
-
+float getAngle(struct gps_fix_t *newestPoint, struct gps_fix_t *prevPoint)
+{
+	float dy = 0;
+	float dx = 0;
+	float angle = 0;
+	if(NULL == newestPoint || NULL == prevPoint)
+	{
+		return 0;
+	}
+	dy = newestPoint->latitude - prevPoint->latitude;
+	dx = cosf(M_PI/180*prevPoint->latitude)*(newestPoint->longitude - prevPoint->longitude);
+	angle = atan2f(dy, dx);
+	return angle;
+	
+}
 
 void* positionReport()
 {
-    struct gps_fix_t *newest = NULL;
-    struct gps_fix_t *second = NULL;
+    struct gps_fix_t *newestPoint = NULL;
+    struct gps_fix_t *prevPoint = NULL;
+	static int inAngleCount = 0;
+	static int count = 0;
+	int inAngle = 0;
 	reportSendNotic_t notic;
 	
 	posFd = fopen("positionReport.log", "a+");
@@ -160,19 +178,31 @@ void* positionReport()
     
     for(;;)
     {
-        sleep(5);
+        sleep(1);
+	count = count + 1;
+	
         
         printf("positionReport \r\n");
         
-        newest = GetNewestDataFirst(&gpsSource);
-        second = GetNewestDataSecond(&gpsSource);
-        
-		FillReportAddToList(newest);
+        newestPoint = GetNewestDataFirst(&gpsSource);
+        prevPoint = GetNewestDataSecond(&gpsSource);
 
-		if(1)
-		{
-			sendReportNotic(notic);
-		}
+	if(10 < getAngle(newestPoint, prevPoint))
+	{
+		inAngleCount = inAngleCount + 1;
+	}
+	else
+	{
+		inAngleCount = 0;
+	}
+
+	if(count >= 10 || inAngleCount >= 3)
+	{
+        
+		FillReportAddToList(newestPoint);
+		sendReportNotic(notic);
+		count = 0;
+	}
 
         
 		
