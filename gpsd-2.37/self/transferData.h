@@ -1,5 +1,6 @@
 #ifndef TRANSFERDATA_H
 #define TRANSFERDATA_H
+#include "dllist.h"
 
 typedef enum
 {

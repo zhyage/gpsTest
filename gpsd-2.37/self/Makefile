@@ -1,5 +1,5 @@
 gpsTest:gpsTest.o arrQueue.o positionReport.o stopAnnounce.o dllist.o transferData.o utils.o
-	gcc -I../ -I. -I./utils/ gpsTest.o arrQueue.o positionReport.o stopAnnounce.o dllist.o transferData.o utils.o ../.libs/libgps.a -o gpsTest -lm -lpthread
+	gcc -I../ -I. -I./utils/ gpsTest.o arrQueue.o positionReport.o stopAnnounce.o dllist.o transferData.o utils.o -o gpsTest -lm -lpthread -L../.libs -lgps
 gpsTest.o:gpsTest.c
 	gcc -I../ -I. -I./utils/ -c gpsTest.c
 arrQueue.o:utils/arrQueue.c
