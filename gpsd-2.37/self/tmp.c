@@ -45,10 +45,12 @@ int main (int argc, const char * argv[])
     double lat2 = 39.90744;
     double lng2 = 116.30746;//经度,纬度2
 */    
-  double lat1 = 30.27787;
-  double lng1 = 120.33214;
-  double lat2 = 30.28668;
-  double lng2 = 120.31938;
+      double lat1 = 30.277816;
+      double lng1 = 120.332080;
+//  double lat1 = 30.27787;
+//  double lng1 = 120.33214;
+  double lat2 = 30.277821;
+  double lng2 = 120.332085;
     // insert code here...
 
     double dst = get_distance(lat1, lng1, lat2, lng2);

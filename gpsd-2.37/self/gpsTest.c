@@ -228,9 +228,9 @@ void process(struct gps_data_t *gpsdata,
   if(1)
   {
       static unsigned long count = 0;
-      double enhance = 0.00005;
-      double lat = 30.27781;
-      double lng = 120.33208;
+      double enhance = 0.000007;
+      double lat = 30.277810;
+      double lng = 120.332080;
       struct gps_fix_t fakeData;
 
       count = count + 1;
