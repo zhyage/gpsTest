@@ -38,6 +38,7 @@
 #include "position.h"
 #include "stopAnnounce.h"
 #include "transferData.h"
+#include "utils.h"
 
 
 #define BS 512
@@ -210,24 +211,44 @@ void bye(int signum){
 }
 
 void process(struct gps_data_t *gpsdata,
-	     char *buf UNUSED, size_t len UNUSED, int level UNUSED)
+    char *buf UNUSED, size_t len UNUSED, int level UNUSED)
 {
-    
-	
+
+
 #if 0
-	if ((gpsdata->fix.mode > 1) && (gpsdata->status > 0))
-		write_record(gpsdata);
-	else
-		track_end();
+  if ((gpsdata->fix.mode > 1) && (gpsdata->status > 0))
+    write_record(gpsdata);
+  else
+    track_end();
 #endif
-	printf("process gps data\r\n");
+  printf("process gps data\r\n");
+#ifdef SIMULATOR
+  if(1)
+  {
+      static unsigned long count = 0;
+      double enhance = 0.00005;
+      double lat = 30.27781;
+      double lng = 120.33208;
+      struct gps_fix_t fakeData;
 
-    EnQueue(&gpsSource, &gpsdata->fix, sizeof(struct gps_fix_t));
-    
-    
-    //printf("tail = %d\r\n", gpsSource.tail);
+      count = count + 1;
 
-    
+      fakeData.latitude = lat + (count * enhance);
+      fakeData.longitude = lng + (count * enhance);
+
+      printf("iiiiistance = %f\r\n", get_distance(fakeData.latitude, fakeData.longitude, lat, lng));
+
+      EnQueue(&gpsSource, fakeData, sizeof(struct gps_fix_t));
+  }
+#else
+
+  EnQueue(&gpsSource, &gpsdata->fix, sizeof(struct gps_fix_t));
+#endif
+
+
+  //printf("tail = %d\r\n", gpsSource.tail);
+
+
 
 }
 
