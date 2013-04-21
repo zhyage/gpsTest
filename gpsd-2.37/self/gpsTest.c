@@ -44,6 +44,8 @@
 #define BS 512
 
 #define NUM 8
+
+#define SIMULATOR 1
 char *pollstr = "SPAMDQTV\n";
 char *host = "127.0.0.1";
 char *port = "2947";
@@ -238,7 +240,7 @@ void process(struct gps_data_t *gpsdata,
 
       printf("iiiiistance = %f\r\n", get_distance(fakeData.latitude, fakeData.longitude, lat, lng));
 
-      EnQueue(&gpsSource, fakeData, sizeof(struct gps_fix_t));
+      EnQueue(&gpsSource, &fakeData, sizeof(struct gps_fix_t));
   }
 #else
 
