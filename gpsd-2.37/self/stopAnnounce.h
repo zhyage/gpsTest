@@ -3,7 +3,14 @@
 #include "dllist.h"
 
 #define INVALID_ID -1
+#define INVALID -1
+#define VALID   1
 
+#define UPLINE 1
+#define DOWNLINE -1
+
+#define ARRIVE 1
+#define LEAVE   -1
 
 typedef enum
 {
@@ -21,6 +28,7 @@ typedef enum
 
 typedef struct
 {
+    int     valid;
     double  lng;
     double  lat;
     int     lngAttr;
@@ -51,6 +59,20 @@ typedef struct
     char    *cityName;
     DLLIST *lineList;//lindId here
 }allLineMark_t;
+
+typedef struct
+{
+    int stopId;//current in which stop
+    //int status;//in or out
+    int upOrDown;//in up spot or down spot
+    int action;//arrive or leave
+    int performTimes;//already call the mp3 or not
+}stopPend_t;
+
+typedef struct
+{
+    char *mp3Name;
+}stopPendAction_t;
 
 
 

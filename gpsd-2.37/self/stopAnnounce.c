@@ -81,39 +81,42 @@ busStopMark_t allBusStop[] =
         0,
         "stop1",
         STOP,
-        {120.332080,    30.277810,  ADD,    ADD,    "up_stop1_in.mp3",     "up_stop1_out.mp3"},
-        {120.332087,    30.277817,  REDUCE, REDUCE,    "down_stop1_in.mp3",     "down_stop1_out.mp3"},
+        {VALID, 120.332080,    30.277810,  ADD,    ADD,    "up_stop1_in.mp3",     "up_stop1_out.mp3"},
+        {VALID, 120.332087,    30.277817,  REDUCE, REDUCE,    "down_stop1_in.mp3",     "down_stop1_out.mp3"},
     },
     {
         1,
         "stop2",
         STOP,
-        {120.332430,    30.278160,  ADD,    ADD,    "up_stop2_in.mp3",     "up_stop2_out.mp3"},
-        {120.332437,    30.278167,  REDUCE,    REDUCE,    "down_stop2_in.mp3",     "down_stop2_out.mp3"},
+        {VALID, 120.332430,    30.278160,  ADD,    ADD,    "up_stop2_in.mp3",     "up_stop2_out.mp3"},
+        {VALID, 120.332437,    30.278167,  REDUCE,    REDUCE,    "down_stop2_in.mp3",     "down_stop2_out.mp3"},
     },
     {
         2,
         "stop3",
         STOP,
-        {120.332780,    30.278510,  ADD,    ADD,    "up_stop3_in.mp3",     "up_stop3_out.mp3"},
-        {120.332787,    30.278517,  REDUCE,    REDUCE,    "down_stop3_in.mp3",     "down_stop3_out.mp3"},
+        {VALID, 120.332780,    30.278510,  ADD,    ADD,    "up_stop3_in.mp3",     "up_stop3_out.mp3"},
+        {VALID, 120.332787,    30.278517,  REDUCE,    REDUCE,    "down_stop3_in.mp3",     "down_stop3_out.mp3"},
     },
     {
         3,
         "stop4",
         STOP,
-        {120.333130,    30.278860,  ADD,    ADD,    "up_stop4_in.mp3",     "up_stop4_out.mp3"},
-        {120.333137,    30.278867,  REDUCE,    REDUCE,    "down_stop4_in.mp3",     "down_stop4_out.mp3"},
+        {VALID, 120.333130,    30.278860,  ADD,    ADD,    "up_stop4_in.mp3",     "up_stop4_out.mp3"},
+        {VALID, 120.333137,    30.278867,  REDUCE,    REDUCE,    "down_stop4_in.mp3",     "down_stop4_out.mp3"},
     },
     {
         INVALID_ID,
         NULL,
         STOP,
-        {0,    0,  UNKNOW,    UNKNOW,    NULL,     NULL},
-        {0,    0,  UNKNOW,    UNKNOW,    NULL,     NULL},
+        {INVALID, 0,    0,  UNKNOW,    UNKNOW,    NULL,     NULL},
+        {INVALID, 0,    0,  UNKNOW,    UNKNOW,    NULL,     NULL},
     },
     
 };
+
+DLLIST *stopPendList;
+DLLIST *stopPendActionList;
 
 void printCityAllBuslineInfo()
 {
@@ -161,48 +164,7 @@ void printCityAllBuslineInfo()
         }
     }
 }
-/*
-void printCityAllBus()
-{
-    DLLIST *lineItem;
-    for(lineItem = xiasha.lineList; lineItem != NULL; lineItem = lineItem->Next)
-    {
-        lineData_t * lineData = (lineData_t *)lineItem->Object;
-        printf(" line id = %d lineName = %s\r\n", lineData->lineId, lineData->lineName);
-        printf("have stops -----------------------------------\r\n");
-        if(INVALID_ID != lineData->lineId)
-        {
-            DLLIST *stopItem;
-            for(stopItem = lineData->stopList; stopItem != NULL; stopItem = stopItem->Next)
-            {
-                busStopMark_t *stopData = (busStopMark_t *)stopItem->Object;
-                {
-                    
-                    spotMark_t *up = &stopData->upline;
-                    spotMark_t *down = &stopData->downline;
-                    printf("stop id = %d stop name = %s stop type = %d \r\n", stopData->id, stopData->name, stopData->type);
-                    printf("up: lng = %f lat = %f lngAttr = %d latAttr = %d arrivedMp3 = %s leavedMp3 = %s\r\n", 
-                        up->lng, up->lat, up->lngAttr, up->latAttr, up->arrivedMp3, up->leavedMp3);
-                    printf("down: lng = %f lat = %f lngAttr = %d latAttr = %d arrivedMp3 = %s leavedMp3 = %s\r\n", 
-                        down->lng, down->lat, down->lngAttr, down->latAttr, down->arrivedMp3, down->leavedMp3);
-                }
-            }
-        }
-        printf("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\r\n");
-    }
-}
-*/
-/*
-void initLine1()
-{
-    line1.lineId = 0;
-    line1.lineName = "yan_jiang_da_dao";
-    DLAppend(&line1.stopList, 0, &allBusStop[0], sizeof(busStopMark_t));
-    DLAppend(&line1.stopList, 0, &allBusStop[1], sizeof(busStopMark_t));
-    DLAppend(&line1.stopList, 0, &allBusStop[2], sizeof(busStopMark_t));
-    DLAppend(&line1.stopList, 0, &allBusStop[3], sizeof(busStopMark_t));
-}
-*/
+
 
 
 void initLine_0()
@@ -234,6 +196,135 @@ void initCity()
     
 }
 
+int judgeTrendToSpot(struct gps_fix_t *current, struct gps_fix_t *prev, int lngAttr, int latAttr)
+{
+    if(lngAttr == ADD)
+    {
+        if(current->longitude - prev->longitude < 0)
+        {
+            return -1;
+        }
+    }
+    else if(lngAttr == REDUCE)
+    {
+        if(current->longitude - prev->longitude > 0)
+        {
+            return -1;
+        }
+    }
+    if(latAttr == ADD)
+    {
+        if(current->latitude - prev->latitude < 0)
+        {
+            return -1;
+        }
+    }
+    else if(latAttr == REDUCE)
+    {
+        if(current->latitude - prev->latitude > 0)
+        {
+            return -1;
+        }
+    }
+    return 1;
+    
+}
+
+void checkLeaveSpot(struct gps_fix_t *current, struct gps_fix_t *prev)
+{
+    DLLIST *pendItem = NULL;
+    spotMark_t *spot = NULL;
+    busStopMark_t *stop = NULL;
+    char *tmp;
+    for(pendItem = stopPendList; pendItem != NULL; pendItem = pendItem->Next)
+    {
+        stopPend_t *pend = pendItem->Object;
+        if(pend->upOrDown == UPLINE)
+        {
+            stop = &allBusStop[pend->stopId];
+            spot = &stop->upline;
+            tmp = "up";
+        }
+        else
+        {
+            stop = &allBusStop[pend->stopId];
+            spot = &stop->downline;
+            tmp = "down";
+        }
+        if(
+            (judgeRadius < get_distance(spot->lat, spot->lng, current->latitude, current->longitude)) 
+            && (judgeRadius >= get_distance(spot->lat, spot->lng, prev->latitude, prev->longitude))
+          )
+          {
+            printf("now leave stop : %d stop name = %s lineDir = %s\r\n", stop->id, stop->name, tmp);
+            if(NULL == pendItem->Next && NULL == pendItem->Prev)
+            {
+                stopPendList = NULL;
+            }
+            DLDelete(pendItem);
+          }
+    }
+}
+
+void updateStopJudgeList(struct gps_fix_t *current, struct gps_fix_t *prev)
+{
+    lineData_t *line = &lineData[0];
+    int upOrDown = 0;
+    DLLIST *stopIdItem;
+    stopPend_t stopPend;
+    //printf("line id = %d line name = %s\r\n", line->lineId, line->lineName);
+    for(stopIdItem = line->stopList; stopIdItem != NULL; stopIdItem = stopIdItem->Next)
+    {
+        int *stopId = stopIdItem->Object;
+        
+        busStopMark_t *stop = &allBusStop[*stopId];
+        spotMark_t *up = &stop->upline;
+        spotMark_t *down = &stop->downline;
+        
+        if(*stopId == 1)
+        {
+            printf("distance with stop 1 = %f\r\n", get_distance(up->lat, up->lng, current->latitude, current->longitude));
+        }
+        
+        if( VALID == up->valid
+            && (judgeRadius >= get_distance(up->lat, up->lng, current->latitude, current->longitude)) 
+            && (judgeRadius < get_distance(up->lat, up->lng, prev->latitude, prev->longitude))
+          )//entry up spot
+        {
+            if(1 == judgeTrendToSpot(current, prev, up->lngAttr, up->latAttr))
+            {
+                stopPendAction_t action;
+                stopPend.stopId = (*stopId);
+                stopPend.upOrDown = UPLINE;
+                stopPend.action = ARRIVE;
+                DLAppend(&stopPendList, 0, &stopPend, sizeof(stopPend_t));
+                action.mp3Name = up->arrivedMp3;
+                DLAppend(&stopPendActionList, 0, &action, sizeof(stopPendAction_t));
+                printf("now entry into stop = %d stop name = %s line dir = up \r\n", stop->id, stop->name);
+            }
+        }
+        if( VALID == down->valid
+            && (judgeRadius >= get_distance(down->lat, down->lng, current->latitude, current->longitude))
+            && (judgeRadius < get_distance(up->lat, up->lng, prev->latitude, prev->longitude))
+          )//entry down spot
+        {
+            if(1 == judgeTrendToSpot(current, prev, down->lngAttr, down->latAttr))
+            {
+                stopPendAction_t action;
+                stopPend.stopId = (*stopId);
+                stopPend.upOrDown = DOWNLINE;
+                stopPend.action = ARRIVE;
+                DLAppend(&stopPendList, 0, &stopPend, sizeof(stopPend_t));
+                action.mp3Name = down->arrivedMp3;
+                DLAppend(&stopPendActionList, 0, &action, sizeof(stopPendAction_t));
+                printf("now entry into stop = %d stop name = %s line dir = down \r\n", stop->id, stop->name);
+            }
+        }
+        
+        
+    }
+}
+
 void* stopAnnounce()
 {
     struct gps_fix_t *newest = NULL;
@@ -248,14 +339,18 @@ void* stopAnnounce()
     
     for(;;)
     {
-        sleep(2);
+        sleep(1);
         
-        printf("stopAnnounce \r\n");
+        //printf("stopAnnounce \r\n");
         
         newest = GetNewestDataFirst(&gpsSource);
         second = GetNewestDataSecond(&gpsSource);
         
-        printf("tail latitude = %f\r\n", newest->latitude);
-        printf("tail latitude = %f\r\n", second->latitude);
+        //printf("tail latitude = %f\r\n", newest->latitude);
+        //printf("tail latitude = %f\r\n", second->latitude);
+        printf("111111111111111111111111111111111111\r\n");
+        updateStopJudgeList(newest, second);
+        checkLeaveSpot(newest, second);
+        printf("222222222222222222222222222222222222\r\n");
     }
 }

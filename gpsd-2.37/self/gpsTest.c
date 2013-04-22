@@ -223,7 +223,7 @@ void process(struct gps_data_t *gpsdata,
   else
     track_end();
 #endif
-  printf("process gps data\r\n");
+//  printf("process gps data\r\n");
 #ifdef SIMULATOR
   if(1)
   {
@@ -238,7 +238,7 @@ void process(struct gps_data_t *gpsdata,
       fakeData.latitude = lat + (count * enhance);
       fakeData.longitude = lng + (count * enhance);
 
-      printf("iiiiistance = %f\r\n", get_distance(fakeData.latitude, fakeData.longitude, lat, lng));
+//      printf("iiiiistance = %f\r\n", get_distance(fakeData.latitude, fakeData.longitude, lat, lng));
 
       EnQueue(&gpsSource, &fakeData, sizeof(struct gps_fix_t));
   }
