@@ -9,6 +9,7 @@
 
 extern gpsSourceData gpsSource;
 
+pthread_mutex_t	actionPendMutex = PTHREAD_MUTEX_INITIALIZER;
 /*
 typedef enum
 {
@@ -235,7 +236,7 @@ void checkLeaveSpot(struct gps_fix_t *current, struct gps_fix_t *prev)
     DLLIST *pendItem = NULL;
     spotMark_t *spot = NULL;
     busStopMark_t *stop = NULL;
-    char *tmp;
+    int upOrDown = 0;
     for(pendItem = stopPendList; pendItem != NULL; pendItem = pendItem->Next)
     {
         stopPend_t *pend = pendItem->Object;
@@ -243,20 +244,37 @@ void checkLeaveSpot(struct gps_fix_t *current, struct gps_fix_t *prev)
         {
             stop = &allBusStop[pend->stopId];
             spot = &stop->upline;
-            tmp = "up";
+            upOrDown = UPLINE;
         }
         else
         {
             stop = &allBusStop[pend->stopId];
             spot = &stop->downline;
-            tmp = "down";
+            upOrDown = DOWNLINE;
         }
         if(
             (judgeRadius < get_distance(spot->lat, spot->lng, current->latitude, current->longitude)) 
             && (judgeRadius >= get_distance(spot->lat, spot->lng, prev->latitude, prev->longitude))
           )
           {
-            printf("now leave stop : %d stop name = %s lineDir = %s\r\n", stop->id, stop->name, tmp);
+            stopPendAction_t action;
+            if(UPLINE == upOrDown)
+            {
+              printf("now leave stop : %d stop name = %s lineDir = up\r\n", stop->id, stop->name);
+              action.mp3Name = spot->leavedMp3;
+              
+              pthread_mutex_lock(&actionPendMutex);
+              DLAppend(&stopPendActionList, 0, &action, sizeof(stopPendAction_t));
+              pthread_mutex_unlock(&actionPendMutex);
+            }
+            else
+            {
+              printf("now leave stop : %d stop name = %s lineDir = down\r\n", stop->id, stop->name);
+              action.mp3Name = spot->leavedMp3;
+              pthread_mutex_lock(&actionPendMutex);
+              DLAppend(&stopPendActionList, 0, &action, sizeof(stopPendAction_t));
+              pthread_mutex_unlock(&actionPendMutex);
+            }
             if(NULL == pendItem->Next && NULL == pendItem->Prev)
             {
                 stopPendList = NULL;
@@ -325,10 +343,42 @@ void updateStopJudgeList(struct gps_fix_t *current, struct gps_fix_t *prev)
     }
 }
 
+void *playTipMedia()
+{
+  int count = 0;
+  for(;;)
+  {
+    DLLIST *mediaItem;
+    for(mediaItem = stopPendActionList; mediaItem != NULL; mediaItem = mediaItem->Next)
+    {
+      //stopPendAction_t *action = DLExtract(mediaItem);
+      pthread_mutex_lock(&actionPendMutex);
+      DLLIST *item = DLExtract(mediaItem);
+      count = DLCount(stopPendActionList);
+      printf("media count = %d\r\n", DLCount(stopPendActionList));
+      if(0 == count)
+      {
+        stopPendActionList = NULL;
+      }
+      pthread_mutex_unlock(&actionPendMutex);
+      if(item->Object != NULL)
+      {
+        stopPendAction_t *action = item->Object;
+        printf("play media name = %s\r\n", action->mp3Name);
+        sleep(3);//block for finish play
+        free(item->Object);
+      }
+      free(item);
+    }
+    sleep(1);
+  }
+}
+
 void* stopAnnounce()
 {
     struct gps_fix_t *newest = NULL;
     struct gps_fix_t *second = NULL;
+    pthread_t mediaPlay_id;
     
     initCity();
     initLine_0();
@@ -336,6 +386,7 @@ void* stopAnnounce()
 
     
     printCityAllBuslineInfo();
+	  pthread_create(&mediaPlay_id, NULL, playTipMedia, NULL);
     
     for(;;)
     {
