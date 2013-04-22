@@ -1,0 +1,20 @@
+gpsTest:gpsTest.o arrQueue.o positionReport.o stopAnnounce.o dllist.o transferData.o utils.o
+	gcc -I../ -I. -I./utils/ gpsTest.o arrQueue.o positionReport.o stopAnnounce.o dllist.o transferData.o utils.o ../x64/libgps.a -g -o gpsTest -lm -lpthread 
+gpsTest.o:gpsTest.c
+	gcc -I../ -I. -I./utils/ -g -c gpsTest.c
+arrQueue.o:utils/arrQueue.c
+	gcc -I../ -I. -I./utils/ -g -c utils/arrQueue.c
+dllist.o:utils/dllist.c
+	gcc -I../ -I. -I./utils/ -g -c utils/dllist.c
+utils.o:utils/utils.c
+	gcc -I../ -I. -I./utils/ -g -c utils/utils.c
+positionReport.o:positionReport.c
+	gcc -I../ -I. -I./utils/ -g -c positionReport.c
+stopAnnounce.o:stopAnnounce.c
+	gcc -I../ -I. -I./utils/ -g -c stopAnnounce.c
+transferData.o:transferData.c
+	gcc -I../ -I. -I./utils/ -g -c transferData.c
+
+clean:
+	rm -rf *.o
+	rm -rf gpsTest
