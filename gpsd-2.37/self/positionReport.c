@@ -45,15 +45,19 @@ void *sendPositionReport(DLLIST *list)
     fputs(string, posFd);
     fflush(posFd);
   }
-  for(thisItem = list; thisItem != NULL; thisItem = thisItem->Next)
+  for(thisItem = DLGetFirst(list); thisItem != NULL; thisItem = thisItem->Next)
   {
     if(thisItem->Tag == 1)
     {
-      if(NULL == thisItem->Next && NULL == thisItem->Prev)
-      {
-        reportList = NULL;
-      }
       DLDelete(thisItem);
+    }
+  }
+  if(DLGetFirst(list) == DLGetLast(list))
+  {
+    thisItem = DLGetFirst(list);
+    if(thisItem != NULL && thisItem->Tag == 1)
+    {
+      DLDestroy(&list);
     }
   }
   printf("222 num = %d\r\n", getNumOfList());
