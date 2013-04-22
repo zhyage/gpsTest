@@ -1,5 +1,5 @@
 gpsTest:gpsTest.o arrQueue.o positionReport.o stopAnnounce.o dllist.o transferData.o utils.o
-	mipsel-linux-gcc -I../ -I. -I./utils/ gpsTest.o arrQueue.o positionReport.o stopAnnounce.o dllist.o transferData.o utils.o -o gpsTest -lm -lpthread -L../.libs -lgps
+	mipsel-linux-gcc -I../ -I. -I./utils/ gpsTest.o arrQueue.o positionReport.o stopAnnounce.o dllist.o transferData.o utils.o -o gpsTest -lm -lpthread -L../mips -lgps
 gpsTest.o:gpsTest.c
 	mipsel-linux-gcc -I../ -I. -I./utils/ -c gpsTest.c
 arrQueue.o:utils/arrQueue.c
