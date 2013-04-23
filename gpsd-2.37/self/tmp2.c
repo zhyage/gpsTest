@@ -8,39 +8,96 @@ DLLIST *tryList = NULL;
 printList()
 {
   DLLIST *item = NULL;
-  for(item = tryList; item != NULL; item = item->Next)
+  for(item = DLGetFirst(tryList); item != NULL; item = item->Next)
   {
     int *i = item->Object;
-    printf(" obj = %d ", (*i));
+    if(NULL == i)
+    {
+        printf("NULL in list\r\n");
+    }
+    else
+    {
+        printf(" %d ", (*i));
+    }
   }
-  printf("\r\n");
+  
+  printf("total count = %d\r\n", DLCount(tryList));
+}
+
+int DelItem(DLLIST *item)
+{
+    if(DLGetFirst(tryList) == item)//delete first item
+    {
+        tryList = item->Next;
+        DLDelete(item);
+        return 1;
+    }
+    else
+    {
+        DLDelete(item);
+        return 0;
+    }
 }
 
 int main()
 {
   int i = 0;
+  int j = 0;
   DLLIST *item = NULL;
-  for(i = 0; i < 10; i++)
+  for(i = 1; i <= 10; i++)
   {
     DLAppend(&tryList, 0, &i, sizeof(int));
   }
   printList();
-/*
-  for(item = tryList; item != NULL; item = item->Next)
+
+  for(item = DLGetFirst(tryList); item != NULL; item = item->Next)
   {
-    DLDelete(item);
+    j = j + 1;
+    if(j == 1 || j == 6 || j == 10)
+    {
+        item->Tag = 0;
+    }
+    else
+    {
+        item->Tag = 1;
+    }
+    printf("totalaa count = %d\r\n", DLCount(tryList));
   }
-*/
+  printf("j = %d\r\n", j);
+
   if(tryList != NULL)
   {
-    for(item = DLGetFirst(tryList); item != NULL; item = item->Next)
+    for(item = DLGetFirst(tryList); item != NULL;)
     {
-      DLDelete(item);
+       DLLIST *nextItem = item->Next;
+        if(item != NULL && item->Tag == 1)
+        {
+            if(item == DLGetFirst(tryList))
+            {
+                printf("aaa\r\n");
+                tryList = item->Next;
+                DLDelete(item);
+                item = tryList;
+                continue;
+            }
+            /*
+            if(1 == DelItem(item))
+            {
+                printf("aaa\r\n");
+                item = DLGetFirst(tryList);
+                continue;
+            }
+            */
+            else
+            {
+                printf("bbb\r\n");
+                DLDelete(item);
+                //item = nextItem;
+            }
+        }
+        item = nextItem;
     }
-    if(DLGetFirst(tryList) == DLGetLast(tryList))
-    {
-      printf("left only 1\r\n");
-    }
+    
   }
   printList();
 

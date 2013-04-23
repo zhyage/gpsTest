@@ -297,6 +297,7 @@ void checkLeaveSpot(struct gps_fix_t *current, struct gps_fix_t *prev)
     {
       if(pendItem->Tag == 1)//delete
       {
+        printf("1132\r\n");
         DLDelete(pendItem);
       }
     }
@@ -311,6 +312,7 @@ void checkLeaveSpot(struct gps_fix_t *current, struct gps_fix_t *prev)
         DLDestroy(&stopPendList);
       }
     }
+    printf("out checkLeaveSpot Num of stopPendList = %d\r\n", DLCount(stopPendList));
     pthread_mutex_unlock(&spotPendMutex);
 }
 
