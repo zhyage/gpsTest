@@ -178,10 +178,10 @@ float getAngle(struct gps_fix_t *newestPoint, struct gps_fix_t *prevPoint)
 
 void *positionReportGetGPSDataUpdate(void *arg)
 {
-    //pthread_mutex_lock(&GPSUpdateMutex);
+    pthread_mutex_lock(&GPSUpdateMutex);
 	printf("positionReport get sig of gps data update\r\n");
     GPSUpdateSignal = 1;
-    //pthread_mutex_unlock(&GPSUpdateMutex);
+    pthread_mutex_unlock(&GPSUpdateMutex);
 }
 
 void* positionReport()
@@ -197,7 +197,6 @@ void* positionReport()
   posFd = fopen("positionReport.log", "a+");
 
   notic.reportType = POSITION_REPORT;
-  //registerReportList(POSITION_REPORT, &reportList);
   registerReportList(POSITION_REPORT, &reportList, sendPositionReport);
   registerNoticeClientList(NOTICE_POSITION, NULL, positionReportGetGPSDataUpdate);
 
@@ -208,7 +207,7 @@ void* positionReport()
     usleep(period);
     count = count + 1;
 
-    //pthread_mutex_lock(&GPSUpdateMutex);
+    pthread_mutex_lock(&GPSUpdateMutex);
     if(GPSUpdateSignal == 1)
     {        
         printf("count = %ld \r\n", count);
@@ -222,7 +221,7 @@ void* positionReport()
             count = 0;
         }
     }
-    //pthread_mutex_unlock(&GPSUpdateMutex);
+    pthread_mutex_unlock(&GPSUpdateMutex);
 
 #if 0    
 //    printf("positionReport \r\n");

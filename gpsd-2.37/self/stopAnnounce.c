@@ -11,6 +11,10 @@ extern gpsSourceData gpsSource;
 
 pthread_mutex_t	actionPendMutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t	spotPendMutex = PTHREAD_MUTEX_INITIALIZER;
+
+pthread_mutex_t	GPSUpdate4AnnounceMutex = PTHREAD_MUTEX_INITIALIZER;
+
+static int GPSUpdateSignal = 0;
 /*
 typedef enum
 {
@@ -422,19 +426,25 @@ void *playTipMedia()
     } 
     pthread_mutex_unlock(&actionPendMutex);
 
-    usleep(200000);
+    usleep(100000);
   }
 }
 
 void *announceGetGPSDataUpdate(void *arg)
 {
+	
+    pthread_mutex_lock(&GPSUpdate4AnnounceMutex);
 	printf("announce get sig of gps data update\r\n");
+    GPSUpdateSignal = 1;
+    pthread_mutex_unlock(&GPSUpdate4AnnounceMutex);
 }
 
 void* stopAnnounce()
 {
-    struct gps_fix_t *newest = NULL;
-    struct gps_fix_t *second = NULL;
+    struct gps_fix_t *newestPoint = NULL;
+    struct gps_fix_t *prevPoint = NULL;
+    int period = 100000;//0.1 sec
+    unsigned long count = 0;
     pthread_t mediaPlay_id;
     
     initCity();
@@ -449,7 +459,30 @@ void* stopAnnounce()
     
     for(;;)
     {
-        sleep(1);
+        newestPoint = NULL;
+        prevPoint = NULL;
+        usleep(period);
+        count = count + 1;
+
+        pthread_mutex_lock(&GPSUpdate4AnnounceMutex);
+        if(GPSUpdateSignal == 1)
+        {        
+            printf("cccount = %ld \r\n", count);
+            newestPoint = GetNewestDataFirst(&gpsSource);
+            prevPoint = GetNewestDataSecond(&gpsSource);
+            GPSUpdateSignal = 0;
+            //if(count >= (100))//10 sec
+            {
+                updateStopJudgeList(newestPoint, prevPoint);
+                checkLeaveSpot(newestPoint, prevPoint);
+                //count = 0;
+            }
+        }
+        pthread_mutex_unlock(&GPSUpdate4AnnounceMutex);
+    
+#if 0    
+    
+        usleep(period);
         
         
         newest = GetNewestDataFirst(&gpsSource);
@@ -457,5 +490,6 @@ void* stopAnnounce()
         
         updateStopJudgeList(newest, second);
         checkLeaveSpot(newest, second);
+#endif        
     }
 }
