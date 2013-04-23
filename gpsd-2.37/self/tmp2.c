@@ -80,14 +80,6 @@ int main()
                 item = tryList;
                 continue;
             }
-            /*
-            if(1 == DelItem(item))
-            {
-                printf("aaa\r\n");
-                item = DLGetFirst(tryList);
-                continue;
-            }
-            */
             else
             {
                 printf("bbb\r\n");

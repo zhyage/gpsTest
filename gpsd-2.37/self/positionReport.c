@@ -45,6 +45,31 @@ void *sendPositionReport(DLLIST *list)
     fputs(string, posFd);
     fflush(posFd);
   }
+  
+    for(thisItem = DLGetFirst(list); thisItem != NULL; )
+    {
+        DLLIST *nextItem = thisItem->Next;
+        if(thisItem != NULL && thisItem->Tag == 1)
+        {
+            if(thisItem == DLGetFirst(list))
+            {
+                //printf("aaa\r\n");
+                list = thisItem->Next;
+                DLDelete(thisItem);
+                thisItem = list;
+                continue;
+            }
+            else
+            {
+                //printf("bbb\r\n");
+                DLDelete(thisItem);
+            }
+        }
+        thisItem = nextItem;
+    } 
+  
+/*  
+  
   for(thisItem = DLGetFirst(list); thisItem != NULL; thisItem = thisItem->Next)
   {
     if(thisItem->Tag == 1)
@@ -60,7 +85,9 @@ void *sendPositionReport(DLLIST *list)
       DLDestroy(&list);
     }
   }
-  printf("222 num = %d\r\n", getNumOfList());
+*/  
+  //printf("222 num = %d\r\n", getNumOfList());
+  
   pthread_mutex_unlock(&positionReportMutex);
 }
 

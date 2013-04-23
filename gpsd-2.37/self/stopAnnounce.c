@@ -237,21 +237,23 @@ void checkLeaveSpot(struct gps_fix_t *current, struct gps_fix_t *prev)
     DLLIST *pendItem = NULL;
     spotMark_t *spot = NULL;
     busStopMark_t *stop = NULL;
+    //time_t tt = time(NULL);
     int upOrDown = 0;
-    printf("in checkLeaveSpot Num of stopPendList = %d\r\n", DLCount(stopPendList));
+    //printf("in checkLeaveSpot Num of stopPendList = %d\r\n", DLCount(stopPendList));
     for(pendItem = DLGetFirst(stopPendList); pendItem != NULL; pendItem = pendItem->Next)
     {
+        time_t tt = time(NULL);
         stopPend_t *pend = pendItem->Object;
         if(pend->upOrDown == UPLINE)
         {
-            printf("111\r\n");
+            //printf("111\r\n");
             stop = &allBusStop[pend->stopId];
             spot = &stop->upline;
             upOrDown = UPLINE;
         }
         else
         {
-            printf("112\r\n");
+            //printf("112\r\n");
             stop = &allBusStop[pend->stopId];
             spot = &stop->downline;
             upOrDown = DOWNLINE;
@@ -262,10 +264,10 @@ void checkLeaveSpot(struct gps_fix_t *current, struct gps_fix_t *prev)
           )
           {
             stopPendAction_t action;
-            printf("113\r\n");
+            //printf("113\r\n");
             if(UPLINE == upOrDown)
             {
-              printf("now leave stop : %d stop name = %s lineDir = up\r\n", stop->id, stop->name);
+              printf("%s : now leave stop : %d stop name = %s lineDir = up\r\n",ctime(&tt),  stop->id, stop->name);
               action.mp3Name = spot->leavedMp3;
               
               pthread_mutex_lock(&actionPendMutex);
@@ -274,50 +276,46 @@ void checkLeaveSpot(struct gps_fix_t *current, struct gps_fix_t *prev)
             }
             else
             {
-              printf("now leave stop : %d stop name = %s lineDir = down\r\n", stop->id, stop->name);
+              printf("%s now leave stop : %d stop name = %s lineDir = down\r\n", ctime(&tt), stop->id, stop->name);
               action.mp3Name = spot->leavedMp3;
               pthread_mutex_lock(&actionPendMutex);
               DLAppend(&stopPendActionList, 0, &action, sizeof(stopPendAction_t));
               pthread_mutex_unlock(&actionPendMutex);
             }
-            printf("1131\r\n");
+            //printf("1131\r\n");
             pendItem->Tag = 1;//already done the work, need to be delete
-/*
-            if(NULL == pendItem->Next && NULL == pendItem->Prev)
-            {
-                stopPendList = NULL;
-            }
-            DLDelete(pendItem);
-*/
           }
     }
 
     pthread_mutex_lock(&spotPendMutex);
-    for(pendItem = DLGetFirst(stopPendList); pendItem != NULL; pendItem = pendItem->Next)
+    for(pendItem = DLGetFirst(stopPendList); pendItem != NULL; )
     {
-      if(pendItem->Tag == 1)//delete
-      {
-        printf("1132\r\n");
-        DLDelete(pendItem);
-      }
-    }
-    /* issue in dllist, the last one can't be delete from list work around*/
-    if(DLGetFirst(stopPendList) == DLGetLast(stopPendList))
-    {
-      printf("114\r\n");
-      pendItem = DLGetFirst(stopPendList);
-      if(pendItem != NULL && pendItem->Tag == 1)
-      {
-        printf("115\r\n");
-        DLDestroy(&stopPendList);
-      }
-    }
-    printf("out checkLeaveSpot Num of stopPendList = %d\r\n", DLCount(stopPendList));
+        DLLIST *nextItem = pendItem->Next;
+        if(pendItem != NULL && pendItem->Tag == 1)
+        {
+            if(pendItem == DLGetFirst(stopPendList))
+            {
+                //printf("aaa\r\n");
+                stopPendList = pendItem->Next;
+                DLDelete(pendItem);
+                pendItem = stopPendList;
+                continue;
+            }
+            else
+            {
+                //printf("bbb\r\n");
+                DLDelete(pendItem);
+            }
+        }
+        pendItem = nextItem;
+    }  
+    //printf("out checkLeaveSpot Num of stopPendList = %d\r\n", DLCount(stopPendList));
     pthread_mutex_unlock(&spotPendMutex);
 }
 
 void updateStopJudgeList(struct gps_fix_t *current, struct gps_fix_t *prev)
 {
+    time_t tt = time(NULL);
     lineData_t *line = &lineData[0];
     int upOrDown = 0;
     DLLIST *stopIdItem;
@@ -330,12 +328,7 @@ void updateStopJudgeList(struct gps_fix_t *current, struct gps_fix_t *prev)
         busStopMark_t *stop = &allBusStop[*stopId];
         spotMark_t *up = &stop->upline;
         spotMark_t *down = &stop->downline;
-/*        
-        if(*stopId == 1)
-        {
-            printf("distance with stop 1 = %f\r\n", get_distance(up->lat, up->lng, current->latitude, current->longitude));
-        }
-*/        
+       
         if( VALID == up->valid
             && (judgeRadius >= get_distance(up->lat, up->lng, current->latitude, current->longitude)) 
             && (judgeRadius < get_distance(up->lat, up->lng, prev->latitude, prev->longitude))
@@ -355,7 +348,7 @@ void updateStopJudgeList(struct gps_fix_t *current, struct gps_fix_t *prev)
                 pthread_mutex_lock(&actionPendMutex);
                 DLAppend(&stopPendActionList, 0, &action, sizeof(stopPendAction_t));
                 pthread_mutex_unlock(&actionPendMutex);
-                printf("now entry into stop = %d stop name = %s line dir = up \r\n", stop->id, stop->name);
+                printf("%s : now entry into stop = %d stop name = %s line dir = up \r\n",ctime(&tt), stop->id, stop->name);
             }
         }
         if( VALID == down->valid
@@ -377,7 +370,7 @@ void updateStopJudgeList(struct gps_fix_t *current, struct gps_fix_t *prev)
                 pthread_mutex_lock(&actionPendMutex);
                 DLAppend(&stopPendActionList, 0, &action, sizeof(stopPendAction_t));
                 pthread_mutex_unlock(&actionPendMutex);
-                printf("now entry into stop = %d stop name = %s line dir = down \r\n", stop->id, stop->name);
+                printf("%s : now entry into stop = %d stop name = %s line dir = down \r\n", ctime(&tt), stop->id, stop->name);
             }
         }
         
@@ -391,36 +384,45 @@ void *playTipMedia()
   for(;;)
   {
     DLLIST *mediaItem;
+    
     for(mediaItem = DLGetFirst(stopPendActionList); mediaItem != NULL; mediaItem = mediaItem->Next)
     {
       if(mediaItem->Object != NULL)
       {
+        time_t tt = time(NULL);
         stopPendAction_t *action = mediaItem->Object;
-        printf("play media name = %s\r\n", action->mp3Name);
+        printf("%s : play media name = %s\r\n", ctime(&tt), action->mp3Name);
         sleep(3);//block for finish play
         mediaItem->Tag = 1;
       }
     }
     pthread_mutex_lock(&actionPendMutex);
-    for(mediaItem = DLGetFirst(stopPendActionList); mediaItem != NULL; mediaItem = mediaItem->Next)
+    
+    
+    for(mediaItem = DLGetFirst(stopPendActionList); mediaItem != NULL; )
     {
-      if(mediaItem->Tag == 1)
-      {
-        DLDelete(mediaItem);
-      }
-    }
-    /* work around dllist issue */
-    if(DLGetFirst(stopPendActionList) == DLGetLast(stopPendActionList))
-    {
-      mediaItem = DLGetFirst(stopPendActionList);
-      if(mediaItem != NULL && mediaItem->Tag == 1)
-      {
-        DLDestroy(&stopPendActionList);
-      }
-    }
+        DLLIST *nextItem = mediaItem->Next;
+        if(mediaItem != NULL && mediaItem->Tag == 1)
+        {
+            if(mediaItem == DLGetFirst(stopPendActionList))
+            {
+                //printf("aaa\r\n");
+                stopPendActionList = mediaItem->Next;
+                DLDelete(mediaItem);
+                mediaItem = stopPendActionList;
+                continue;
+            }
+            else
+            {
+                //printf("bbb\r\n");
+                DLDelete(mediaItem);
+            }
+        }
+        mediaItem = nextItem;
+    } 
     pthread_mutex_unlock(&actionPendMutex);
 
-    sleep(1);
+    usleep(200000);
   }
 }
 
@@ -442,16 +444,11 @@ void* stopAnnounce()
     {
         sleep(1);
         
-        //printf("stopAnnounce \r\n");
         
         newest = GetNewestDataFirst(&gpsSource);
         second = GetNewestDataSecond(&gpsSource);
         
-        //printf("tail latitude = %f\r\n", newest->latitude);
-        //printf("tail latitude = %f\r\n", second->latitude);
-        printf("111111111111111111111111111111111111\r\n");
         updateStopJudgeList(newest, second);
         checkLeaveSpot(newest, second);
-        printf("222222222222222222222222222222222222\r\n");
     }
 }
