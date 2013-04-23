@@ -357,7 +357,7 @@ void updateStopJudgeList(struct gps_fix_t *current, struct gps_fix_t *prev)
         }
         if( VALID == down->valid
             && (judgeRadius >= get_distance(down->lat, down->lng, current->latitude, current->longitude))
-            && (judgeRadius < get_distance(up->lat, up->lng, prev->latitude, prev->longitude))
+            && (judgeRadius < get_distance(down->lat, down->lng, prev->latitude, prev->longitude))
           )//entry down spot
         {
             if(1 == judgeTrendToSpot(current, prev, down->lngAttr, down->latAttr))
@@ -434,7 +434,7 @@ void *announceGetGPSDataUpdate(void *arg)
 {
 	
     pthread_mutex_lock(&GPSUpdate4AnnounceMutex);
-	printf("announce get sig of gps data update\r\n");
+	//printf("announce get sig of gps data update\r\n");
     GPSUpdateSignal = 1;
     pthread_mutex_unlock(&GPSUpdate4AnnounceMutex);
 }
@@ -444,7 +444,7 @@ void* stopAnnounce()
     struct gps_fix_t *newestPoint = NULL;
     struct gps_fix_t *prevPoint = NULL;
     int period = 100000;//0.1 sec
-    unsigned long count = 0;
+    //unsigned long count = 0;
     pthread_t mediaPlay_id;
     
     initCity();
@@ -462,12 +462,12 @@ void* stopAnnounce()
         newestPoint = NULL;
         prevPoint = NULL;
         usleep(period);
-        count = count + 1;
+        //count = count + 1;
 
         pthread_mutex_lock(&GPSUpdate4AnnounceMutex);
         if(GPSUpdateSignal == 1)
         {        
-            printf("cccount = %ld \r\n", count);
+            //printf("cccount = %ld \r\n", count);
             newestPoint = GetNewestDataFirst(&gpsSource);
             prevPoint = GetNewestDataSecond(&gpsSource);
             GPSUpdateSignal = 0;

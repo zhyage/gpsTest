@@ -93,7 +93,7 @@ void* transferData()
 		}
 #if 1 
 		printf("get notic  = %d\r\n", reportNotic.reportType);
-		if(NULL == DLGetFirst(reportListArr[reportNotic.reportType].list))
+		if(NULL == (reportListArr[reportNotic.reportType].list))
 		{
 			printf("no such report type\r\n");
 		}

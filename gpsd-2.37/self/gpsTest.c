@@ -226,7 +226,7 @@ void bye(int signum){
 void process(struct gps_data_t *gpsdata,
     char *buf UNUSED, size_t len UNUSED, int level UNUSED)
 {
-
+int i = 0;
 
 #if 0
   if ((gpsdata->fix.mode > 1) && (gpsdata->status > 0))
@@ -238,28 +238,52 @@ void process(struct gps_data_t *gpsdata,
 #ifdef SIMULATOR
   if(1)
   {
-      static unsigned long count = 0;
+      //static unsigned long count = 0;
       double enhance = 0.000007;
-      double lat = 30.277810;
-      double lng = 120.332080;
+      const double startLat = 30.277810;
+      const double startLng = 120.332080;
+      
+      const double endLat = 30.278897;
+      const double endLng = 120.333167;
+      
+      static double lat = 30.277810;
+      static double lng = 120.332080;
+      static int back = 0;
+
+      
       struct gps_fix_t fakeData;
-	  int i = 0;
+	  
 
-      count = count + 1;
+      //count = count + 1;
 
-      fakeData.latitude = lat + (count * enhance);
-      fakeData.longitude = lng + (count * enhance);
+      if(lat >= endLat)
+      {
+        back = 1;
+      }
+      if(lat <= startLat)
+      {
+        back = 0;
+      }
+      
+      if(back == 0)
+      {
+        lat = lat + enhance;
+        lng = lng + enhance;
+      }
+      else
+      {
+        lat = lat - enhance;
+        lng = lng - enhance;
+      }
+      printf("latttttttttt = %f\r\n", lat);
+      
+      fakeData.latitude = lat;
+      fakeData.longitude = lng;
 
 //      printf("iiiiistance = %f\r\n", get_distance(fakeData.latitude, fakeData.longitude, lat, lng));
 
       EnQueue(&gpsSource, &fakeData, sizeof(struct gps_fix_t));
-	for(i = 0; i < NOTICE_END; i++)
-	{
-		if(NULL != locationUpdateRegistArr[i].sendFunc)
-		{
-			locationUpdateRegistArr[i].sendFunc(locationUpdateRegistArr[i].arg);	
-		}
-	}
+	
 	
   }
 #else
@@ -267,7 +291,13 @@ void process(struct gps_data_t *gpsdata,
   EnQueue(&gpsSource, &gpsdata->fix, sizeof(struct gps_fix_t));
 #endif
 
-
+    for(i = 0; i < NOTICE_END; i++)
+	{
+		if(NULL != locationUpdateRegistArr[i].sendFunc)
+		{
+			locationUpdateRegistArr[i].sendFunc(locationUpdateRegistArr[i].arg);	
+		}
+	}
   //printf("tail = %d\r\n", gpsSource.tail);
 
 

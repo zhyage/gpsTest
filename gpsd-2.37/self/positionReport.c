@@ -179,7 +179,7 @@ float getAngle(struct gps_fix_t *newestPoint, struct gps_fix_t *prevPoint)
 void *positionReportGetGPSDataUpdate(void *arg)
 {
     pthread_mutex_lock(&GPSUpdateMutex);
-	printf("positionReport get sig of gps data update\r\n");
+	//printf("positionReport get sig of gps data update\r\n");
     GPSUpdateSignal = 1;
     pthread_mutex_unlock(&GPSUpdateMutex);
 }
@@ -210,7 +210,7 @@ void* positionReport()
     pthread_mutex_lock(&GPSUpdateMutex);
     if(GPSUpdateSignal == 1)
     {        
-        printf("count = %ld \r\n", count);
+        //printf("count = %ld \r\n", count);
         newestPoint = GetNewestDataFirst(&gpsSource);
         prevPoint = GetNewestDataSecond(&gpsSource);
         GPSUpdateSignal = 0;
