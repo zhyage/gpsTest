@@ -26,4 +26,21 @@ typedef struct
     struct gps_fix_t data[MISC_BUF_SIZE];
 }gpsSourceData;
 
+typedef enum
+{
+	NOTICE_POSITION = 0,
+	NOTICE_ANNOUNCE,		
+	NOTICE_END
+}noticClient_t;
+
+typedef struct
+{
+	void *arg;
+	void (*sendFunc)(void *arg);
+}locationUpdateRegister_t;
+
+void registerNoticeClientList(int noticeClent, void *arg, void *func);
+
+
+
 #endif

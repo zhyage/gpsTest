@@ -193,6 +193,11 @@ float getAngle(struct gps_fix_t *newestPoint, struct gps_fix_t *prevPoint)
 
 }
 
+void *getGPSDataUpdate(void *arg)
+{
+	printf("positionReport get sig of gps data update\r\n");
+}
+
 void* positionReport()
 {
   struct gps_fix_t *newestPoint = NULL;
@@ -207,6 +212,7 @@ void* positionReport()
   notic.reportType = POSITION_REPORT;
   //registerReportList(POSITION_REPORT, &reportList);
   registerReportList(POSITION_REPORT, &reportList, sendPositionReport);
+  registerNoticeClientList(NOTICE_POSITION, NULL, getGPSDataUpdate);
 
   for(;;)
   {

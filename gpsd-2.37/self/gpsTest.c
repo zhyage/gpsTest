@@ -56,6 +56,9 @@ struct gps_data_t *gpsdata;
 gpsSourceData gpsSource;
 
 
+locationUpdateRegister_t locationUpdateRegistArr[NOTICE_END] = {NULL, NULL};
+
+
 char *progname;
 
 void process(struct gps_data_t *, char *, size_t, int);
@@ -80,6 +83,13 @@ struct {
 	char mode;
 	char time[32];
 } gps_ctx;
+
+void registerNoticeClientList(int noticeClent, void *arg, void *func)
+{
+	locationUpdateRegistArr[noticeClent].arg = arg;
+	locationUpdateRegistArr[noticeClent].sendFunc = func;	
+	return;
+}
 
 
 int
@@ -163,6 +173,7 @@ main(int argc, char **argv){
     pthread_create(&positionReport_id, NULL, positionReport, NULL);
     pthread_create(&stopAnnounce_id, NULL, stopAnnounce, NULL);
 	pthread_create(&transferData_id, NULL, transferData, NULL);
+	memset(&locationUpdateRegistArr, 0, sizeof(locationUpdateRegistArr));
 
 	if (casoc)
 		gps_query(gpsdata, "j1\n");
@@ -232,6 +243,7 @@ void process(struct gps_data_t *gpsdata,
       double lat = 30.277810;
       double lng = 120.332080;
       struct gps_fix_t fakeData;
+	  int i = 0;
 
       count = count + 1;
 
@@ -241,6 +253,14 @@ void process(struct gps_data_t *gpsdata,
 //      printf("iiiiistance = %f\r\n", get_distance(fakeData.latitude, fakeData.longitude, lat, lng));
 
       EnQueue(&gpsSource, &fakeData, sizeof(struct gps_fix_t));
+	for(i = 0; i < NOTICE_END; i++)
+	{
+		if(NULL != locationUpdateRegistArr[i].sendFunc)
+		{
+			locationUpdateRegistArr[i].sendFunc(*(locationUpdateRegistArr[i].arg));	
+		}
+	}
+	
   }
 #else
 
