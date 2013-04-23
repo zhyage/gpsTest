@@ -257,7 +257,7 @@ void process(struct gps_data_t *gpsdata,
 	{
 		if(NULL != locationUpdateRegistArr[i].sendFunc)
 		{
-			locationUpdateRegistArr[i].sendFunc(*(locationUpdateRegistArr[i].arg));	
+			locationUpdateRegistArr[i].sendFunc(locationUpdateRegistArr[i].arg);	
 		}
 	}
 	

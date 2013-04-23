@@ -20,7 +20,7 @@
 
 reportListRegister_t reportListArr[REPORT_END] = {NULL, NULL};
 
-void registerReportList(int reportType, DLLIST *list, void *func)
+void registerReportList(int reportType, DLLIST **list, void *func)
 {
 	reportListArr[reportType].list = list;
 	reportListArr[reportType].sendFunc = func;
@@ -93,13 +93,13 @@ void* transferData()
 		}
 #if 1 
 		printf("get notic  = %d\r\n", reportNotic.reportType);
-		if(NULL == reportListArr[reportNotic.reportType].list)
+		if(NULL == DLGetFirst(reportListArr[reportNotic.reportType].list))
 		{
 			printf("no such report type\r\n");
 		}
 		else
 		{
-			reportListArr[reportNotic.reportType].sendFunc(*(reportListArr[reportNotic.reportType].list));	
+			reportListArr[reportNotic.reportType].sendFunc((reportListArr[reportNotic.reportType].list));	
 			//DLWalk((*(reportListArr[reportNotic.reportType])), WalkPositionReport, NULL);
 		}
 #endif
@@ -108,7 +108,7 @@ void* transferData()
 }
 
 
-void sendReportNotic(reportSendNotic_t notic )
+void sendReportNotic(reportSendNotic_t *notic )
 {
 		static int sockfd=0;
 		struct sockaddr_in servaddr;
@@ -122,7 +122,7 @@ void sendReportNotic(reportSendNotic_t notic )
 		inet_pton(AF_INET,"127.0.0.1",&servaddr.sin_addr);
 		sockfd=socket(AF_INET,SOCK_DGRAM,0);
 
-		sendto(sockfd,&notic,sizeof(reportSendNotic_t),
+		sendto(sockfd, notic,sizeof(reportSendNotic_t),
 			0,(struct sockaddr *)&servaddr,sizeof(struct sockaddr));
 }
 

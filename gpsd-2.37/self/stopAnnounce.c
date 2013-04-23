@@ -426,6 +426,11 @@ void *playTipMedia()
   }
 }
 
+void *announceGetGPSDataUpdate(void *arg)
+{
+	printf("announce get sig of gps data update\r\n");
+}
+
 void* stopAnnounce()
 {
     struct gps_fix_t *newest = NULL;
@@ -439,6 +444,8 @@ void* stopAnnounce()
     
     printCityAllBuslineInfo();
 	  pthread_create(&mediaPlay_id, NULL, playTipMedia, NULL);
+    
+    registerNoticeClientList(NOTICE_ANNOUNCE, NULL, announceGetGPSDataUpdate);
     
     for(;;)
     {

@@ -12,11 +12,14 @@
 #include "utils.h"
 
 pthread_mutex_t	positionReportMutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t	GPSUpdateMutex = PTHREAD_MUTEX_INITIALIZER;
 
 extern gpsSourceData gpsSource;
 FILE *posFd = NULL;
 
 DLLIST *reportList = NULL;
+
+static int GPSUpdateSignal = 0;
 
 int getNumOfList()
 {
@@ -29,12 +32,11 @@ int getNumOfList()
   return i;
 }
 
-void *sendPositionReport(DLLIST *list)
+void *sendPositionReport(DLLIST **list)
 {
   pthread_mutex_lock(&positionReportMutex);
-  printf("111 num = %d\r\n", getNumOfList());
   DLLIST *thisItem;
-  for(thisItem = list; thisItem != NULL; thisItem = thisItem->Next)
+  for(thisItem = DLGetFirst(*list); thisItem != NULL; thisItem = thisItem->Next)
   {
     char string[256];
     time_t tt = time(NULL);
@@ -43,20 +45,21 @@ void *sendPositionReport(DLLIST *list)
     sprintf(string, "time : %s longitude : %x latitude : %x\r\n", ctime(&tt), arg->longitude, arg->latitude);
     thisItem->Tag = 1;//already sent
     fputs(string, posFd);
+    printf(" %s \r\n", string);
     fflush(posFd);
   }
   
-    for(thisItem = DLGetFirst(list); thisItem != NULL; )
+    for(thisItem = DLGetFirst(*list); thisItem != NULL; )
     {
         DLLIST *nextItem = thisItem->Next;
         if(thisItem != NULL && thisItem->Tag == 1)
         {
-            if(thisItem == DLGetFirst(list))
+            if(thisItem == DLGetFirst(*list))
             {
                 //printf("aaa\r\n");
-                list = thisItem->Next;
+                *list = thisItem->Next;
                 DLDelete(thisItem);
-                thisItem = list;
+                thisItem = *list;
                 continue;
             }
             else
@@ -67,26 +70,6 @@ void *sendPositionReport(DLLIST *list)
         }
         thisItem = nextItem;
     } 
-  
-/*  
-  
-  for(thisItem = DLGetFirst(list); thisItem != NULL; thisItem = thisItem->Next)
-  {
-    if(thisItem->Tag == 1)
-    {
-      DLDelete(thisItem);
-    }
-  }
-  if(DLGetFirst(list) == DLGetLast(list))
-  {
-    thisItem = DLGetFirst(list);
-    if(thisItem != NULL && thisItem->Tag == 1)
-    {
-      DLDestroy(&list);
-    }
-  }
-*/  
-  //printf("222 num = %d\r\n", getNumOfList());
   
   pthread_mutex_unlock(&positionReportMutex);
 }
@@ -193,9 +176,12 @@ float getAngle(struct gps_fix_t *newestPoint, struct gps_fix_t *prevPoint)
 
 }
 
-void *getGPSDataUpdate(void *arg)
+void *positionReportGetGPSDataUpdate(void *arg)
 {
+    //pthread_mutex_lock(&GPSUpdateMutex);
 	printf("positionReport get sig of gps data update\r\n");
+    GPSUpdateSignal = 1;
+    //pthread_mutex_unlock(&GPSUpdateMutex);
 }
 
 void* positionReport()
@@ -203,8 +189,9 @@ void* positionReport()
   struct gps_fix_t *newestPoint = NULL;
   struct gps_fix_t *prevPoint = NULL;
   static int inAngleCount = 0;
-  static int count = 0;
+  unsigned long count = 0;
   int inAngle = 0;
+  int period = 100000;//0.1 sec
   reportSendNotic_t notic;
 
   posFd = fopen("positionReport.log", "a+");
@@ -212,19 +199,37 @@ void* positionReport()
   notic.reportType = POSITION_REPORT;
   //registerReportList(POSITION_REPORT, &reportList);
   registerReportList(POSITION_REPORT, &reportList, sendPositionReport);
-  registerNoticeClientList(NOTICE_POSITION, NULL, getGPSDataUpdate);
+  registerNoticeClientList(NOTICE_POSITION, NULL, positionReportGetGPSDataUpdate);
 
   for(;;)
   {
-    sleep(1);
+    newestPoint = NULL;
+    prevPoint = NULL;
+    usleep(period);
     count = count + 1;
 
+    //pthread_mutex_lock(&GPSUpdateMutex);
+    if(GPSUpdateSignal == 1)
+    {        
+        printf("count = %ld \r\n", count);
+        newestPoint = GetNewestDataFirst(&gpsSource);
+        prevPoint = GetNewestDataSecond(&gpsSource);
+        GPSUpdateSignal = 0;
+        if(count >= (100))//10 sec
+        {
+            FillReportAddToList(newestPoint);
+            sendReportNotic(&notic);
+            count = 0;
+        }
+    }
+    //pthread_mutex_unlock(&GPSUpdateMutex);
 
+#if 0    
 //    printf("positionReport \r\n");
 
     newestPoint = GetNewestDataFirst(&gpsSource);
     prevPoint = GetNewestDataSecond(&gpsSource);
-
+/*
     if(10 < getAngle(newestPoint, prevPoint))
     {
       inAngleCount = inAngleCount + 1;
@@ -233,7 +238,7 @@ void* positionReport()
     {
       inAngleCount = 0;
     }
-
+*/
     if(count >= 10 || inAngleCount >= 3)
     {
 
@@ -241,7 +246,7 @@ void* positionReport()
       sendReportNotic(notic);
       count = 0;
     }
-
+#endif
 
 
   }

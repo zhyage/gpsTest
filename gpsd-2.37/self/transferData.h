@@ -16,12 +16,12 @@ typedef struct
 typedef struct
 {
 	DLLIST **list;
-	void (*sendFunc)(DLLIST *list);
+	void (*sendFunc)(DLLIST **list);
 }reportListRegister_t;
 
-void sendReportNotic(reportSendNotic_t notic );
+void sendReportNotic(reportSendNotic_t *notic );
 void* transferData();
-void registerReportList(int reportType, DLLIST *list, void *func);
+void registerReportList(int reportType, DLLIST **list, void *func);
 
 
 
