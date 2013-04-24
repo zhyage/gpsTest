@@ -62,20 +62,22 @@ typedef struct
 
 typedef struct
 {
-    int stopId;//current in which stop
-    //int status;//in or out
-    int upOrDown;//in up spot or down spot
-    int action;//arrive or leave
-    int performTimes;//already call the mp3 or not
-}stopPend_t;
+    char *mp3Name;
+}stopPendAction_t;
 
 typedef struct
 {
-    char *mp3Name;
-}stopPendAction_t;
+    int stopId;//current in which stop
+    int upOrDown;//in up spot or down spot
+    stopPendAction_t *action;
+
+}stopPend_t;
+
+
 
 
 
 void* stopAnnounce();
+void addActionToActionPend(stopPendAction_t *action);
 
 #endif

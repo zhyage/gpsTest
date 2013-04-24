@@ -2,10 +2,20 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
+#include <curses.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <asm/types.h>
+#include <signal.h>
+#include <sys/resource.h>
+#include <sys/stat.h>
+#include <errno.h>
+#include <time.h>
 #include "gpsTest.h"
 #include "arrQueue.h"
 #include "stopAnnounce.h"
 #include "utils.h"
+#include "manager.h"
 
 extern gpsSourceData gpsSource;
 
@@ -13,6 +23,8 @@ pthread_mutex_t	actionPendMutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t	spotPendMutex = PTHREAD_MUTEX_INITIALIZER;
 
 pthread_mutex_t	GPSUpdate4AnnounceMutex = PTHREAD_MUTEX_INITIALIZER;
+
+static stopPend_t lastUpdateStop;
 
 static int GPSUpdateSignal = 0;
 /*
@@ -87,29 +99,29 @@ busStopMark_t allBusStop[] =
         0,
         "stop1",
         STOP,
-        {VALID, 120.332080,    30.277810,  ADD,    ADD,    "up_stop1_in.mp3",     "up_stop1_out.mp3"},
-        {VALID, 120.332087,    30.277817,  REDUCE, REDUCE,    "down_stop1_in.mp3",     "down_stop1_out.mp3"},
+        {VALID, 120.332080,    30.277810,  ADD,    ADD,    "stop1_in.mp3",     "stop1_out.mp3"},
+        {VALID, 120.332087,    30.277817,  REDUCE, REDUCE,    "stop1_in.mp3",     "stop1_out.mp3"},
     },
     {
         1,
         "stop2",
         STOP,
-        {VALID, 120.332430,    30.278160,  ADD,    ADD,    "up_stop2_in.mp3",     "up_stop2_out.mp3"},
-        {VALID, 120.332437,    30.278167,  REDUCE,    REDUCE,    "down_stop2_in.mp3",     "down_stop2_out.mp3"},
+        {VALID, 120.332430,    30.278160,  ADD,    ADD,    "stop2_in.mp3",     "stop2_out.mp3"},
+        {VALID, 120.332437,    30.278167,  REDUCE,    REDUCE,    "stop2_in.mp3",     "stop2_out.mp3"},
     },
     {
         2,
         "stop3",
         STOP,
-        {VALID, 120.332780,    30.278510,  ADD,    ADD,    "up_stop3_in.mp3",     "up_stop3_out.mp3"},
-        {VALID, 120.332787,    30.278517,  REDUCE,    REDUCE,    "down_stop3_in.mp3",     "down_stop3_out.mp3"},
+        {VALID, 120.332780,    30.278510,  ADD,    ADD,    "stop3_in.mp3",     "stop3_out.mp3"},
+        {VALID, 120.332787,    30.278517,  REDUCE,    REDUCE,    "stop3_in.mp3",     "stop3_out.mp3"},
     },
     {
         3,
         "stop4",
         STOP,
-        {VALID, 120.333130,    30.278860,  ADD,    ADD,    "up_stop4_in.mp3",     "up_stop4_out.mp3"},
-        {VALID, 120.333137,    30.278867,  REDUCE,    REDUCE,    "down_stop4_in.mp3",     "down_stop4_out.mp3"},
+        {VALID, 120.333130,    30.278860,  ADD,    ADD,    "stop4_in.mp3",     "stop4_out.mp3"},
+        {VALID, 120.333137,    30.278867,  REDUCE,    REDUCE,    "stop4_in.mp3",     "stop4_out.mp3"},
     },
     {
         INVALID_ID,
@@ -236,6 +248,14 @@ int judgeTrendToSpot(struct gps_fix_t *current, struct gps_fix_t *prev, int lngA
     
 }
 
+void addActionToActionPend(stopPendAction_t *action)
+{
+    pthread_mutex_lock(&actionPendMutex);
+    DLAppend(&stopPendActionList, 0, action, sizeof(stopPendAction_t));
+    pthread_mutex_unlock(&actionPendMutex);
+}
+
+
 void checkLeaveSpot(struct gps_fix_t *current, struct gps_fix_t *prev)
 {
     DLLIST *pendItem = NULL;
@@ -273,18 +293,13 @@ void checkLeaveSpot(struct gps_fix_t *current, struct gps_fix_t *prev)
             {
               printf("%s : now leave stop : %d stop name = %s lineDir = up\r\n",ctime(&tt),  stop->id, stop->name);
               action.mp3Name = spot->leavedMp3;
-              
-              pthread_mutex_lock(&actionPendMutex);
-              DLAppend(&stopPendActionList, 0, &action, sizeof(stopPendAction_t));
-              pthread_mutex_unlock(&actionPendMutex);
+              addActionToActionPend(&action);
             }
             else
             {
               printf("%s now leave stop : %d stop name = %s lineDir = down\r\n", ctime(&tt), stop->id, stop->name);
               action.mp3Name = spot->leavedMp3;
-              pthread_mutex_lock(&actionPendMutex);
-              DLAppend(&stopPendActionList, 0, &action, sizeof(stopPendAction_t));
-              pthread_mutex_unlock(&actionPendMutex);
+              addActionToActionPend(&action);
             }
             //printf("1131\r\n");
             pendItem->Tag = 1;//already done the work, need to be delete
@@ -317,6 +332,19 @@ void checkLeaveSpot(struct gps_fix_t *current, struct gps_fix_t *prev)
     pthread_mutex_unlock(&spotPendMutex);
 }
 
+void enterSpot(stopPend_t *stopPend)
+{
+    stopPendAction_t *action = stopPend->action;
+    
+    pthread_mutex_lock(&spotPendMutex);
+    DLAppend(&stopPendList, 0, stopPend, sizeof(stopPend_t));
+    pthread_mutex_unlock(&spotPendMutex);
+    
+    addActionToActionPend(action);
+}
+
+
+
 void updateStopJudgeList(struct gps_fix_t *current, struct gps_fix_t *prev)
 {
     time_t tt = time(NULL);
@@ -343,15 +371,20 @@ void updateStopJudgeList(struct gps_fix_t *current, struct gps_fix_t *prev)
                 stopPendAction_t action;
                 stopPend.stopId = (*stopId);
                 stopPend.upOrDown = UPLINE;
-                stopPend.action = ARRIVE;
+                action.mp3Name = up->arrivedMp3;
+                //stopPend.action = ARRIVE;
+                stopPend.action = &action;
+                
+                enterSpot(&stopPend);
+                
+                /*
                 pthread_mutex_lock(&spotPendMutex);
                 DLAppend(&stopPendList, 0, &stopPend, sizeof(stopPend_t));
                 pthread_mutex_unlock(&spotPendMutex);
 
                 action.mp3Name = up->arrivedMp3;
-                pthread_mutex_lock(&actionPendMutex);
-                DLAppend(&stopPendActionList, 0, &action, sizeof(stopPendAction_t));
-                pthread_mutex_unlock(&actionPendMutex);
+                addActionToActionPend(&action);
+                */
                 printf("%s : now entry into stop = %d stop name = %s line dir = up \r\n",ctime(&tt), stop->id, stop->name);
             }
         }
@@ -365,15 +398,18 @@ void updateStopJudgeList(struct gps_fix_t *current, struct gps_fix_t *prev)
                 stopPendAction_t action;
                 stopPend.stopId = (*stopId);
                 stopPend.upOrDown = DOWNLINE;
-                stopPend.action = ARRIVE;
+                action.mp3Name = down->arrivedMp3;
+                stopPend.action = &action;
+                
+                enterSpot(&stopPend);
+                /*
                 pthread_mutex_lock(&spotPendMutex);
                 DLAppend(&stopPendList, 0, &stopPend, sizeof(stopPend_t));
                 pthread_mutex_unlock(&spotPendMutex);
 
                 action.mp3Name = down->arrivedMp3;
-                pthread_mutex_lock(&actionPendMutex);
-                DLAppend(&stopPendActionList, 0, &action, sizeof(stopPendAction_t));
-                pthread_mutex_unlock(&actionPendMutex);
+                addActionToActionPend(&action);
+                */
                 printf("%s : now entry into stop = %d stop name = %s line dir = down \r\n", ctime(&tt), stop->id, stop->name);
             }
         }
@@ -394,9 +430,15 @@ void *playTipMedia()
       if(mediaItem->Object != NULL)
       {
         time_t tt = time(NULL);
+        char command[128];
+        memset(command, 0, 128);
+        
         stopPendAction_t *action = mediaItem->Object;
-        printf("%s : play media name = %s\r\n", ctime(&tt), action->mp3Name);
-        sleep(3);//block for finish play
+        sprintf(command, "madplay /opt/github_cross/gpsTest/gpsd-2.37/self/media/%s", action->mp3Name);
+        printf("%s : play media name = %s\r\n", ctime(&tt), command);
+        system(command);
+        //sleep(3);//block for finish play
+        
         mediaItem->Tag = 1;
       }
     }
@@ -439,17 +481,58 @@ void *announceGetGPSDataUpdate(void *arg)
     pthread_mutex_unlock(&GPSUpdate4AnnounceMutex);
 }
 
-void* stopAnnounce()
+int getStopIdOfLine(int lineId, int num)
+{
+    DLLIST *item = DLGetFirst(lineData[lineId].stopList);
+    int *stopId = 0;
+    int count = 0;
+    
+    if(num > DLCount(lineData[lineId].stopList))
+    {
+        return -1;
+    }
+    
+    for(item = DLGetFirst(lineData[lineId].stopList); item != NULL; item = item->Next)
+    {
+        stopId = item->Object;
+        if(count == num)
+        {
+            return (*stopId);
+        }
+        count = count + 1;
+    }
+    
+    return -1;
+}
+
+void performCommandFromManager(int command)
+{
+    
+}
+
+void* stopAnnounce(int lineId)
 {
     struct gps_fix_t *newestPoint = NULL;
     struct gps_fix_t *prevPoint = NULL;
     int period = 100000;//0.1 sec
     //unsigned long count = 0;
     pthread_t mediaPlay_id;
+    struct timeval timeout;
+    static struct sockaddr_in serv_addr;
+	struct sockaddr_in cli_addr;
+	socklen_t clilen;
+	fd_set set;
+    int s = 0;
+    int sock_opt = 1;
+    
     
     initCity();
     initLine_0();
     initLine_1();
+    
+    lastUpdateStop.stopId = getStopIdOfLine(0, 0);
+    lastUpdateStop.upOrDown = UPLINE;
+    printf("init stopId = %d\r\n", lastUpdateStop.stopId);
 
     
     printCityAllBuslineInfo();
@@ -457,13 +540,61 @@ void* stopAnnounce()
     
     registerNoticeClientList(NOTICE_ANNOUNCE, NULL, announceGetGPSDataUpdate);
     
+    
+    s = socket(AF_INET, SOCK_DGRAM, 0);
+	if (s < 0){
+		printf("error to get socket\n");
+		return -1;
+	}
+	sock_opt = 1;
+
+	if(setsockopt(s,SOL_SOCKET,SO_REUSEADDR,(void *)&sock_opt, sizeof(sock_opt)) == -1)
+	{
+			printf("error to set sock opt reuseaddr\n");
+			return -1;
+
+	}
+
+			
+	memset((char *)&serv_addr,0,sizeof(serv_addr));
+	serv_addr.sin_family = AF_INET;
+	inet_pton(AF_INET,"127.0.0.1",&serv_addr.sin_addr);
+	serv_addr.sin_port = htons(PORT_ANNOUNCE);
+	
+
+
+
+
+	if (bind (s, (struct sockaddr *)&serv_addr, sizeof(serv_addr))<0)
+	{
+		printf("error to binding 9998\n");
+		close(s);
+		return -1;
+	}
+
+
     for(;;)
-    {
+	{
         newestPoint = NULL;
         prevPoint = NULL;
-        usleep(period);
-        //count = count + 1;
-
+		FD_ZERO(&set);
+		FD_SET(s,&set);
+		timeout.tv_sec=0;
+		timeout.tv_usec=100000;
+        int recvCommand = 0;
+        int n = 0;
+   
+       
+        select(FD_SETSIZE,&set,NULL,NULL,&timeout);
+        
+        
+        if (FD_ISSET(s, &set)) 
+        {
+			n=recvfrom(s, &recvCommand,sizeof(int),0,(struct sockaddr *)&cli_addr,&clilen);
+            printf("recv command from manager %d\r\n", recvCommand);
+        }
+		    
+        
         pthread_mutex_lock(&GPSUpdate4AnnounceMutex);
         if(GPSUpdateSignal == 1)
         {        
@@ -479,17 +610,5 @@ void* stopAnnounce()
             }
         }
         pthread_mutex_unlock(&GPSUpdate4AnnounceMutex);
-    
-#if 0    
-    
-        usleep(period);
-        
-        
-        newest = GetNewestDataFirst(&gpsSource);
-        second = GetNewestDataSecond(&gpsSource);
-        
-        updateStopJudgeList(newest, second);
-        checkLeaveSpot(newest, second);
-#endif        
     }
 }

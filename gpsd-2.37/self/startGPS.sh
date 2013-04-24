@@ -1,0 +1,3 @@
+./gpsTest > out.log &
+./manager 
+
