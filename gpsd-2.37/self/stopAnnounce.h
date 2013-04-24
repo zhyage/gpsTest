@@ -69,7 +69,7 @@ typedef struct
 {
     int stopId;//current in which stop
     int upOrDown;//in up spot or down spot
-    stopPendAction_t *action;
+    //stopPendAction_t *action;
 
 }stopPend_t;
 
@@ -79,5 +79,7 @@ typedef struct
 
 void* stopAnnounce();
 void addActionToActionPend(stopPendAction_t *action);
+int getNextStop(int curStopId, int curUpOrDown, int lineId, stopPend_t *nextStop);
+int getPrevStop(int curStopId, int curUpOrDown, int lineId, stopPend_t *prevStop);
 
 #endif
