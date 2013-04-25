@@ -8,7 +8,6 @@
 #include "arrQueue.h"
 #include "position.h"
 #include "dllist.h"
-#include "transferData.h"
 #include "utils.h"
 #include "sendSession.h"
 
@@ -94,7 +93,7 @@ int WalkPositionReport(int Tag, void *p, void *Parms)
 
 
 
-void FillReportAddToList(struct gps_fix_t* gpsData)
+void FillReportAndSend(struct gps_fix_t* gpsData)
 {
   /*
      typedef struct
@@ -205,12 +204,7 @@ void* positionReport()
   unsigned long count = 0;
   int inAngle = 0;
   int period = 100000;//0.1 sec
-  reportSendNotic_t notic;
 
-  posFd = fopen("positionReport.log", "a+");
-
-  notic.reportType = POSITION_REPORT;
-  registerReportList(POSITION_REPORT, &reportList, sendPositionReport);
   registerNoticeClientList(NOTICE_POSITION, NULL, positionReportGetGPSDataUpdate);
 
   for(;;)
@@ -229,37 +223,11 @@ void* positionReport()
         GPSUpdateSignal = 0;
         if(count >= (100))//10 sec
         {
-            FillReportAddToList(newestPoint);
-            sendReportNotic(&notic);
+            FillReportAndSend(newestPoint);
             count = 0;
         }
     }
     pthread_mutex_unlock(&GPSUpdateMutex);
-
-#if 0    
-//    printf("positionReport \r\n");
-
-    newestPoint = GetNewestDataFirst(&gpsSource);
-    prevPoint = GetNewestDataSecond(&gpsSource);
-/*
-    if(10 < getAngle(newestPoint, prevPoint))
-    {
-      inAngleCount = inAngleCount + 1;
-    }
-    else
-    {
-      inAngleCount = 0;
-    }
-*/
-    if(count >= 10 || inAngleCount >= 3)
-    {
-
-      FillReportAddToList(newestPoint);
-      sendReportNotic(notic);
-      count = 0;
-    }
-#endif
-
 
   }
 }
