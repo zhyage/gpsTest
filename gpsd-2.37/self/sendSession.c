@@ -133,7 +133,71 @@ void AddSendData2List(dataSendReq_t *dataSendReq)
     {
         addData2noResSendList(&sendData);
     }
+    printf("eleNum of g_needResSendList = %d\r\n", g_needResSendList.eleNum);
+    printf("eleNum of g_noResSendList = %d\r\n", g_noResSendList.eleNum);
     
+}
+
+int sendDataEle(sendData_t *sendData)
+{
+    printf("sendDataEle *********************************\r\n");
+    printf("command Id : %d\r\n", sendData->commandAttr->commandId);
+    printf("command name : %s\r\n", sendData->commandAttr->commandName);
+    printf("command needRes : %d\r\n", sendData->commandAttr->needResponse);
+    printf("sessionId : %d\r\n", sendData->sessionId);
+    printf("retry times : %d\r\n", sendData->retryTimes);
+    printf("data length : %u\r\n", sendData->dataLength);
+    
+    return 1;
+}
+
+void sendSendList(SendList_t *sList, int needRes)
+{
+    DLLIST *item;
+    for(item = DLGetFirst(sList->sendList); item != NULL; item = item->Next)
+    {
+        sendData_t *sendData = item->Object;
+        if(1 == sendDataEle(sendData))
+        {
+            item->Tag = SENDOK;//send success
+        }
+        else
+        {
+            item->Tag = SENDERR;//send fail
+        }
+        sendData->retryTimes = sendData->retryTimes + 1;
+    }
+    
+    if(NO_NEED_RES == needRes)//if no need res, delete when it send success
+    {
+        for(item = DLGetFirst(sList->sendList); item != NULL;)
+        {
+            DLLIST *nextItem = item->Next;
+            if(item != NULL && item->Tag == SENDOK)
+            {
+                if(item == DLGetFirst(sList->sendList))
+                {
+                    sList->sendList = item->Next;
+                    DLDelete(item);
+                    sList->eleNum = sList->eleNum - 1;
+                    item = sList->sendList;
+                    continue;
+                }
+                else
+                {
+                    DLDelete(item);
+                    sList->eleNum = sList->eleNum - 1;
+                }
+            }
+            item = nextItem;
+        }
+    }
+}
+
+void sendData2Remote()
+{
+    sendSendList(&g_needResSendList, NEED_RES);
+    sendSendList(&g_noResSendList, NO_NEED_RES);
 }
 
 
@@ -148,6 +212,9 @@ int main()
 	fd_set set;
     int s = 0;
     int sock_opt = 1;
+    
+    initCommandDefine();
+    printAllCommandDefine();
   
     s = socket(AF_INET, SOCK_DGRAM, 0);
 	if (s < 0){
@@ -184,7 +251,7 @@ int main()
 		FD_SET(s,&set);
 		timeout.tv_sec=0;
 		timeout.tv_usec=period;
-        int recvCommand = 0;
+        dataSendReq_t req;
         int n = 0;
    
        
@@ -193,11 +260,15 @@ int main()
         
         if (FD_ISSET(s, &set)) 
         {
-			n=recvfrom(s, &recvCommand,sizeof(int),0,(struct sockaddr *)&cli_addr,&clilen);
-            printf("recv command from manager %d\r\n", recvCommand);
-            //performCommandFromManager(recvCommand);
+			n=recvfrom(s, &req, sizeof(dataSendReq_t), 0, (struct sockaddr *)&cli_addr, &clilen);
+            printf("recv dataSendReq commandId %d\r\n", req.commandId);
+            AddSendData2List(&req);
+            AddSendData2List(&req);
+            AddSendData2List(&req);
+            AddSendData2List(&req);
         }
-		    
+
+        sendData2Remote();
 
     }
 }

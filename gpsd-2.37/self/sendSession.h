@@ -7,6 +7,9 @@
 #define NEED_RES 1
 #define NO_NEED_RES -1
 
+#define SENDOK  1
+#define SENDERR -1
+
 #define MAX_SEND_BUF  128
 
 typedef struct
@@ -31,7 +34,7 @@ typedef struct
 {
     unsigned char commandId;
     unsigned int dataLength;
-    void *data;
+    char data[1024];
 }dataSendReq_t;
 
 typedef struct

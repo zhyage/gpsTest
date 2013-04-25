@@ -1,6 +1,7 @@
 #ifndef TRANSFERDATA_H
 #define TRANSFERDATA_H
 #include "dllist.h"
+#include "sendSession.h"
 
 typedef enum
 {
@@ -22,6 +23,7 @@ typedef struct
 void sendReportNotic(reportSendNotic_t *notic );
 void* transferData();
 void registerReportList(int reportType, DLLIST **list, void *func);
+void dataSendReqSend(dataSendReq_t *dataSendReq );
 
 
 

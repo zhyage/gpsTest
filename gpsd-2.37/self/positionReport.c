@@ -10,6 +10,7 @@
 #include "dllist.h"
 #include "transferData.h"
 #include "utils.h"
+#include "sendSession.h"
 
 pthread_mutex_t	positionReportMutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t	GPSUpdateMutex = PTHREAD_MUTEX_INITIALIZER;
@@ -90,6 +91,9 @@ int WalkPositionReport(int Tag, void *p, void *Parms)
 }
 #endif
 
+
+
+
 void FillReportAddToList(struct gps_fix_t* gpsData)
 {
   /*
@@ -121,6 +125,7 @@ void FillReportAddToList(struct gps_fix_t* gpsData)
 
    */
   positionReport_t report;
+  dataSendReq_t dataSendReq;
   unsigned int DD;
   unsigned int MM;
   unsigned int SSSS;
@@ -128,6 +133,7 @@ void FillReportAddToList(struct gps_fix_t* gpsData)
 
 
   memset(&report, 0, sizeof(positionReport_t));
+  memset(&dataSendReq, 0, sizeof(dataSendReq_t));
 
   report.commandId = 0x14;
   getDDMMSSSS(gpsData->longitude, &DD, &MM, &SSSS);
@@ -150,13 +156,20 @@ void FillReportAddToList(struct gps_fix_t* gpsData)
   strcpy(report.driverId, "00001");
   report.SIMType = 0;
   report.baseStatus = 0;
-
+  
+  dataSendReq.commandId = 0x14;
+  dataSendReq.dataLength = sizeof(positionReport_t);
+  memcpy(&dataSendReq.data, &report, dataSendReq.dataLength);
+  
+  dataSendReqSend(&dataSendReq);
+  
+/*
   pthread_mutex_lock(&positionReportMutex);
   printf("333 num = %d\r\n", getNumOfList());
   DLAppend(&reportList, 0, &report, sizeof(positionReport_t));
   printf("444 num = %d\r\n", getNumOfList());
   pthread_mutex_unlock(&positionReportMutex);
-
+*/
 }
 
 float getAngle(struct gps_fix_t *newestPoint, struct gps_fix_t *prevPoint)
