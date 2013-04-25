@@ -19,6 +19,13 @@ SendList_t g_needResSendList = {0, NULL};//save sendData_t
 
 commandAttr_t g_commandDefine[256] = {0};
 
+unsigned char *g_motoId = "bus 0001";
+
+unsigned char *getMotoId()
+{
+    return g_motoId;
+}
+
 void addCommandAttr2Define(commandAttr_t *cmdAttr)
 {
     memcpy(&g_commandDefine[cmdAttr->commandId], cmdAttr, sizeof(commandAttr_t));
@@ -289,4 +296,64 @@ void dataSendReqSend(dataSendReq_t *dataSendReq )
 
 		sendto(sockfd, dataSendReq,sizeof(dataSendReq_t),
 			0,(struct sockaddr *)&servaddr,sizeof(struct sockaddr));
+}
+
+/*
+typedef struct
+{
+    U16 startTag;
+    U16 length;
+    U8  version;
+    U8  sessionId;
+    U8  checkLineStatus;
+    U16 reserve;
+    U8  motoType;
+    U8  *motoId;
+    U8  date[3];
+    U8  time[3];
+    U8  commandId;
+    U8  *data;
+    U8  checkSum;    
+}uploadData_t;
+*/
+
+void buildUploadData(sendData_t *sendData)
+{
+    unsigned short packageLength = 0;
+    uploadData_t updateData;
+    struct tm time;
+    
+    localtime_r(&(sendData->time), &time);
+
+    packageLength = sizeof(updateData.version) + 
+                    sizeof(updateData.sessionId) +
+                    sizeof(updateData.checkLineStatus) +
+                    sizeof(updateData.reserve) +
+                    sizeof(updateData.motoType) +
+                    (strlen(getMotoId()) + 1) + //motoId
+                    sizeof(updateData.date) +
+                    sizeof(updateData.time) +
+                    sizeof(updateData.commandId) +
+                    sendData->dataLength + 
+                    sizeof(updateData.checkSum) ;
+                    
+    printf("upload package length = %u\r\n", packageLength);                
+
+    updateData.startTag = 0x1AE6;
+    updateData.length = packageLength;
+    updateData.version = 0x12;
+    updateData.sessionId = sendData->sessionId;
+    updateData.checkLineStatus = 0;
+    updateData.reserve = 0x00;
+    updateData.motoType = 0x71;
+    updateData.data[0] = time.tm_year % 2000;
+    updateData.data[1] = time.tm_mon;
+    updateData.data[2] = time.tm_mday;
+    updateData.time[0] = time.tm_hour;
+    updateData.time[1] = time.tm_min;
+    updateData.time[2] = time.tm_sec;
+    updateData.commandId = sendData->commandAttr->commandId;
+    
+    
+    
 }

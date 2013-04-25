@@ -1,6 +1,8 @@
 #ifndef SEND_SESSION_H
 #define SEND_SESSION_H
 
+#include "common.h"
+
 #define SEND_COMMAND 1
 #define RECV_COMMAND -1
 
@@ -44,8 +46,27 @@ typedef struct
     
 }SendList_t;
 
+typedef struct
+{
+    U16 startTag;
+    U16 length;
+    U8  version;
+    U8  sessionId;
+    U8  checkLineStatus;
+    U16 reserve;
+    U8  motoType;
+    U8  *motoId;
+    U8  date[3];
+    U8  time[3];
+    U8  commandId;
+    U8  *data;
+    U8  *checkSum;    
+}uploadData_t;
+
+
 void* sendSession();
 void dataSendReqSend(dataSendReq_t *dataSendReq );
+unsigned char *getMotoId();
 
 
 
