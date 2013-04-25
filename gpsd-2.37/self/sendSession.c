@@ -317,11 +317,29 @@ typedef struct
 }uploadData_t;
 */
 
-void buildUploadData(sendData_t *sendData)
+
+U16 getCheckSum(unsigned char *start, unsigned short length)
+{
+    U16 checkSum = 0;
+    unsigned short i = 0;
+    for(i = 0; i < length; i++)
+    {
+        checkSum ^= start[i];
+    }
+
+    return checkSum;
+}
+
+int buildAndSendUploadData(sendData_t *sendData)
 {
     unsigned short packageLength = 0;
+    unsigned short msgLen = 0;
+    unsigned char sendMsg[1024];
     uploadData_t updateData;
     struct tm time;
+    static FILE *positionLogFd;
+
+    positionLogFd = fopen("positionLog.log", "a");
     
     localtime_r(&(sendData->time), &time);
 
@@ -334,8 +352,7 @@ void buildUploadData(sendData_t *sendData)
                     sizeof(updateData.date) +
                     sizeof(updateData.time) +
                     sizeof(updateData.commandId) +
-                    sendData->dataLength + 
-                    sizeof(updateData.checkSum) ;
+                    sendData->dataLength;
                     
     printf("upload package length = %u\r\n", packageLength);                
 
@@ -346,14 +363,53 @@ void buildUploadData(sendData_t *sendData)
     updateData.checkLineStatus = 0;
     updateData.reserve = 0x00;
     updateData.motoType = 0x71;
-    updateData.data[0] = time.tm_year % 2000;
-    updateData.data[1] = time.tm_mon;
-    updateData.data[2] = time.tm_mday;
+    updateData.motoId = getMotoId();
+    updateData.date[0] = time.tm_year % 2000;
+    updateData.date[1] = time.tm_mon;
+    updateData.date[2] = time.tm_mday;
     updateData.time[0] = time.tm_hour;
     updateData.time[1] = time.tm_min;
     updateData.time[2] = time.tm_sec;
     updateData.commandId = sendData->commandAttr->commandId;
-    
-    
-    
+    updateData.data = sendData.data;
+    updateData.checkSum = 0;
+       
+    memcpy(sendMsg + msgLen, &updateData.startTag, sizeof(updateData.startTag));
+    msgLen += sizeof(updateData.startTag);
+    memcpy(sendMsg + msgLen, &updateData.length, sizeof(updateData.length));
+    msgLen += sizeof(updateData.length);
+
+    memcpy(sendMsg + msgLen, &updateData.version, sizeof(updateData.version));
+    msgLen += sizeof(updateData.version);
+    memcpy(sendMsg + msgLen, &updateData.sessionId, sizeof(updateData.sessionId));
+    msgLen += sizeof(updateData.sessionId);
+    memcpy(sendMsg + msgLen, &updateData.checkLineStatus, sizeof(updateData.checkLineStatus));
+    msgLen += sizeof(updateData.checkLineStatus);
+    memcpy(sendMsg + msgLen, &updateData.reserve, sizeof(updateData.reserve));
+    msgLen += sizeof(updateData.reserve);
+    memcpy(sendMsg + msgLen, &updateData.motoType, sizeof(updateData.motoType));
+    msgLen += sizeof(updateData.motoType);
+    memcpy(sendMsg + msgLen, updateData.motoId, strlen(updateData.motoId) + 1);
+    msgLen += strlen(updateData.motoId) + 1;
+
+    memcpy(sendMsg + msgLen, &updateData.date, sizeof(updateData.date));
+    msgLen += sizeof(updateData.date);
+    memcpy(sendMsg + msgLen, &updateData.time, sizeof(updateData.time));
+    msgLen += sizeof(updateData.time);
+    memcpy(sendMsg + msgLen, &updateData.commandId, sizeof(updateData.commandId));
+    msgLen += sizeof(updateData.commandId);
+
+    memcpy(sendMsg + msgLen, updateData.data, sendData->dataLength;
+    msgLen += sendData->dataLength;
+
+    updateData.checkSum = getCheckSum((sendMsg + 
+        sizeof(updateData.startTag) + 
+        sizeof(updateData.length)), packageLength);
+
+    memcpy(sendMsg + msgLen, &updateData.checkSum, sizeof(updateData.checkSum));
+    msgLen += sizeof(updateData.checkSum);
+
+    fwrite(sendMsg, 1, msgLen, positionLogFd);
+
+    return 1;
 }
