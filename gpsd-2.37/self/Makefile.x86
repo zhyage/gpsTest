@@ -1,9 +1,11 @@
-all:gpsTest manager
+all:gpsTest manager sendSession
 
 gpsTest:gpsTest.o arrQueue.o positionReport.o stopAnnounce.o dllist.o transferData.o utils.o
 	gcc -I../ -I. -I./utils/ gpsTest.o arrQueue.o positionReport.o stopAnnounce.o dllist.o transferData.o utils.o -g -o gpsTest -lm -lpthread -lcurses -L../x86 -lgps
 manager:manager.o
 	gcc -I../ -I. -I./utils/ manager.o -g -o manager
+sendSession:sendSession.o dllist.o
+	gcc -I../ -I. -I./utils/ sendSession.o dllist.o -g -o sendSession
 
 gpsTest.o:gpsTest.c
 	gcc -I../ -I. -I./utils/ -g -c gpsTest.c
@@ -22,6 +24,9 @@ transferData.o:transferData.c
 
 manager.o:manager.c
 	gcc -I../ -I. -I./utils/ -g -c manager.c
+sendSession.o:sendSession.c
+	gcc -I../ -I. -I./utils/ -g -c sendSession.c
+
 
 clean:
 	rm -rf *.o
