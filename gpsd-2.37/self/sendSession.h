@@ -44,6 +44,9 @@ typedef struct
     
 }SendList_t;
 
+void* sendSession();
+void dataSendReqSend(dataSendReq_t *dataSendReq );
+
 
 
 
