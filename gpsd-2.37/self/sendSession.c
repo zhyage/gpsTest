@@ -127,7 +127,7 @@ void AddSendData2List(dataSendReq_t *dataSendReq)
     
     sendData.commandAttr = cmdAttr;
     sendData.sessionId = getSessionId();
-    sendData.time = ctime(NULL);
+    sendData.time = time(NULL);
     sendData.retryTimes = 0;
     sendData.dataLength = dataSendReq->dataLength;
     memcpy(sendData.data, dataSendReq->data, dataSendReq->dataLength);
@@ -154,8 +154,8 @@ int sendDataEle(sendData_t *sendData)
     printf("sessionId : %d\r\n", sendData->sessionId);
     printf("retry times : %d\r\n", sendData->retryTimes);
     printf("data length : %u\r\n", sendData->dataLength);
-    
-    return 1;
+ 
+    return buildAndSendUploadData(sendData);
 }
 
 void sendSendList(SendList_t *sList, int needRes)
@@ -270,9 +270,6 @@ void* sendSession()
 			n=recvfrom(s, &req, sizeof(dataSendReq_t), 0, (struct sockaddr *)&cli_addr, &clilen);
             printf("recv dataSendReq commandId %d\r\n", req.commandId);
             AddSendData2List(&req);
-            AddSendData2List(&req);
-            AddSendData2List(&req);
-            AddSendData2List(&req);
         }
 
         sendData2Remote();
@@ -337,11 +334,19 @@ int buildAndSendUploadData(sendData_t *sendData)
     unsigned char sendMsg[1024];
     uploadData_t updateData;
     struct tm time;
-    static FILE *positionLogFd;
+    FILE *positionLogFd;
 
     positionLogFd = fopen("positionLog.log", "a");
     
     localtime_r(&(sendData->time), &time);
+    
+    printf("year: %d mon: %d day: %d hour: %d min: %d sec:%d\r\n"
+        , time.tm_year%100, 
+        time.tm_mon + 1, 
+        time.tm_mday,
+        time.tm_hour, 
+        time.tm_min, 
+        time.tm_sec);
 
     packageLength = sizeof(updateData.version) + 
                     sizeof(updateData.sessionId) +
@@ -356,22 +361,22 @@ int buildAndSendUploadData(sendData_t *sendData)
                     
     printf("upload package length = %u\r\n", packageLength);                
 
-    updateData.startTag = 0x1AE6;
-    updateData.length = packageLength;
+    updateData.startTag = htons(0x1AE6);
+    updateData.length = htons(packageLength);
     updateData.version = 0x12;
     updateData.sessionId = sendData->sessionId;
     updateData.checkLineStatus = 0;
-    updateData.reserve = 0x00;
+    updateData.reserve = htons(0x0000);
     updateData.motoType = 0x71;
     updateData.motoId = getMotoId();
-    updateData.date[0] = time.tm_year % 2000;
-    updateData.date[1] = time.tm_mon;
+    updateData.date[0] = time.tm_year % 100;
+    updateData.date[1] = time.tm_mon + 1;
     updateData.date[2] = time.tm_mday;
     updateData.time[0] = time.tm_hour;
     updateData.time[1] = time.tm_min;
     updateData.time[2] = time.tm_sec;
     updateData.commandId = sendData->commandAttr->commandId;
-    updateData.data = sendData.data;
+    updateData.data = sendData->data;
     updateData.checkSum = 0;
        
     memcpy(sendMsg + msgLen, &updateData.startTag, sizeof(updateData.startTag));
@@ -399,7 +404,7 @@ int buildAndSendUploadData(sendData_t *sendData)
     memcpy(sendMsg + msgLen, &updateData.commandId, sizeof(updateData.commandId));
     msgLen += sizeof(updateData.commandId);
 
-    memcpy(sendMsg + msgLen, updateData.data, sendData->dataLength;
+    memcpy(sendMsg + msgLen, updateData.data, sendData->dataLength);
     msgLen += sendData->dataLength;
 
     updateData.checkSum = getCheckSum((sendMsg + 
@@ -410,6 +415,8 @@ int buildAndSendUploadData(sendData_t *sendData)
     msgLen += sizeof(updateData.checkSum);
 
     fwrite(sendMsg, 1, msgLen, positionLogFd);
+
+    fclose(positionLogFd);
 
     return 1;
 }

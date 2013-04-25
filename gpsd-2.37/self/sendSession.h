@@ -67,6 +67,7 @@ typedef struct
 void* sendSession();
 void dataSendReqSend(dataSendReq_t *dataSendReq );
 unsigned char *getMotoId();
+int buildAndSendUploadData(sendData_t *sendData);
 
 
 
