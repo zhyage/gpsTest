@@ -8,6 +8,8 @@ unsigned char *getMotoLicense();
 unsigned char *getSIMId();
 unsigned char *getBasePosition();
 unsigned char *getBaseCell();
+unsigned int getLineId();
+void setLineId(unsigned int lineId);
 
 
 #endif

@@ -17,6 +17,8 @@ unsigned char *g_basePosition = "3.3, 6.6";
 
 unsigned char *g_baseCell = "6-6";
 
+unsigned int *g_lineId = 1;
+
 unsigned char *getMotoId()
 {
     return g_motoId;
@@ -52,3 +54,12 @@ unsigned char *getBaseCell()
 	return g_baseCell;
 }
 
+unsigned int getLineId()
+{
+	return g_lineId;
+}
+
+void setLineId(unsigned int lineId)
+{
+	g_lineId = lineId;
+}

@@ -32,58 +32,7 @@ static int GPSUpdateSignal = 0;
 
 const double judgeRadius = 0.003;//30m
 
-lineData_t lineData[] = 
-{
-    {0, "yan_jiang_da_dao", NULL},
-    {1, "liu_hao_lu",       NULL},
-    {INVALID_ID, NULL,      NULL}
-};
 
-allLineMark_t cityData[] = 
-{
-    {0, "xiasha", NULL},
-    {INVALID_ID, NULL, NULL}
-};
-
-busStopMark_t allBusStop[] = 
-{
-    {
-        0,
-        "stop1",
-        STOP,
-        {VALID, 120.332080,    30.277810,  ADD,    ADD,    "stop1_in.mp3",     "stop1_out.mp3"},
-        {VALID, 120.332087,    30.277817,  REDUCE, REDUCE,    "stop1_in.mp3",     "stop1_out.mp3"},
-    },
-    {
-        1,
-        "stop2",
-        STOP,
-        {VALID, 120.332430,    30.278160,  ADD,    ADD,    "stop2_in.mp3",     "stop2_out.mp3"},
-        {VALID, 120.332437,    30.278167,  REDUCE,    REDUCE,    "stop2_in.mp3",     "stop2_out.mp3"},
-    },
-    {
-        2,
-        "stop3",
-        STOP,
-        {VALID, 120.332780,    30.278510,  ADD,    ADD,    "stop3_in.mp3",     "stop3_out.mp3"},
-        {VALID, 120.332787,    30.278517,  REDUCE,    REDUCE,    "stop3_in.mp3",     "stop3_out.mp3"},
-    },
-    {
-        3,
-        "stop4",
-        STOP,
-        {VALID, 120.333130,    30.278860,  ADD,    ADD,    "stop4_in.mp3",     "stop4_out.mp3"},
-        {VALID, 120.333137,    30.278867,  REDUCE,    REDUCE,    "stop4_in.mp3",     "stop4_out.mp3"},
-    },
-    {
-        INVALID_ID,
-        NULL,
-        STOP,
-        {INVALID, 0,    0,  UNKNOW,    UNKNOW,    NULL,     NULL},
-        {INVALID, 0,    0,  UNKNOW,    UNKNOW,    NULL,     NULL},
-    },
-    
-};
 
 DLLIST *stopPendList;
 DLLIST *stopPendActionList;
@@ -284,81 +233,7 @@ void checkLeaveSpot(struct gps_fix_t *current, struct gps_fix_t *prev)
     pthread_mutex_unlock(&spotPendMutex);
 }
 
-int getNextStop(int curStopId, int curUpOrDown, int lineId, stopPend_t *nextStop)
-{
-    DLLIST *item = DLGetFirst(lineData[lineId].stopList);
-    DLLIST *nextItem = NULL;
-    int *stopId = 0;
-    int *nextStopId = 0;
-    
-    if(NULL == item)
-    {
-        return -1;
-    }
-    
-    for(item = DLGetFirst(lineData[lineId].stopList); item != NULL; item = item->Next)
-    {
-        stopId = item->Object;
-        if(*stopId == curStopId)
-        {
-            nextItem = item->Next;
-            if(nextItem == NULL)//the last stop, need turn around
-            {
-                nextStopId = item->Object;
-                nextStop->stopId = *nextStopId;
-                nextStop->upOrDown = 0 - curUpOrDown;
-                //return nextStop;
-                return (*nextStopId);
-            }
-            else
-            {
-                nextStopId = nextItem->Object;
-                nextStop->stopId = *nextStopId;
-                nextStop->upOrDown = curUpOrDown;
-                //return nextStop;
-                return (*nextStopId);
-            }
-        }
-    } 
-    
-}
 
-int getPrevStop(int curStopId, int curUpOrDown, int lineId, stopPend_t *prevStop)
-{
-    DLLIST *item = DLGetFirst(lineData[lineId].stopList);
-    DLLIST *nextItem = NULL;
-    int *stopId = 0;
-    int *prevStopId = 0;
-    
-    if(NULL == item)
-    {
-        return -1;
-    }
-    
-    for(item = DLGetLast(lineData[lineId].stopList); item != NULL; item = item->Prev)
-    {
-        stopId = item->Object;
-        if(*stopId == curStopId)
-        {
-            nextItem = item->Prev;
-            if(nextItem == NULL)//the last stop, need turn around
-            {
-                prevStopId = item->Object;
-                prevStop->stopId = *prevStopId;
-                prevStop->upOrDown = 0 - curUpOrDown;
-                return (*prevStopId);
-            }
-            else
-            {
-                prevStopId = nextItem->Object;
-                prevStop->stopId = *prevStopId;
-                prevStop->upOrDown = curUpOrDown;
-                return (*prevStopId);
-            }
-        }
-    } 
-    
-}
 
 void updatelastUpdateStop(int stopId, int upOrDown)
 {
@@ -514,29 +389,7 @@ void *announceGetGPSDataUpdate(void *arg)
     pthread_mutex_unlock(&GPSUpdate4AnnounceMutex);
 }
 
-int getStopIdOfLine(int lineId, int num)
-{
-    DLLIST *item = DLGetFirst(lineData[lineId].stopList);
-    int *stopId = 0;
-    int count = 0;
-    
-    if(num > DLCount(lineData[lineId].stopList))
-    {
-        return -1;
-    }
-    
-    for(item = DLGetFirst(lineData[lineId].stopList); item != NULL; item = item->Next)
-    {
-        stopId = item->Object;
-        if(count == num)
-        {
-            return (*stopId);
-        }
-        count = count + 1;
-    }
-    
-    return -1;
-}
+
 
 void performCommandFromManager(int command)
 {
