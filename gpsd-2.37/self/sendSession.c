@@ -41,7 +41,7 @@ void initCommandDefine()
     commandAttr_t cmdAttr;
     memset(g_commandDefine, 0, sizeof(commandAttr_t) * 256);
     
-    cmdAttr.commandId = 0x14;
+    cmdAttr.commandId = COMMAND_POSITION_REPORT;
     strcpy(cmdAttr.commandName, "position cycle report");
     cmdAttr.sendOrRecv = SEND_COMMAND;
     cmdAttr.needResponse = NO_NEED_RES;

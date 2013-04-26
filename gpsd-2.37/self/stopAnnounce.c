@@ -307,14 +307,16 @@ int getNextStop(int curStopId, int curUpOrDown, int lineId, stopPend_t *nextStop
                 nextStopId = item->Object;
                 nextStop->stopId = *nextStopId;
                 nextStop->upOrDown = 0 - curUpOrDown;
-                return nextStop;
+                //return nextStop;
+                return (*nextStopId);
             }
             else
             {
                 nextStopId = nextItem->Object;
                 nextStop->stopId = *nextStopId;
                 nextStop->upOrDown = curUpOrDown;
-                return nextStop;
+                //return nextStop;
+                return (*nextStopId);
             }
         }
     } 
@@ -344,14 +346,14 @@ int getPrevStop(int curStopId, int curUpOrDown, int lineId, stopPend_t *prevStop
                 prevStopId = item->Object;
                 prevStop->stopId = *prevStopId;
                 prevStop->upOrDown = 0 - curUpOrDown;
-                return prevStop;
+                return (*prevStopId);
             }
             else
             {
                 prevStopId = nextItem->Object;
                 prevStop->stopId = *prevStopId;
                 prevStop->upOrDown = curUpOrDown;
-                return prevStop;
+                return (*prevStopId);
             }
         }
     } 
@@ -421,23 +423,11 @@ void updateStopJudgeList(struct gps_fix_t *current, struct gps_fix_t *prev)
         {
             if(1 == judgeTrendToSpot(current, prev, up->lngAttr, up->latAttr))
             {
-                //stopPendAction_t action;
                 stopPend.stopId = (*stopId);
                 stopPend.upOrDown = UPLINE;
-                //action.mp3Name = up->arrivedMp3;
-                //stopPend.action = ARRIVE;
-                //stopPend.action = &action;
                 
                 enterSpot(&stopPend, 0);
-                
-                /*
-                pthread_mutex_lock(&spotPendMutex);
-                DLAppend(&stopPendList, 0, &stopPend, sizeof(stopPend_t));
-                pthread_mutex_unlock(&spotPendMutex);
 
-                action.mp3Name = up->arrivedMp3;
-                addActionToActionPend(&action);
-                */
                 printf("%s : now entry into stop = %d stop name = %s line dir = up \r\n",ctime(&tt), stop->id, stop->name);
             }
         }
@@ -448,21 +438,11 @@ void updateStopJudgeList(struct gps_fix_t *current, struct gps_fix_t *prev)
         {
             if(1 == judgeTrendToSpot(current, prev, down->lngAttr, down->latAttr))
             {
-                //stopPendAction_t action;
                 stopPend.stopId = (*stopId);
                 stopPend.upOrDown = DOWNLINE;
-                //action.mp3Name = down->arrivedMp3;
-                //stopPend.action = &action;
                 
                 enterSpot(&stopPend, 0);
-                /*
-                pthread_mutex_lock(&spotPendMutex);
-                DLAppend(&stopPendList, 0, &stopPend, sizeof(stopPend_t));
-                pthread_mutex_unlock(&spotPendMutex);
 
-                action.mp3Name = down->arrivedMp3;
-                addActionToActionPend(&action);
-                */
                 printf("%s : now entry into stop = %d stop name = %s line dir = down \r\n", ctime(&tt), stop->id, stop->name);
             }
         }
@@ -611,6 +591,70 @@ void performCommandFromManager(int command)
     }
 }
 
+busStopMark_t *getStopAttr(int stopId)
+{
+    return &allBusStop[stopId];
+}
+
+spotMark_t *getSpotAttr(int stopId, int upOrDown)
+{
+    if(UPLINE == upOrDown)
+    {
+        return &allBusStop[stopId].upline;
+    }
+    else
+    {
+        return &allBusStop[stopId].downline;
+    }
+}
+
+int getDriveDirect()
+{
+    return lastUpdateStop.upOrDown;
+}
+
+int getLastStopId()
+{
+    return lastUpdateStop.stopId;
+}
+
+int getNextStopId()
+{
+    return getNextStopAttr()->id;
+}
+
+busStopMark_t *getNextStopAttr()
+{
+    stopPend_t getPend;
+    if(-1 == getNextStop(lastUpdateStop.stopId, lastUpdateStop.upOrDown, 0, &getPend))
+    {
+        return NULL;
+    }
+    return getStopAttr(getPend.stopId);
+}
+
+spotMark_t *getNextStopSpotAttr()
+{
+    stopPend_t getPend;
+    if(-1 == getNextStop(lastUpdateStop.stopId, lastUpdateStop.upOrDown, 0, &getPend))
+    {
+        return NULL;
+    }
+    return getSpotAttr(getPend.stopId, getPend.upOrDown);
+}
+
+
+
+unsigned short getDistance2NextStop(struct gps_fix_t *current)
+{
+    spotMark_t *nextSpot = getNextStopSpotAttr();
+    if(NULL == nextSpot)
+    {
+        return 0;
+    }
+    return 1000*(get_distance(current->latitude, current->longitude, nextSpot->latAttr, nextSpot->lngAttr));
+}
+
 void* stopAnnounce(int lineId)
 {
     struct gps_fix_t *newestPoint = NULL;
@@ -643,16 +687,17 @@ void* stopAnnounce(int lineId)
     
     
     s = socket(AF_INET, SOCK_DGRAM, 0);
-	if (s < 0){
+	if (s < 0)
+    {
 		printf("error to get socket\n");
-		return -1;
+		return ;
 	}
 	sock_opt = 1;
 
 	if(setsockopt(s,SOL_SOCKET,SO_REUSEADDR,(void *)&sock_opt, sizeof(sock_opt)) == -1)
 	{
 			printf("error to set sock opt reuseaddr\n");
-			return -1;
+			return ;
 
 	}
 
@@ -670,7 +715,7 @@ void* stopAnnounce(int lineId)
 	{
 		printf("error to binding 9998\n");
 		close(s);
-		return -1;
+		return ;
 	}
 
 

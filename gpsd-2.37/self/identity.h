@@ -6,6 +6,8 @@ unsigned char *getSoftVersion();
 unsigned char *getDeviceId();
 unsigned char *getMotoLicense();
 unsigned char *getSIMId();
+unsigned char *getBasePosition();
+unsigned char *getBaseCell();
 
 
 #endif

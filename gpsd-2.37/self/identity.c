@@ -13,6 +13,10 @@ const unsigned char *g_motoLicense = "A7680G";
 
 const unsigned char *g_SIMId = "abcdefghijklmnopqrst";
 
+unsigned char *g_basePosition = "3.3, 6.6";
+
+unsigned char *g_baseCell = "6-6";
+
 unsigned char *getMotoId()
 {
     return g_motoId;
@@ -36,5 +40,15 @@ unsigned char *getMotoLicense()
 unsigned char *getSIMId()
 {
     return g_SIMId;
+}
+
+unsigned char *getBasePosition()
+{
+	return g_basePosition;
+}
+
+unsigned char *getBaseCell()
+{
+	return g_baseCell;
 }
 

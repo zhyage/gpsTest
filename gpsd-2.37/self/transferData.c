@@ -12,7 +12,7 @@
 #include <time.h>
 #include "gpsTest.h"
 #include "arrQueue.h"
-#include "position.h"
+#include "positionReport.h"
 #include "dllist.h"
 #include "transferData.h"
 #include "position.h"

@@ -14,4 +14,9 @@ typedef unsigned int    U32;
 typedef long            S64;
 typedef unsigned long   U64;
 
+
+typedef enum 
+{
+	COMMAND_POSITION_REPORT = 0x14,
+}COMMANDID;
 #endif

@@ -6,8 +6,12 @@
 
 typedef struct
 {
-    U32 longitude;//经度
-    U32 latitude;//纬度
+    U8  lng1;
+    U8  lng2;
+    U16  lng3;
+    U8  lat1;
+    U8  lat2;
+    U16 lat3;
     U16 speed;//车速
     U16 azimuth;//方位角
     U8  vehicleStatus;//车辆状态
@@ -16,7 +20,7 @@ typedef struct
     U16 nextStopDistance;//下一站距离
     U8  inStop;//是否在站内
     U8  cacheData;//是否缓存数据
-    U8[3] mileage;//里程
+    U8  mileage[3];//里程
     U8  overSpeed;//超速
     U16 temperature;//温度
     U16 fuel1;//油量整数
