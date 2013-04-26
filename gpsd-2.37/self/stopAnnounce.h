@@ -3,13 +3,6 @@
 #include "dllist.h"
 #include "lineMap.h"
 
-#define INVALID_ID -1
-#define INVALID -1
-#define VALID   1
-
-#define UPLINE 1
-#define DOWNLINE -1
-
 #define ARRIVE 1
 #define LEAVE   -1
 

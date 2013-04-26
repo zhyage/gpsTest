@@ -12,6 +12,7 @@
 #include "sendSession.h"
 #include "stopAnnounce.h"
 #include "lineMap.h"
+#include "identity.h"
 
 pthread_mutex_t	positionReportMutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t	GPSUpdateMutex = PTHREAD_MUTEX_INITIALIZER;

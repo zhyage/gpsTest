@@ -166,6 +166,7 @@ void checkLeaveSpot(struct gps_fix_t *current, struct gps_fix_t *prev)
     DLLIST *pendItem = NULL;
     spotMark_t *spot = NULL;
     busStopMark_t *stop = NULL;
+
     //time_t tt = time(NULL);
     int upOrDown = 0;
     //printf("in checkLeaveSpot Num of stopPendList = %d\r\n", DLCount(stopPendList));
@@ -176,14 +177,16 @@ void checkLeaveSpot(struct gps_fix_t *current, struct gps_fix_t *prev)
         if(pend->upOrDown == UPLINE)
         {
             //printf("111\r\n");
-            stop = &allBusStop[pend->stopId];
+            //stop = &allBusStop[pend->stopId];
+            stop = getBusStopBystopId(pend->stopId);
             spot = &stop->upline;
             upOrDown = UPLINE;
         }
         else
         {
             //printf("112\r\n");
-            stop = &allBusStop[pend->stopId];
+            //stop = &allBusStop[pend->stopId];
+            stop = getBusStopBystopId(pend->stopId);
             spot = &stop->downline;
             upOrDown = DOWNLINE;
         }
@@ -248,7 +251,8 @@ void updatelastUpdateStop(int stopId, int upOrDown)
 void enterSpot(stopPend_t *stopPend, int manuallyHandle)
 {
     stopPendAction_t action;   
-    busStopMark_t *stop = &allBusStop[stopPend->stopId];    
+    //busStopMark_t *stop = &allBusStop[stopPend->stopId];  
+    busStopMark_t *stop = getBusStopBystopId(stopPend->stopId);  
     spotMark_t *spot = NULL;
     
     if(UPLINE == stopPend->upOrDown)
@@ -275,18 +279,62 @@ void enterSpot(stopPend_t *stopPend, int manuallyHandle)
     }
     
     updatelastUpdateStop(stopPend->stopId, stopPend->upOrDown);
+    printf("updatelastUpdateStop stopId = %d\r\n", stopPend->stopId);
 }
 
 
 
-void updateStopJudgeList(struct gps_fix_t *current, struct gps_fix_t *prev)
+void updateStopJudgeList(struct gps_fix_t *current, struct gps_fix_t *prev, unsigned int lineId)
 {
     time_t tt = time(NULL);
-    lineData_t *line = &lineData[0];
+    //lineData_t *line = &lineData[0];
+    lineData_t *line = getLineData(lineId);
     int upOrDown = 0;
     DLLIST *stopIdItem;
     stopPend_t stopPend;
-    //printf("line id = %d line name = %s\r\n", line->lineId, line->lineName);
+    unsigned int i = 0;
+    printf("line id = %d line name = %s\r\n", line->lineId, line->lineName);
+    for(i = 0; i < 256; i++)
+    {
+        int stopId = line->stopId[i];
+        busStopMark_t *stop = getBusStopBystopId(stopId);
+        spotMark_t *up = &stop->upline;
+        spotMark_t *down = &stop->downline;
+
+        if( VALID == up->valid
+            && (judgeRadius >= get_distance(up->lat, up->lng, current->latitude, current->longitude)) 
+            && (judgeRadius < get_distance(up->lat, up->lng, prev->latitude, prev->longitude))
+          )//entry up spot
+        {
+            printf("in stop stopId = %d\r\n", stopId);
+            if(1 == judgeTrendToSpot(current, prev, up->lngAttr, up->latAttr))
+            {
+                stopPend.stopId = stopId;
+                stopPend.upOrDown = UPLINE;
+                
+                enterSpot(&stopPend, 0);
+
+                printf("%s : now entry into stop = %d stop name = %s line dir = up \r\n",ctime(&tt), stop->id, stop->name);
+            }
+        }
+        if( VALID == down->valid
+            && (judgeRadius >= get_distance(down->lat, down->lng, current->latitude, current->longitude))
+            && (judgeRadius < get_distance(down->lat, down->lng, prev->latitude, prev->longitude))
+          )//entry down spot
+        {
+            if(1 == judgeTrendToSpot(current, prev, down->lngAttr, down->latAttr))
+            {
+                stopPend.stopId = stopId;
+                stopPend.upOrDown = DOWNLINE;
+                
+                enterSpot(&stopPend, 0);
+
+                printf("%s : now entry into stop = %d stop name = %s line dir = down \r\n", ctime(&tt), stop->id, stop->name);
+            }
+        }
+    }
+
+#if 0
     for(stopIdItem = line->stopList; stopIdItem != NULL; stopIdItem = stopIdItem->Next)
     {
         int *stopId = stopIdItem->Object;
@@ -328,6 +376,7 @@ void updateStopJudgeList(struct gps_fix_t *current, struct gps_fix_t *prev)
         
         
     }
+#endif    
 }
 
 void *playTipMedia()
@@ -404,7 +453,7 @@ void performCommandFromManager(int command)
         {
             if(getPend.upOrDown == UPLINE)
             {
-                if(-1 != getNextStop(lastUpdateStop.stopId, lastUpdateStop.upOrDown, 0, &getPend))
+                if(-1 != getNextStop(lastUpdateStop.stopId, lastUpdateStop.upOrDown, getLineId(), &getPend))
                 {
                     printf("next stop id = %d\r\n", getPend.stopId);
                     enterSpot(&getPend, 1);
@@ -433,7 +482,7 @@ void performCommandFromManager(int command)
             }
             else
             {
-                if(-1 != getNextStop(lastUpdateStop.stopId, lastUpdateStop.upOrDown, 0, &getPend))
+                if(-1 != getNextStop(lastUpdateStop.stopId, lastUpdateStop.upOrDown, getLineId(), &getPend))
                 {
                     printf("prev stop id = %d\r\n", getPend.stopId);
                     enterSpot(&getPend, 1);
@@ -450,18 +499,21 @@ void performCommandFromManager(int command)
 
 busStopMark_t *getStopAttr(int stopId)
 {
-    return &allBusStop[stopId];
+    //return &allBusStop[stopId];
+    return getBusStopBystopId(stopId);
 }
 
 spotMark_t *getSpotAttr(int stopId, int upOrDown)
 {
     if(UPLINE == upOrDown)
     {
-        return &allBusStop[stopId].upline;
+        //return &allBusStop[stopId].upline;
+        return &getBusStopBystopId(stopId)->upline;
     }
     else
     {
-        return &allBusStop[stopId].downline;
+        //return &allBusStop[stopId].downline;
+        return &getBusStopBystopId(stopId)->downline;
     }
 }
 
@@ -483,7 +535,8 @@ int getNextStopId()
 busStopMark_t *getNextStopAttr()
 {
     stopPend_t getPend;
-    if(-1 == getNextStop(lastUpdateStop.stopId, lastUpdateStop.upOrDown, 0, &getPend))
+    printf("getNextStopAttr lastUpdateStop.stopId = %d\r\n", lastUpdateStop.stopId);
+    if(-1 == getNextStop(lastUpdateStop.stopId, lastUpdateStop.upOrDown, getLineId(), &getPend))
     {
         return NULL;
     }
@@ -493,7 +546,7 @@ busStopMark_t *getNextStopAttr()
 spotMark_t *getNextStopSpotAttr()
 {
     stopPend_t getPend;
-    if(-1 == getNextStop(lastUpdateStop.stopId, lastUpdateStop.upOrDown, 0, &getPend))
+    if(-1 == getNextStop(lastUpdateStop.stopId, lastUpdateStop.upOrDown, getLineId(), &getPend))
     {
         return NULL;
     }
@@ -528,16 +581,16 @@ void* stopAnnounce(int lineId)
     int sock_opt = 1;
     
     
-    initCity();
-    initLine_0();
-    initLine_1();
+//    initCity();
+//    initLine_0();
+//    initLine_1();
     
-    lastUpdateStop.stopId = getStopIdOfLine(0, 0);
+    lastUpdateStop.stopId = getStopIdOfLine(getLineId(), 1);
     lastUpdateStop.upOrDown = UPLINE;
     printf("init stopId = %d\r\n", lastUpdateStop.stopId);
 
     
-    printCityAllBuslineInfo();
+//    printCityAllBuslineInfo();
 	  pthread_create(&mediaPlay_id, NULL, playTipMedia, NULL);
     
     registerNoticeClientList(NOTICE_ANNOUNCE, NULL, announceGetGPSDataUpdate);
@@ -608,7 +661,7 @@ void* stopAnnounce(int lineId)
             GPSUpdateSignal = 0;
             //if(count >= (100))//10 sec
             {
-                updateStopJudgeList(newestPoint, prevPoint);
+                updateStopJudgeList(newestPoint, prevPoint, getLineId());
                 checkLeaveSpot(newestPoint, prevPoint);
                 //count = 0;
             }

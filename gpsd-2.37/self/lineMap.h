@@ -1,6 +1,12 @@
 #ifndef LINEMAP_H
 #define LINEMAP_H
 
+#define INVALID_ID -1
+#define INVALID -1
+#define VALID   1
+#define UPLINE 1
+#define DOWNLINE -1
+
 typedef enum
 {
     STOP = 1,
@@ -69,5 +75,8 @@ typedef struct
 int getStopIdOfLine(int lineId, int num);
 int getNextStop(int curStopId, int curUpOrDown, int lineId, stopPend_t *nextStop);
 int getPrevStop(int curStopId, int curUpOrDown, int lineId, stopPend_t *prevStop);
+busStopMark_t *getAllBusStop();
+busStopMark_t *getBusStopBystopId(unsigned short stopId);
+lineData_t *getLineData(unsigned int lineId);
 
 #endif

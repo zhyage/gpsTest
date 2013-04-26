@@ -99,7 +99,7 @@ int getStopIdOfLine(int lineId, int num)
     {
     	return -1;
     }
-    return stopId
+    return stopId;
 }
 
 int getNextStop(int curStopId, int curUpOrDown, int lineId, stopPend_t *nextStop)
@@ -109,13 +109,14 @@ int getNextStop(int curStopId, int curUpOrDown, int lineId, stopPend_t *nextStop
     unsigned nextStopId = 0;
     int upOrDown = UPLINE;
 
+    printf("get next lineId = %d\r\n", lineId);
     lineData_t *lineData = getLineData(lineId);
     if(NULL == lineData)
     {
     	return -1;
     }
 
-    for(i = 1; i < 256; i++)
+    for(i = 0; i < 256; i++)
     {
     	if(curStopId == lineData->stopId[i])
     	{
@@ -160,7 +161,7 @@ int getPrevStop(int curStopId, int curUpOrDown, int lineId, stopPend_t *prevStop
     	return -1;
     }
 
-    for(i = 1; i < 256; i++)
+    for(i = 0; i < 256; i++)
     {
     	if(curStopId == lineData->stopId[i])
     	{
@@ -173,16 +174,16 @@ int getPrevStop(int curStopId, int curUpOrDown, int lineId, stopPend_t *prevStop
     				return -1;
     			}
     			upOrDown = 0 - curUpOrDown;
-    			nextStop->stopId = prevStopId;
-    			nextStop->upOrDown = upOrDown;
+    			prevStop->stopId = prevStopId;
+    			prevStop->upOrDown = upOrDown;
     			return prevStopId;
     		}
     		else
     		{
     			upOrDown = curUpOrDown;
-    			nextStop->stopId = prevStopId;
-    			nextStop->upOrDown = upOrDown;
-    			return prevStopId
+    			prevStop->stopId = prevStopId;
+    			prevStop->upOrDown = upOrDown;
+    			return prevStopId;
 
     		}
     	}
@@ -190,4 +191,9 @@ int getPrevStop(int curStopId, int curUpOrDown, int lineId, stopPend_t *prevStop
     }
     return -1;//no this stopid in this line
     
+}
+
+busStopMark_t *getBusStopBystopId(unsigned short stopId)
+{
+    return &allBusStop[stopId];
 }
