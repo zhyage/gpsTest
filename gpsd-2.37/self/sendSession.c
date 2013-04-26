@@ -12,6 +12,7 @@
 #include <time.h>
 #include "dllist.h"
 #include "sendSession.h"
+#include "identity.h"
 
 SendList_t g_noResSendList = {0, NULL};//save sendData_t
 
@@ -19,12 +20,6 @@ SendList_t g_needResSendList = {0, NULL};//save sendData_t
 
 commandAttr_t g_commandDefine[256] = {0};
 
-unsigned char *g_motoId = "bus 0001";
-
-unsigned char *getMotoId()
-{
-    return g_motoId;
-}
 
 void addCommandAttr2Define(commandAttr_t *cmdAttr)
 {

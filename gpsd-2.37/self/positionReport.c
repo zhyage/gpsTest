@@ -31,7 +31,7 @@ int getNumOfList()
   }
   return i;
 }
-
+#if 0
 void *sendPositionReport(DLLIST **list)
 {
   pthread_mutex_lock(&positionReportMutex);
@@ -73,7 +73,7 @@ void *sendPositionReport(DLLIST **list)
   
   pthread_mutex_unlock(&positionReportMutex);
 }
-
+#endif
 #if 0
 int WalkPositionReport(int Tag, void *p, void *Parms)
 {
