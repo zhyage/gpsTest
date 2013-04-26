@@ -37,6 +37,7 @@ const double judgeRadius = 0.003;//30m
 DLLIST *stopPendList;
 DLLIST *stopPendActionList;
 
+#if 0
 void printCityAllBuslineInfo()
 {
     int i = 0;
@@ -84,7 +85,9 @@ void printCityAllBuslineInfo()
     }
 }
 
+#endif
 
+#if 0
 
 void initLine_0()
 {
@@ -114,6 +117,7 @@ void initCity()
     DLAppend(&cityData[0].lineList, 0, &line1, sizeof(int));//add line 1 to city
     
 }
+#endif
 
 int judgeTrendToSpot(struct gps_fix_t *current, struct gps_fix_t *prev, int lngAttr, int latAttr)
 {
