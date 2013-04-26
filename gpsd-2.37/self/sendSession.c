@@ -326,7 +326,7 @@ int buildAndSendUploadData(sendData_t *sendData)
 {
     unsigned short packageLength = 0;
     unsigned short msgLen = 0;
-    unsigned char sendMsg[1024];
+    unsigned char sendMsg[128];
     uploadData_t updateData;
     struct tm time;
     FILE *positionLogFd;

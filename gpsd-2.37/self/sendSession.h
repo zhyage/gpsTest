@@ -29,14 +29,14 @@ typedef struct
     time_t time;
     unsigned char retryTimes;
     unsigned int dataLength;
-    char data[1024];
+    char data[128];
 }sendData_t;
 
 typedef struct
 {
     unsigned char commandId;
     unsigned int dataLength;
-    char data[1024];
+    char data[128];
 }dataSendReq_t;
 
 typedef struct
