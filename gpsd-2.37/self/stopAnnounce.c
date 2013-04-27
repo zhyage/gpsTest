@@ -293,7 +293,7 @@ void updateStopJudgeList(struct gps_fix_t *current, struct gps_fix_t *prev, unsi
     DLLIST *stopIdItem;
     stopPend_t stopPend;
     unsigned int i = 0;
-    printf("line id = %d line name = %s\r\n", line->lineId, line->lineName);
+//    printf("line id = %d line name = %s\r\n", line->lineId, line->lineName);
     for(i = 0; i < 256; i++)
     {
         int stopId = line->stopId[i];
@@ -306,7 +306,7 @@ void updateStopJudgeList(struct gps_fix_t *current, struct gps_fix_t *prev, unsi
             && (judgeRadius < get_distance(up->lat, up->lng, prev->latitude, prev->longitude))
           )//entry up spot
         {
-            printf("in stop stopId = %d\r\n", stopId);
+//            printf("in stop stopId = %d\r\n", stopId);
             if(1 == judgeTrendToSpot(current, prev, up->lngAttr, up->latAttr))
             {
                 stopPend.stopId = stopId;
@@ -455,7 +455,7 @@ void performCommandFromManager(int command)
             {
                 if(-1 != getNextStop(lastUpdateStop.stopId, lastUpdateStop.upOrDown, getLineId(), &getPend))
                 {
-                    printf("next stop id = %d\r\n", getPend.stopId);
+                    //printf("next stop id = %d\r\n", getPend.stopId);
                     enterSpot(&getPend, 1);
                 }
             }
@@ -463,7 +463,7 @@ void performCommandFromManager(int command)
             {
                 if(-1 != getPrevStop(lastUpdateStop.stopId, lastUpdateStop.upOrDown, 0, &getPend))
                 {
-                    printf("next stop id = %d\r\n", getPend.stopId);
+                    //printf("next stop id = %d\r\n", getPend.stopId);
                     enterSpot(&getPend, 1);
                 }
             }
@@ -476,7 +476,7 @@ void performCommandFromManager(int command)
             {
                 if(-1 != getPrevStop(lastUpdateStop.stopId, lastUpdateStop.upOrDown, 0, &getPend))
                 {
-                    printf("Prev stop id = %d\r\n", getPend.stopId);
+                    //printf("Prev stop id = %d\r\n", getPend.stopId);
                     enterSpot(&getPend, 1);
                 }
             }
@@ -484,7 +484,7 @@ void performCommandFromManager(int command)
             {
                 if(-1 != getNextStop(lastUpdateStop.stopId, lastUpdateStop.upOrDown, getLineId(), &getPend))
                 {
-                    printf("prev stop id = %d\r\n", getPend.stopId);
+                    //printf("prev stop id = %d\r\n", getPend.stopId);
                     enterSpot(&getPend, 1);
                 }
             }
@@ -535,7 +535,7 @@ int getNextStopId()
 busStopMark_t *getNextStopAttr()
 {
     stopPend_t getPend;
-    printf("getNextStopAttr lastUpdateStop.stopId = %d\r\n", lastUpdateStop.stopId);
+//    printf("getNextStopAttr lastUpdateStop.stopId = %d\r\n", lastUpdateStop.stopId);
     if(-1 == getNextStop(lastUpdateStop.stopId, lastUpdateStop.upOrDown, getLineId(), &getPend))
     {
         return NULL;

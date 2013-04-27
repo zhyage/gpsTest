@@ -284,10 +284,42 @@ void dataSendReqSend(dataSendReq_t *dataSendReq )
 		servaddr.sin_port = htons(9920);
 		
 		inet_pton(AF_INET,"127.0.0.1",&servaddr.sin_addr);
-		sockfd=socket(AF_INET,SOCK_DGRAM,0);
-
+        if(sockfd == 0)
+        {
+		  sockfd=socket(AF_INET,SOCK_DGRAM,0);
+        }
 		sendto(sockfd, dataSendReq,sizeof(dataSendReq_t),
 			0,(struct sockaddr *)&servaddr,sizeof(struct sockaddr));
+}
+
+int send2Remote(unsigned char *data, unsigned short length )
+{
+        static int sockfd=0;
+        struct sockaddr_in servaddr;
+        int n = 0;
+
+        
+        bzero(&servaddr,sizeof(servaddr));
+        servaddr.sin_family = AF_INET;
+        servaddr.sin_port = htons(9999);
+        
+        inet_pton(AF_INET,"127.0.0.1",&servaddr.sin_addr);
+        if(0 == sockfd)
+        {
+            sockfd=socket(AF_INET,SOCK_DGRAM,0);
+        }
+        n = sendto(sockfd, data, length,
+            0,(struct sockaddr *)&servaddr,sizeof(struct sockaddr));
+        printf("sendto length = %d\r\n", n);
+        
+        if(n == -1 || n != length)
+        {
+            printf("err to send2Remote\r\n");
+            printf("err reason : %s\r\n", strerror(errno));
+            return -1;
+        }
+        
+        return 1;
 }
 
 /*
@@ -356,12 +388,15 @@ int buildAndSendUploadData(sendData_t *sendData)
                     
     printf("upload package length = %u\r\n", packageLength);                
 
-    updateData.startTag = htons(0x1AE6);
-    updateData.length = htons(packageLength);
+    //updateData.startTag = htons(0x1AE6);
+    updateData.startTag = (0x1AE6);
+    //updateData.length = htons(packageLength);
+    updateData.length = (packageLength);
     updateData.version = 0x12;
     updateData.sessionId = sendData->sessionId;
     updateData.checkLineStatus = 0;
-    updateData.reserve = htons(0x0000);
+    //updateData.reserve = htons(0x0000);
+    updateData.reserve = (0x0000);
     updateData.motoType = 0x71;
     updateData.motoId = getMotoId();
     updateData.date[0] = time.tm_year % 100;
@@ -413,5 +448,6 @@ int buildAndSendUploadData(sendData_t *sendData)
 
     fclose(positionLogFd);
 
-    return 1;
+    return send2Remote(sendMsg, msgLen);
+
 }

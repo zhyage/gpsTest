@@ -277,7 +277,7 @@ int i = 0;
         lat = lat - enhance;
         lng = lng - enhance;
       }
-      printf("latttttttttt = %f\r\n", lat);
+      //printf("latttttttttt = %f\r\n", lat);
       
       fakeData.latitude = lat;
       fakeData.longitude = lng;

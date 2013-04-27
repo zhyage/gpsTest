@@ -106,15 +106,19 @@ void buildPositionReportData(struct gps_fix_t *gpsData,   positionReport_t *repo
     getDDMMSSSS(gpsData->longitude, &DD, &MM, &SSSS);
     report->lng1 = DD;
     report->lng2 = MM;
-    report->lng3 = htons(SSSS);
+    //report->lng3 = htons(SSSS);
+    report->lng3 = (SSSS);
     
     getDDMMSSSS(gpsData->latitude, &DD, &MM, &SSSS);
     report->lat1 = DD;
     report->lat2 = MM;
-    report->lat3 = htons(SSSS);
+    //report->lat3 = htons(SSSS);
+    report->lat3 = (SSSS);
 
-    report->speed = htons(gpsData->speed);
-    report->azimuth = htons(0);//TODO
+    //report->speed = htons(gpsData->speed);
+    report->speed = (gpsData->speed);
+    //report->azimuth = htons(0);//TODO
+    report->azimuth = (0);//TODO
     report->vehicleStatus = 0;//TODO
     report->directMark = getDriveDirect();
     report->nextStop = getNextStopId();
@@ -124,8 +128,10 @@ void buildPositionReportData(struct gps_fix_t *gpsData,   positionReport_t *repo
     report->mileage[1] = 0;//TODO
     report->mileage[2] = 0;//TODO
     report->overSpeed = 0;//TODO
-    report->temperature = htons(18);
-    report->fuel1 = htons(30);
+    //report->temperature = htons(18);
+    report->temperature = (18);
+    //report->fuel1 = htons(30);
+    report->fuel1 = (30);
     report->fuel2 = 80;
     report->operationStatus = 0;
     report->driverId = getDeviceId();

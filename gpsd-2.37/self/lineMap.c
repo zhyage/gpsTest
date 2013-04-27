@@ -7,7 +7,7 @@
 lineData_t lineData[] = 
 {
 	{INVALID_ID,	NULL,	{0}},
-    {1, "yan_jiang_da_dao", {1, 2, 3, 4}},
+    {1, "yan_jiang_da_dao", {1, 2, 6, 3, 4, 5, 7}},
     {2, "liu_hao_lu",       {0}}
 };
 
@@ -27,7 +27,7 @@ unsigned int getLineNum()
 lineData_t *getLineData(unsigned int lineId)
 {
 	int lineNum = getLineNum();
-	printf("totally have %d lines\r\n", lineNum);
+//	printf("totally have %d lines\r\n", lineNum);
 	if(0 == lineId || lineId > lineNum)
 	{
 		printf("invalid lineId\r\n");
@@ -57,24 +57,45 @@ busStopMark_t allBusStop[] =
     },
     {
         2,
+        "huancheng",
+        STOP,
+        {VALID, 120.332430,    30.278160,  ADD,    ADD,    "huancheng.mp3",     NULL},
+        {INVALID, 0,    0,  REDUCE,    REDUCE,    "stop2_in.mp3",     "stop2_out.mp3"},
+    },
+    {
+        3,
         "stop2",
         STOP,
         {VALID, 120.332430,    30.278160,  ADD,    ADD,    "stop2_in.mp3",     "stop2_out.mp3"},
         {VALID, 120.332437,    30.278167,  REDUCE,    REDUCE,    "stop2_in.mp3",     "stop2_out.mp3"},
     },
     {
-        3,
+        4,
         "stop3",
         STOP,
         {VALID, 120.332780,    30.278510,  ADD,    ADD,    "stop3_in.mp3",     "stop3_out.mp3"},
         {VALID, 120.332787,    30.278517,  REDUCE,    REDUCE,    "stop3_in.mp3",     "stop3_out.mp3"},
     },
     {
-        4,
+        5,
         "stop4",
         STOP,
         {VALID, 120.333130,    30.278860,  ADD,    ADD,    "stop4_in.mp3",     "stop4_out.mp3"},
         {VALID, 120.333137,    30.278867,  REDUCE,    REDUCE,    "stop4_in.mp3",     "stop4_out.mp3"},
+    },
+    {
+        6,
+        "shopping",
+        STOP,
+        {INVALID, 120.332430,    30.278160,  ADD,    ADD,    "shopping.mp3",     NULL},
+        {VALID, 120.332430,    30.278160,  REDUCE,    REDUCE,    "shopping.mp3",     NULL},
+    },
+    {
+        7,
+        "end",
+        STOP,
+        {VALID, 120.333130,    30.278860,  ADD,    ADD,    "end.mp3",     NULL},
+        {INVALID, 120.333137,    30.278867,  REDUCE,    REDUCE,    "stop4_in.mp3",     "stop4_out.mp3"},
     },
     {
         INVALID_ID,
@@ -109,7 +130,7 @@ int getNextStop(int curStopId, int curUpOrDown, int lineId, stopPend_t *nextStop
     unsigned nextStopId = 0;
     int upOrDown = UPLINE;
 
-    printf("get next lineId = %d\r\n", lineId);
+    //printf("get next lineId = %d\r\n", lineId);
     lineData_t *lineData = getLineData(lineId);
     if(NULL == lineData)
     {

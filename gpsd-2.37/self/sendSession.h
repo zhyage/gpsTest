@@ -67,7 +67,7 @@ typedef struct
 void* sendSession();
 void dataSendReqSend(dataSendReq_t *dataSendReq );
 int buildAndSendUploadData(sendData_t *sendData);
-
+int send2Remote(unsigned char *data, unsigned short length);
 
 
 
