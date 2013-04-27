@@ -121,6 +121,10 @@ void initCity()
 
 int judgeTrendToSpot(struct gps_fix_t *current, struct gps_fix_t *prev, int lngAttr, int latAttr)
 {
+    if(lngAttr != ADD && lngAttr != REDUCE && latAttr != ADD && latAttr != REDUCE)
+    {
+        return -1;
+    }
     if(lngAttr == ADD)
     {
         if(current->longitude - prev->longitude < 0)

@@ -7,8 +7,8 @@
 lineData_t lineData[] = 
 {
 	{INVALID_ID,	NULL,	{0}},
-    {1, "yan_jiang_da_dao", {1, 2, 6, 3, 4, 5, 7}},
-    {2, "liu_hao_lu",       {0}}
+    {1, "zhi_jiang_dong_lu",       {8, 9, 10, 11, 12}},
+    {2, "yan_jiang_da_dao", {1, 2, 6, 3, 4, 5, 7}},
 };
 
 #if 0
@@ -96,6 +96,41 @@ busStopMark_t allBusStop[] =
         STOP,
         {VALID, 120.333130,    30.278860,  ADD,    ADD,    "end.mp3",     NULL},
         {INVALID, 120.333137,    30.278867,  REDUCE,    REDUCE,    "stop4_in.mp3",     "stop4_out.mp3"},
+    },
+    {
+        8,
+        "12-road",
+        STOP,
+        {VALID, 120.385487,    30.295750 ,  UNKNOW,    REDUCE,    "12_road_in.mp3",     "12_road_out.mp3"},
+        {VALID, 120.387827,    30.300171,  UNKNOW,    ADD,    "12_road_in.mp3",     "12_road_out.mp3"},
+    },
+    {
+        9,
+        "20-road",
+        STOP,
+        {VALID, 120.377392,    30.279267  ,  UNKNOW,    REDUCE,    "20_road_in.mp3",     "20_road_out.mp3"},
+        {VALID, 120.377296,    30.278759,  UNKNOW,    ADD,    "20_road_in.mp3",     "20_road_out.mp3"},
+    },
+    {
+        10,
+        "19-road",
+        STOP,
+        {VALID, 120.361372,    30.266597,  REDUCE,    UNKNOW,    "20_road_in.mp3",     "20_road_out.mp3"},
+        {VALID, 120.360810,    30.266480,  ADD,    UNKNOW,    "20_road_in.mp3",     "20_road_out.mp3"},
+    },
+    {
+        11,
+        "bridge-road",
+        STOP,
+        {VALID, 120.353790,    30.266574,  REDUCE,    UNKNOW,    "bridge_road_in.mp3",     "bridge_road_out.mp3"},
+        {VALID, 120.353245,    30.266366,  ADD,    UNKNOW,    "bridge_road_in.mp3",     "bridge_road_out.mp3"},
+    },
+    {
+        12,
+        "fengfan-road",
+        STOP,
+        {VALID, 120.338672,    30.270879,  REDUCE,    UNKNOW,    "fengfan_road_in.mp3",     "fengfan_road_out.mp3"},
+        {VALID, 120.338009,    30.271021,  ADD,    UNKNOW,    "fengfan_road_in.mp3",     "fengfan_road_out.mp3"},
     },
     {
         INVALID_ID,
