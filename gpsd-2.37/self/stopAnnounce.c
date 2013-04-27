@@ -199,15 +199,24 @@ void checkLeaveSpot(struct gps_fix_t *current, struct gps_fix_t *prev)
             //printf("113\r\n");
             if(UPLINE == upOrDown)
             {
-              printf("%s : now leave stop : %d stop name = %s lineDir = up\r\n",ctime(&tt),  stop->id, stop->name);
-              action.mp3Name = spot->leavedMp3;
-              addActionToActionPend(&action);
+                printf("%s : now leave stop : %d stop name = %s lineDir = up\r\n",ctime(&tt),  stop->id, stop->name);
+                action.mp3Name = spot->leavedMp3;
+                addActionToActionPend(&action);
+                if(stop->type == STOP)
+                {
+
+                    FillArrivedLeaveReportAndSend(current, COMMAND_LEAVE_STOP_REPORT);
+                }
             }
             else
             {
-              printf("%s now leave stop : %d stop name = %s lineDir = down\r\n", ctime(&tt), stop->id, stop->name);
-              action.mp3Name = spot->leavedMp3;
-              addActionToActionPend(&action);
+                printf("%s now leave stop : %d stop name = %s lineDir = down\r\n", ctime(&tt), stop->id, stop->name);
+                action.mp3Name = spot->leavedMp3;
+                addActionToActionPend(&action);
+                if(stop->type == STOP)
+                {
+                    FillArrivedLeaveReportAndSend(current, COMMAND_LEAVE_STOP_REPORT);
+                }
             }
             //printf("1131\r\n");
             pendItem->Tag = 1;//already done the work, need to be delete
@@ -313,7 +322,10 @@ void updateStopJudgeList(struct gps_fix_t *current, struct gps_fix_t *prev, unsi
                 stopPend.upOrDown = UPLINE;
                 
                 enterSpot(&stopPend, 0);
-
+                if(stop->type == STOP)
+                {
+                    FillArrivedLeaveReportAndSend(current, COMMAND_ARRIVED_STOP_REPORT);
+                }
                 printf("%s : now entry into stop = %d stop name = %s line dir = up \r\n",ctime(&tt), stop->id, stop->name);
             }
         }
@@ -328,7 +340,10 @@ void updateStopJudgeList(struct gps_fix_t *current, struct gps_fix_t *prev, unsi
                 stopPend.upOrDown = DOWNLINE;
                 
                 enterSpot(&stopPend, 0);
-
+                if(stop->type == STOP)
+                {
+                    FillArrivedLeaveReportAndSend(current, COMMAND_ARRIVED_STOP_REPORT);
+                }
                 printf("%s : now entry into stop = %d stop name = %s line dir = down \r\n", ctime(&tt), stop->id, stop->name);
             }
         }
@@ -668,4 +683,108 @@ void* stopAnnounce(int lineId)
         }
         pthread_mutex_unlock(&GPSUpdate4AnnounceMutex);
     }
+}
+
+void buildArrivedLeaveReportData(struct gps_fix_t *gpsData,   arrivedLeaveStopReport_t *report,   dataSendReq_t *dataSendReq, int arrivedOrLeave)
+{
+    unsigned int DD;
+    unsigned int MM;
+    unsigned int SSSS;
+    unsigned short dataLen = 0;
+    lineData_t *lineData = getLineData(getLineId());
+    
+    memset(report, 0, sizeof(arrivedLeaveStopReport_t));
+    memset(dataSendReq, 0, sizeof(dataSendReq_t));
+    
+    getDDMMSSSS(gpsData->longitude, &DD, &MM, &SSSS);
+    report->lng1 = DD;
+    report->lng2 = MM;
+    //report->lng3 = htons(SSSS);
+    report->lng3 = (SSSS);
+    
+    getDDMMSSSS(gpsData->latitude, &DD, &MM, &SSSS);
+    report->lat1 = DD;
+    report->lat2 = MM;
+    //report->lat3 = htons(SSSS);
+    report->lat3 = (SSSS);
+
+    //report->speed = htons(gpsData->speed);
+    report->speed = (gpsData->speed);
+    //report->azimuth = htons(0);//TODO
+    report->azimuth = (0);//TODO
+    report->vehicleStatus = 0;//TODO
+    report->directMark = getDriveDirect();
+    report->stopId = getLastStopId();
+    if(NULL == lineData)
+    {
+        printf("invalid lineData\r\n");
+        memset(report->lineId, 0, sizeof(U8)*3);
+        report->lineName = "";
+    }
+    else
+    {
+        
+        report->lineId[0] = lineData->lineId >> 16;
+        report->lineId[1] = lineData->lineId >> 8;
+        report->lineId[2] = lineData->lineId;
+        report->lineName = lineData->lineName;
+    }
+    report->driverId = getDriverId();
+
+
+    
+
+    memcpy(dataSendReq->data + dataLen, &report->lng1, sizeof(report->lng1));
+    dataLen += sizeof(report->lng1);
+    memcpy(dataSendReq->data + dataLen, &report->lng2, sizeof(report->lng2));
+    dataLen += sizeof(report->lng2);
+    memcpy(dataSendReq->data + dataLen, &report->lng3, sizeof(report->lng3));
+    dataLen += sizeof(report->lng3);
+    memcpy(dataSendReq->data + dataLen, &report->lat1, sizeof(report->lat1));
+    dataLen += sizeof(report->lat1);
+    memcpy(dataSendReq->data + dataLen, &report->lat2, sizeof(report->lat2));
+    dataLen += sizeof(report->lat2);
+    memcpy(dataSendReq->data + dataLen, &report->lat3, sizeof(report->lat3));
+    dataLen += sizeof(report->lat3);
+
+    memcpy(dataSendReq->data + dataLen, &report->speed, sizeof(report->speed));
+    dataLen += sizeof(report->speed);
+
+    memcpy(dataSendReq->data + dataLen, &report->azimuth, sizeof(report->azimuth));
+    dataLen += sizeof(report->azimuth);
+    memcpy(dataSendReq->data + dataLen, &report->vehicleStatus, sizeof(report->vehicleStatus));
+    dataLen += sizeof(report->vehicleStatus);
+    memcpy(dataSendReq->data + dataLen, &report->directMark, sizeof(report->directMark));
+    dataLen += sizeof(report->directMark);
+
+    memcpy(dataSendReq->data + dataLen, &report->stopId, sizeof(report->stopId));
+    dataLen += sizeof(report->stopId);
+
+    memcpy(dataSendReq->data + dataLen, &report->lineId, sizeof(report->lineId));
+    dataLen += sizeof(report->lineId);
+
+    strcpy(dataSendReq->data + dataLen, report->lineName);
+    dataLen += strlen(report->lineName)+1;
+
+    strcpy(dataSendReq->data + dataLen, report->driverId);
+    dataLen += strlen(report->driverId)+1;
+
+    dataSendReq->commandId = arrivedOrLeave;
+    dataSendReq->dataLength = dataLen;
+    printf("length of arrived or leave report msg = %u\r\n", dataLen);
+
+    return;
+
+}
+
+
+void FillArrivedLeaveReportAndSend(struct gps_fix_t* gpsData, int arriveOrLeave)
+{
+
+  arrivedLeaveStopReport_t report;
+  dataSendReq_t dataSendReq;
+
+
+  buildArrivedLeaveReportData(gpsData, &report, &dataSendReq, arriveOrLeave);
+  dataSendReqSend(&dataSendReq);
 }

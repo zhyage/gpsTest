@@ -18,5 +18,7 @@ typedef unsigned long   U64;
 typedef enum 
 {
 	COMMAND_POSITION_REPORT = 0x14,
+	COMMAND_ARRIVED_STOP_REPORT = 0x40,
+	COMMAND_LEAVE_STOP_REPORT = 0x41,
 }COMMANDID;
 #endif

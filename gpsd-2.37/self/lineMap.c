@@ -58,7 +58,7 @@ busStopMark_t allBusStop[] =
     {
         2,
         "huancheng",
-        STOP,
+        CROOKED,
         {VALID, 120.332430,    30.278160,  ADD,    ADD,    "huancheng.mp3",     NULL},
         {INVALID, 0,    0,  REDUCE,    REDUCE,    "stop2_in.mp3",     "stop2_out.mp3"},
     },
@@ -86,7 +86,7 @@ busStopMark_t allBusStop[] =
     {
         6,
         "shopping",
-        STOP,
+        HOTSPOT,
         {INVALID, 120.332430,    30.278160,  ADD,    ADD,    "shopping.mp3",     NULL},
         {VALID, 120.332430,    30.278160,  REDUCE,    REDUCE,    "shopping.mp3",     NULL},
     },

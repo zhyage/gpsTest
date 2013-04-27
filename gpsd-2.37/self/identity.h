@@ -10,6 +10,7 @@ unsigned char *getBasePosition();
 unsigned char *getBaseCell();
 unsigned int getLineId();
 void setLineId(unsigned int lineId);
+unsigned char *getDriverId();
 
 
 #endif

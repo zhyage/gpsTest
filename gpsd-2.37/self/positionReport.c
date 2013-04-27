@@ -134,7 +134,7 @@ void buildPositionReportData(struct gps_fix_t *gpsData,   positionReport_t *repo
     report->fuel1 = (30);
     report->fuel2 = 80;
     report->operationStatus = 0;
-    report->driverId = getDeviceId();
+    report->driverId = getDriverId();
     report->SIMType = 0;
     report->baseStatus = 0;
     report->basePosition = getBasePosition();
@@ -236,9 +236,7 @@ typedef struct
    */
   positionReport_t report;
   dataSendReq_t dataSendReq;
-  unsigned int DD;
-  unsigned int MM;
-  unsigned int SSSS;
+
 
   buildPositionReportData(gpsData, &report, &dataSendReq);
   dataSendReqSend(&dataSendReq);

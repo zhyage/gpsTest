@@ -19,6 +19,8 @@ unsigned char *g_baseCell = "6-6";
 
 unsigned int *g_lineId = 1;
 
+unsigned char *g_driverId = "driver-001";
+
 unsigned char *getMotoId()
 {
     return g_motoId;
@@ -62,4 +64,9 @@ unsigned int getLineId()
 void setLineId(unsigned int lineId)
 {
 	g_lineId = lineId;
+}
+
+unsigned char *getDriverId()
+{
+	return g_driverId;
 }

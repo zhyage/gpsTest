@@ -46,6 +46,18 @@ void initCommandDefine()
     cmdAttr.sendOrRecv = SEND_COMMAND;
     cmdAttr.needResponse = NO_NEED_RES;
     addCommandAttr2Define(&cmdAttr);
+
+    cmdAttr.commandId = COMMAND_ARRIVED_STOP_REPORT;
+    strcpy(cmdAttr.commandName, "arrived stop report");
+    cmdAttr.sendOrRecv = SEND_COMMAND;
+    cmdAttr.needResponse = NO_NEED_RES;
+    addCommandAttr2Define(&cmdAttr);
+
+    cmdAttr.commandId = COMMAND_LEAVE_STOP_REPORT;
+    strcpy(cmdAttr.commandName, "leave stop report");
+    cmdAttr.sendOrRecv = SEND_COMMAND;
+    cmdAttr.needResponse = NO_NEED_RES;
+    addCommandAttr2Define(&cmdAttr);
         
 }
 
@@ -303,7 +315,8 @@ int send2Remote(unsigned char *data, unsigned short length )
         servaddr.sin_family = AF_INET;
         servaddr.sin_port = htons(9999);
         
-        inet_pton(AF_INET,"111.13.47.157",&servaddr.sin_addr);
+        //inet_pton(AF_INET,"111.13.47.157",&servaddr.sin_addr);
+        inet_pton(AF_INET,"127.0.0.1",&servaddr.sin_addr);
         if(0 == sockfd)
         {
             sockfd=socket(AF_INET,SOCK_DGRAM,0);
