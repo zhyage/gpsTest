@@ -14,7 +14,41 @@ typedef struct
 }stopPendAction_t;
 
 
+typedef struct
+{
+    U8  lng1;
+    U8  lng2;
+    U16  lng3;
+    U8  lat1;
+    U8  lat2;
+    U16 lat3;
+    U16 speed;//车速
+    U16 azimuth;//方位角
+    U8  vehicleStatus;//车辆状态
+    U8  directMark;//上下行标志
+    U8  stopId;
+    U8  lineId[3];
+    U8  *lineName;
+    U8  *driverId;
+}arrivedStopReport_t;
 
+typedef struct
+{
+    U8  lng1;
+    U8  lng2;
+    U16  lng3;
+    U8  lat1;
+    U8  lat2;
+    U16 lat3;
+    U16 speed;//车速
+    U16 azimuth;//方位角
+    U8  vehicleStatus;//车辆状态
+    U8  directMark;//上下行标志
+    U8  stopId;
+    U8  lineId[3];
+    U8  *lineName;
+    U8  *driverId;
+}leaveStopReport_t;
 
 
 
