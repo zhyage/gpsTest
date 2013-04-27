@@ -17,7 +17,7 @@ unsigned char *g_basePosition = "3.3, 6.6";
 
 unsigned char *g_baseCell = "6-6";
 
-unsigned int *g_lineId = 1;
+unsigned int *g_lineId = 2;
 
 unsigned char *g_driverId = "driver-001";
 
