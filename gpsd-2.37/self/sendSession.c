@@ -58,6 +58,12 @@ void initCommandDefine()
     cmdAttr.sendOrRecv = SEND_COMMAND;
     cmdAttr.needResponse = NO_NEED_RES;
     addCommandAttr2Define(&cmdAttr);
+
+    cmdAttr.commandId = COMANDID_INTERNET_HANDSHAKE;
+    strcpy(cmdAttr.commandName, "internet connect hand report");
+    cmdAttr.sendOrRecv = SEND_COMMAND;
+    cmdAttr.needResponse = NO_NEED_RES;
+    addCommandAttr2Define(&cmdAttr);
         
 }
 

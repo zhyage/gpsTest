@@ -33,6 +33,25 @@ typedef struct
     U8  *driverId;
 }arrivedLeaveStopReport_t;
 
+typedef struct
+{
+    U8  lng1;
+    U8  lng2;
+    U16  lng3;
+    U8  lat1;
+    U8  lat2;
+    U16 lat3;
+    U16 speed;//车速
+    U16 azimuth;//方位角
+    U8  vehicleStatus;//车辆状态
+    U8  *softVersion;
+    U8  *deviceId;
+    U8  *lineName;
+    U8  lineId[3];
+    U8  *license;
+    U8  *SIMId;
+}internetHandShakeReport_t;
+
 
 
 
@@ -50,5 +69,6 @@ unsigned short getDistance2NextStop(struct gps_fix_t *current);
 void buildArrivedLeaveReportData(struct gps_fix_t *gpsData,   arrivedLeaveStopReport_t *report,   dataSendReq_t *dataSendReq, int arrivedOrLeave);
 int getNextStopId();
 void FillArrivedLeaveReportAndSend(struct gps_fix_t* gpsData, int arriveOrLeave);
-
+void buildInternetHandShakeReportData(struct gps_fix_t *gpsData,   internetHandShakeReport_t *report,   dataSendReq_t *dataSendReq);
+void FillInternetHandShakeReportAndSend(struct gps_fix_t* gpsData);
 #endif

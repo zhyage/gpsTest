@@ -463,7 +463,7 @@ void *announceGetGPSDataUpdate(void *arg)
 
 
 
-void performCommandFromManager(int command)
+void performCommandFromManager(int command, struct gps_fix_t *gpsData)
 {
     stopPend_t getPend;
     switch (command)
@@ -507,6 +507,11 @@ void performCommandFromManager(int command)
                     enterSpot(&getPend, 1);
                 }
             }
+        }
+        break;
+        case INTERNET_CONNECT_HAND_SHAKE:
+        {
+            FillInternetHandShakeReportAndSend(gpsData);
         }
         break;
         default:
@@ -667,7 +672,9 @@ void* stopAnnounce(int lineId)
         {
 			n=recvfrom(s, &recvCommand,sizeof(int),0,(struct sockaddr *)&cli_addr,&clilen);
             printf("recv command from manager %d\r\n", recvCommand);
-            performCommandFromManager(recvCommand);
+            newestPoint = GetNewestDataFirst(&gpsSource);
+            prevPoint = GetNewestDataSecond(&gpsSource);
+            performCommandFromManager(recvCommand, newestPoint);
         }
 		    
         
@@ -691,9 +698,9 @@ void* stopAnnounce(int lineId)
 
 void buildArrivedLeaveReportData(struct gps_fix_t *gpsData,   arrivedLeaveStopReport_t *report,   dataSendReq_t *dataSendReq, int arrivedOrLeave)
 {
-    unsigned int DD;
-    unsigned int MM;
-    unsigned int SSSS;
+    unsigned char DD;
+    unsigned char MM;
+    unsigned short SSSS;
     unsigned short dataLen = 0;
     lineData_t *lineData = getLineData(getLineId());
     
@@ -790,5 +797,118 @@ void FillArrivedLeaveReportAndSend(struct gps_fix_t* gpsData, int arriveOrLeave)
 
 
   buildArrivedLeaveReportData(gpsData, &report, &dataSendReq, arriveOrLeave);
+  dataSendReqSend(&dataSendReq);
+}
+
+
+void buildInternetHandShakeReportData(struct gps_fix_t *gpsData,   internetHandShakeReport_t *report,   dataSendReq_t *dataSendReq)
+{
+    unsigned char DD;
+    unsigned char MM;
+    unsigned short SSSS;
+    unsigned short dataLen = 0;
+    lineData_t *lineData = getLineData(getLineId());
+    
+    memset(report, 0, sizeof(internetHandShakeReport_t));
+    memset(dataSendReq, 0, sizeof(dataSendReq_t));
+    
+    getDDMMSSSS(gpsData->longitude, &DD, &MM, &SSSS);
+    report->lng1 = DD;
+    report->lng2 = MM;
+    //report->lng3 = htons(SSSS);
+    report->lng3 = (SSSS);
+    
+    getDDMMSSSS(gpsData->latitude, &DD, &MM, &SSSS);
+    report->lat1 = DD;
+    report->lat2 = MM;
+    //report->lat3 = htons(SSSS);
+    report->lat3 = (SSSS);
+
+    //report->speed = htons(gpsData->speed);
+    report->speed = (gpsData->speed);
+    //report->azimuth = htons(0);//TODO
+    report->azimuth = (0);//TODO
+    report->vehicleStatus = 0;//TODO
+
+    report->softVersion = getSoftVersion();
+    report->deviceId = getDeviceId();
+    if(NULL == lineData)
+    {
+        printf("invalid lineData\r\n");
+        memset(report->lineId, 0, sizeof(U8)*3);
+        report->lineName = "";
+    }
+    else
+    {
+        
+        report->lineId[0] = lineData->lineId >> 16;
+        report->lineId[1] = lineData->lineId >> 8;
+        report->lineId[2] = lineData->lineId;
+        report->lineName = lineData->lineName;
+    }
+
+    report->license = getMotoLicense();
+    report->SIMId = getSIMId();
+
+
+    memcpy(dataSendReq->data + dataLen, &report->lng1, sizeof(report->lng1));
+    dataLen += sizeof(report->lng1);
+    memcpy(dataSendReq->data + dataLen, &report->lng2, sizeof(report->lng2));
+    dataLen += sizeof(report->lng2);
+    memcpy(dataSendReq->data + dataLen, &report->lng3, sizeof(report->lng3));
+    dataLen += sizeof(report->lng3);
+    memcpy(dataSendReq->data + dataLen, &report->lat1, sizeof(report->lat1));
+    dataLen += sizeof(report->lat1);
+    memcpy(dataSendReq->data + dataLen, &report->lat2, sizeof(report->lat2));
+    dataLen += sizeof(report->lat2);
+    memcpy(dataSendReq->data + dataLen, &report->lat3, sizeof(report->lat3));
+    dataLen += sizeof(report->lat3);
+
+    memcpy(dataSendReq->data + dataLen, &report->speed, sizeof(report->speed));
+    dataLen += sizeof(report->speed);
+
+    memcpy(dataSendReq->data + dataLen, &report->azimuth, sizeof(report->azimuth));
+    dataLen += sizeof(report->azimuth);
+    memcpy(dataSendReq->data + dataLen, &report->vehicleStatus, sizeof(report->vehicleStatus));
+    dataLen += sizeof(report->vehicleStatus);
+
+    strcpy(dataSendReq->data + dataLen, report->softVersion);
+    dataLen += strlen(report->softVersion)+1;
+
+    strcpy(dataSendReq->data + dataLen, report->deviceId);
+    dataLen += strlen(report->deviceId)+1;
+
+    strcpy(dataSendReq->data + dataLen, report->lineName);
+    dataLen += strlen(report->lineName)+1;
+
+    memcpy(dataSendReq->data + dataLen, &report->lineId, sizeof(report->lineId));
+    dataLen += sizeof(report->lineId);
+
+    strcpy(dataSendReq->data + dataLen, report->license);
+    dataLen += strlen(report->license)+1;
+
+    strcpy(dataSendReq->data + dataLen, report->SIMId);
+    dataLen += strlen(report->SIMId)+1;
+
+    
+
+
+    dataSendReq->commandId = COMANDID_INTERNET_HANDSHAKE;
+    dataSendReq->dataLength = dataLen;
+    printf("length of internet hand shake report msg = %u\r\n", dataLen);
+
+    return;
+
+}
+
+
+void FillInternetHandShakeReportAndSend(struct gps_fix_t* gpsData)
+{
+
+  internetHandShakeReport_t report;
+  dataSendReq_t dataSendReq;
+
+
+  buildInternetHandShakeReportData(gpsData, &report, &dataSendReq);
   dataSendReqSend(&dataSendReq);
 }

@@ -236,7 +236,7 @@ int i = 0;
   else
     track_end();
 #endif
-//  printf("process gps data\r\n");
+  //printf("process gps data lng = %f lat = %f\r\n", gpsdata->fix.longitude, gpsdata->fix.latitude);
 #ifdef SIMULATOR
   if(1)
   {
@@ -248,8 +248,10 @@ int i = 0;
       const double endLat = 30.278897;
       const double endLng = 120.333167;
       
-      static double lat = 30.277810;
-      static double lng = 120.332080;
+      //static double lat = 30.277810;
+      //static double lng = 120.332080;
+      static double lat = 30.277775;
+      static double lng = 120.332045;
       static int back = 0;
 
       

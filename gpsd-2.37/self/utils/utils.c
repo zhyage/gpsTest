@@ -3,11 +3,20 @@
 #include <string.h>
 #include <math.h>
 
-void getDDMMSSSS(float x, unsigned int *DD, unsigned int *MM, unsigned int *SSSS)
+void getDDMMSSSS(float x, unsigned char *DD, unsigned char *MM, unsigned short *SSSS)
 {
-	*DD = x;
-	*MM = (x * 100) - ((*DD)*100);
-	*SSSS = (x * 1000000) - ((*DD)*1000000) - ((*MM)*10000);
+    if(0 == isnan(x))
+    {
+	   *DD = x;
+	   *MM = (x * 100) - ((*DD)*100);
+	   *SSSS = (x * 1000000) - ((*DD)*1000000) - ((*MM)*10000);
+    }
+    else
+    {
+        *DD = 0xFF;
+        *MM = 0xFF;
+        *SSSS = 0xFFFF;
+    }
 }
 
 #define PI                      3.1415926

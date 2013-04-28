@@ -95,9 +95,9 @@ int WalkPositionReport(int Tag, void *p, void *Parms)
 
 void buildPositionReportData(struct gps_fix_t *gpsData,   positionReport_t *report,   dataSendReq_t *dataSendReq)
 {
-    unsigned int DD;
-    unsigned int MM;
-    unsigned int SSSS;
+    unsigned char DD;
+    unsigned char MM;
+    unsigned short SSSS;
     unsigned short dataLen = 0;
     
     memset(report, 0, sizeof(positionReport_t));
@@ -114,6 +114,8 @@ void buildPositionReportData(struct gps_fix_t *gpsData,   positionReport_t *repo
     report->lat2 = MM;
     //report->lat3 = htons(SSSS);
     report->lat3 = (SSSS);
+
+    printf("DD : %02x MM: %02x SSSS:%04x\r\n", DD, MM, SSSS);
 
     //report->speed = htons(gpsData->speed);
     report->speed = (gpsData->speed);

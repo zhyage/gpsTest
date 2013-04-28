@@ -12,6 +12,7 @@
 #include <time.h>
 #include "gpsTest.h"
 #include "manager.h"
+#include "internetConnectCheck.h"
 
 int mainCommand = 0;
 
@@ -47,6 +48,9 @@ int main()
 	fd_set set;
     char command[12];
     int i = 0;
+    pthread_t internetConnectCheck_id;
+
+    pthread_create(&internetConnectCheck_id, NULL, internetConnectCheck, NULL);
 
 
     for(;;)
