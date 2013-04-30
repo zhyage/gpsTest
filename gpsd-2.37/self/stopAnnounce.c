@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
-#include <curses.h>
+//#include <curses.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <asm/types.h>
@@ -414,7 +414,7 @@ void *playTipMedia()
         memset(command, 0, 128);
         
         stopPendAction_t *action = mediaItem->Object;
-        sprintf(command, "madplay /opt/github_cross/gpsTest/gpsd-2.37/self/media/%s", action->mp3Name);
+        sprintf(command, "madplay ./media/%s", action->mp3Name);
         printf("%s : play media name = %s\r\n", ctime(&tt), command);
         system(command);
         //sleep(3);//block for finish play

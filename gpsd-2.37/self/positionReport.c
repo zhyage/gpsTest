@@ -320,6 +320,7 @@ void* positionReport()
   int inAngle = 0;
   int period = 100000;//0.1 sec
 
+
   registerNoticeClientList(NOTICE_POSITION, NULL, positionReportGetGPSDataUpdate);
 
   for(;;)

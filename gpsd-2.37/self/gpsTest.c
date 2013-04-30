@@ -169,13 +169,13 @@ main(int argc, char **argv){
 	signal(SIGHUP, bye);
 
 //	header();
+	memset(&locationUpdateRegistArr, 0, sizeof(locationUpdateRegistArr));
     SetQueueEmpty(&gpsSource);
     pthread_create(&sendSession_id, NULL, sendSession, NULL);
     pthread_create(&positionReport_id, NULL, positionReport, NULL);
     pthread_create(&stopAnnounce_id, NULL, stopAnnounce, NULL);
 	
     
-	memset(&locationUpdateRegistArr, 0, sizeof(locationUpdateRegistArr));
 
 	if (casoc)
 		gps_query(gpsdata, "j1\n");
@@ -294,7 +294,6 @@ int i = 0;
 
   EnQueue(&gpsSource, &gpsdata->fix, sizeof(struct gps_fix_t));
 #endif
-
     for(i = 0; i < NOTICE_END; i++)
 	{
 		if(NULL != locationUpdateRegistArr[i].sendFunc)

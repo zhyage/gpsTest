@@ -1,20 +1,41 @@
-gpsTest:gpsTest.o arrQueue.o positionReport.o stopAnnounce.o dllist.o transferData.o utils.o
-	mipsel-linux-gcc -I../ -I. -I./utils/ gpsTest.o arrQueue.o positionReport.o stopAnnounce.o dllist.o transferData.o utils.o -o gpsTest -lm -lpthread -L../mips -lgps
+CC = mipsel-linux-gcc
+all:gpsTest manager serverDemo
+
+gpsTest:gpsTest.o arrQueue.o positionReport.o stopAnnounce.o dllist.o utils.o sendSession.o identity.o lineMap.o
+	$(CC) -I../ -I. -I./utils/ gpsTest.o arrQueue.o positionReport.o stopAnnounce.o dllist.o sendSession.o utils.o identity.o lineMap.o -g -o gpsTest -lm -lpthread -L../mips -lgps
+manager:manager.o internetConnectCheck.o
+	$(CC) -I../ -I. -I./utils/ manager.o internetConnectCheck.o libcurl.a -g -o manager  -lpthread
+serverDemo:serverDemo.o
+	$(CC) -I../ -I. -I./utils/ serverDemo.o -g -o serverDemo
 gpsTest.o:gpsTest.c
-	mipsel-linux-gcc -I../ -I. -I./utils/ -c gpsTest.c
+	$(CC) -I../ -I. -I./utils/ -g -c gpsTest.c
 arrQueue.o:utils/arrQueue.c
-	mipsel-linux-gcc -I../ -I. -I./utils/ -c utils/arrQueue.c
+	$(CC) -I../ -I. -I./utils/ -g -c utils/arrQueue.c
 dllist.o:utils/dllist.c
-	mipsel-linux-gcc -I../ -I. -I./utils/ -c utils/dllist.c
+	$(CC) -I../ -I. -I./utils/ -g -c utils/dllist.c
 utils.o:utils/utils.c
-	mipsel-linux-gcc -I../ -I. -I./utils/ -c utils/utils.c
+	$(CC) -I../ -I. -I./utils/ -g -c utils/utils.c
 positionReport.o:positionReport.c
-	mipsel-linux-gcc -I../ -I. -I./utils/ -c positionReport.c
+	$(CC) -I../ -I. -I./utils/ -g -c positionReport.c
 stopAnnounce.o:stopAnnounce.c
-	mipsel-linux-gcc -I../ -I. -I./utils/ -c stopAnnounce.c
-transferData.o:transferData.c
-	mipsel-linux-gcc -I../ -I. -I./utils/ -c transferData.c
+	$(CC) -I../ -I. -I./utils/ -g -c stopAnnounce.c
+manager.o:manager.c
+	$(CC) -I../ -I. -I./utils/ -g -c manager.c
+internetConnectCheck.o:internetConnectCheck.c
+	$(CC) -I../ -I. -I./utils/ -I/opt/router/GPS/curl/curl-7.21.3/include/ -g -c internetConnectCheck.c
+sendSession.o:sendSession.c
+	$(CC) -I../ -I. -I./utils/ -g -c sendSession.c
+identity.o:identity.c
+	$(CC) -I../ -I. -I./utils/ -g -c identity.c
+lineMap.o:lineMap.c
+	$(CC) -I../ -I. -I./utils/ -g -c lineMap.c
+serverDemo.o:server/serverDemo.c
+	$(CC) -I../ -I. -I./utils/ -g -c server/serverDemo.c
+
+
 
 clean:
 	rm -rf *.o
 	rm -rf gpsTest
+	rm -rf manager
+	rm -rf serverDemo

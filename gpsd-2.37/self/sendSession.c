@@ -380,9 +380,9 @@ int buildAndSendUploadData(sendData_t *sendData)
     unsigned char sendMsg[128];
     uploadData_t updateData;
     struct tm time;
-    FILE *positionLogFd;
+//    FILE *positionLogFd;
 
-    positionLogFd = fopen("positionLog.log", "a");
+//    positionLogFd = fopen("positionLog.log", "a");
     
     localtime_r(&(sendData->time), &time);
     
@@ -463,9 +463,9 @@ int buildAndSendUploadData(sendData_t *sendData)
     memcpy(sendMsg + msgLen, &updateData.checkSum, sizeof(updateData.checkSum));
     msgLen += sizeof(updateData.checkSum);
 
-    fwrite(sendMsg, 1, msgLen, positionLogFd);
+//    fwrite(sendMsg, 1, msgLen, positionLogFd);
 
-    fclose(positionLogFd);
+//    fclose(positionLogFd);
 
     return send2Remote(sendMsg, msgLen);
 
