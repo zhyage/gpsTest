@@ -22,7 +22,7 @@ stopAnnounce.o:stopAnnounce.c
 manager.o:manager.c
 	$(CC) -I../ -I. -I./utils/ -g -c manager.c
 internetConnectCheck.o:internetConnectCheck.c
-	$(CC) -I../ -I. -I./utils/ -I/opt/router/GPS/curl/curl-7.21.3/include/ -g -c internetConnectCheck.c
+	$(CC) -I../ -I. -I./utils/ -I./third_include -g -c internetConnectCheck.c
 sendSession.o:sendSession.c
 	$(CC) -I../ -I. -I./utils/ -g -c sendSession.c
 identity.o:identity.c
