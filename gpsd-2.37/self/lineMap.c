@@ -115,8 +115,8 @@ busStopMark_t allBusStop[] =
         10,
         "19-road",
         STOP,
-        {VALID, 120.361372,    30.266597,  REDUCE,    UNKNOW,    "20_road_in.mp3",     "20_road_out.mp3"},
-        {VALID, 120.360810,    30.266480,  ADD,    UNKNOW,    "20_road_in.mp3",     "20_road_out.mp3"},
+        {VALID, 120.361372,    30.266597,  REDUCE,    UNKNOW,    "19_road_in.mp3",     "19_road_out.mp3"},
+        {VALID, 120.360810,    30.266480,  ADD,    UNKNOW,    "19_road_in.mp3",     "19_road_out.mp3"},
     },
     {
         11,

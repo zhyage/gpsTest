@@ -45,7 +45,7 @@
 
 #define NUM 8
 
-#define SIMULATOR 1
+//#define SIMULATOR 1
 char *pollstr = "SPAMDQTV\n";
 char *host = "127.0.0.1";
 char *port = "2947";

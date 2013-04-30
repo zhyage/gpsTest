@@ -30,7 +30,8 @@ static int GPSUpdateSignal = 0;
 
 
 
-const double judgeRadius = 0.003;//30m
+//const double judgeRadius = 0.003;//30m
+const double judgeRadius = 0.05;//50m
 
 
 
@@ -307,6 +308,8 @@ void updateStopJudgeList(struct gps_fix_t *current, struct gps_fix_t *prev, unsi
     stopPend_t stopPend;
     unsigned int i = 0;
 //    printf("line id = %d line name = %s\r\n", line->lineId, line->lineName);
+    printf("--------------------distance with spot 1 = %f\r\n", 
+        get_distance(30.295750, 120.385487, current->latitude, current->longitude));
     for(i = 0; i < 256; i++)
     {
         int stopId = line->stopId[i];
@@ -687,6 +690,8 @@ void* stopAnnounce(int lineId)
             GPSUpdateSignal = 0;
             //if(count >= (100))//10 sec
             {
+                printf("---------------------------\r\n");
+                printf("lng = %f lat = %f \r\n", newestPoint->longitude, newestPoint->latitude);
                 updateStopJudgeList(newestPoint, prevPoint, getLineId());
                 checkLeaveSpot(newestPoint, prevPoint);
                 //count = 0;
