@@ -45,7 +45,7 @@
 
 #define NUM 8
 
-//#define SIMULATOR 1
+#define SIMULATOR 1
 char *pollstr = "SPAMDQTV\n";
 char *host = "127.0.0.1";
 char *port = "2947";
@@ -241,17 +241,18 @@ int i = 0;
   if(1)
   {
       //static unsigned long count = 0;
-      double enhance = 0.000007;
+      double enhance = 0.00007;
+      
       const double startLat = 30.277810;
       const double startLng = 120.332080;
       
-      const double endLat = 30.278897;
-      const double endLng = 120.333167;
+      const double endLat = startLat + (enhance * 30 * 5) + enhance;
+      const double endLng = startLng + (enhance * 30 * 5) + enhance;
       
       //static double lat = 30.277810;
       //static double lng = 120.332080;
-      static double lat = 30.277775;
-      static double lng = 120.332045;
+      static double lat = 30.277810 - (0.00007 * 3);
+      static double lng = 120.332080 - (0.00007 * 3);
       static int back = 0;
 
       

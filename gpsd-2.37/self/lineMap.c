@@ -19,6 +19,14 @@ allLineMark_t cityData[] =
 };
 #endif
 
+/*
+const double 120.332080 = 120.332080;
+const double 30.277810 = 30.277810;
+
+const double 0.00007 = 0.00007;
+
+const double (0.00007 * 30) = 0.00007 * 30;
+*/
 unsigned int getLineNum()
 {
 	return sizeof(lineData)/sizeof(lineData_t);
@@ -48,6 +56,7 @@ busStopMark_t allBusStop[] =
         {INVALID, 0,    0,  UNKNOW,    UNKNOW,    NULL,     NULL},
         {INVALID, 0,    0,  UNKNOW,    UNKNOW,    NULL,     NULL},
     },
+#if 0
     {
         1,
         "stop1",
@@ -97,6 +106,57 @@ busStopMark_t allBusStop[] =
         {VALID, 120.333130,    30.278860,  ADD,    ADD,    "end.mp3",     NULL},
         {INVALID, 120.333137,    30.278867,  REDUCE,    REDUCE,    "stop4_in.mp3",     "stop4_out.mp3"},
     },
+#endif    
+    {
+        1,
+        "stop1",
+        STOP,
+        {VALID, 120.332080,    30.277810,  ADD,    ADD,    "stop1_in.mp3",     "stop1_out.mp3"},
+        {VALID, 120.332080 + 0.00007,    30.277810 + 0.00007,  REDUCE, REDUCE,    "stop1_in.mp3",     "stop1_out.mp3"},
+    },
+    {
+        2,
+        "huancheng",
+        CROOKED,
+        {VALID, 120.332080 + (0.00007 * 30),    30.277810 + (0.00007 * 30),  ADD,    ADD,    "huancheng.mp3",     NULL},
+        {INVALID, 0,    0,  REDUCE,    REDUCE,    "stop2_in.mp3",     "stop2_out.mp3"},
+    },
+    {
+        3,
+        "stop2",
+        STOP,
+        {VALID, 120.332080 + 2*(0.00007 * 30),    30.277810 + 2*(0.00007 * 30),  ADD,    ADD,    "stop2_in.mp3",     "stop2_out.mp3"},
+        {VALID, 120.332080 + 2*(0.00007 * 30) + 0.00007,    30.277810 + 2*(0.00007 * 30) + 0.00007,  REDUCE,    REDUCE,    "stop2_in.mp3",     "stop2_out.mp3"},
+    },
+    {
+        4,
+        "stop3",
+        STOP,
+        {VALID, 120.332080 + 3*(0.00007 * 30),    30.277810 + 3*(0.00007 * 30),  ADD,    ADD,    "stop3_in.mp3",     "stop3_out.mp3"},
+        {VALID, 120.332080 + 3*(0.00007 * 30) + 0.00007,    30.277810 + 3*(0.00007 * 30) + 0.00007,  REDUCE,    REDUCE,    "stop3_in.mp3",     "stop3_out.mp3"},
+    },
+    {
+        5,
+        "stop4",
+        STOP,
+        {VALID, 120.332080 + 4*(0.00007 * 30),    30.277810 + 4*(0.00007 * 30),  ADD,    ADD,    "stop4_in.mp3",     "stop4_out.mp3"},
+        {VALID, 120.332080 + 4*(0.00007 * 30) + 0.00007,    30.277810 + 4*(0.00007 * 30) + 0.00007,  REDUCE,    REDUCE,    "stop4_in.mp3",     "stop4_out.mp3"},
+    },
+    {
+        6,
+        "shopping",
+        HOTSPOT,
+        {INVALID, 120.332080 + 4*(0.00007 * 30),    30.277810 + 4*(0.00007 * 30),  ADD,    ADD,    "shopping.mp3",     NULL},
+        {VALID, 120.332080 + 4*(0.00007 * 30),    30.277810 + 4*(0.00007 * 30),  REDUCE,    REDUCE,    "shopping.mp3",     NULL},
+    },
+    {
+        7,
+        "end",
+        STOP,
+        {VALID, 120.332080 + 5*(0.00007 * 30),    30.277810 + 5*(0.00007 * 30),  ADD,    ADD,    "end.mp3",     NULL},
+        {INVALID, 120.332080 + 5*(0.00007 * 30) + 0.00007,    30.277810 + 5*(0.00007 * 30) + 0.00007,  REDUCE,    REDUCE,    "stop4_in.mp3",     "stop4_out.mp3"},
+    },
+    
     {
         8,
         "12-road",
