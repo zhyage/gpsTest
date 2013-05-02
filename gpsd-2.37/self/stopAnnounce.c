@@ -196,8 +196,8 @@ void checkLeaveSpot(struct gps_fix_t *current, struct gps_fix_t *prev)
             upOrDown = DOWNLINE;
         }
         if(
-            (judgeRadius < get_distance(spot->lat, spot->lng, current->latitude, current->longitude)) 
-            && (judgeRadius >= get_distance(spot->lat, spot->lng, prev->latitude, prev->longitude))
+            (judgeRadius < get_distance_out(spot->lat, spot->lng, current->latitude, current->longitude)) 
+            && (judgeRadius >= get_distance_out(spot->lat, spot->lng, prev->latitude, prev->longitude))
           )
           {
             stopPendAction_t action;
@@ -205,6 +205,8 @@ void checkLeaveSpot(struct gps_fix_t *current, struct gps_fix_t *prev)
             if(UPLINE == upOrDown)
             {
                 printf("%s : now leave stop : %d stop name = %s lineDir = up\r\n",ctime(&tt),  stop->id, stop->name);
+                printf("-----------------------------------------------distance with current spot when leave up= %u\r\n", 
+                    getDistance2CurrentStop(current));
                 action.mp3Name = spot->leavedMp3;
                 addActionToActionPend(&action);
                 if(stop->type == STOP)
@@ -216,6 +218,8 @@ void checkLeaveSpot(struct gps_fix_t *current, struct gps_fix_t *prev)
             else
             {
                 printf("%s now leave stop : %d stop name = %s lineDir = down\r\n", ctime(&tt), stop->id, stop->name);
+                printf("-----------------------------------------------distance with current spot when leave down= %u\r\n", 
+                    getDistance2CurrentStop(current));
                 action.mp3Name = spot->leavedMp3;
                 addActionToActionPend(&action);
                 if(stop->type == STOP)
@@ -308,8 +312,8 @@ void updateStopJudgeList(struct gps_fix_t *current, struct gps_fix_t *prev, unsi
     stopPend_t stopPend;
     unsigned int i = 0;
 //    printf("line id = %d line name = %s\r\n", line->lineId, line->lineName);
-    printf("--------------------distance with spot 1 = %f\r\n", 
-        get_distance(30.295750, 120.385487, current->latitude, current->longitude));
+    //printf("--------------------distance with spot 1 = %f\r\n", 
+    //    get_distance(30.295750, 120.385487, current->latitude, current->longitude));
     for(i = 0; i < 256; i++)
     {
         int stopId = line->stopId[i];
@@ -318,8 +322,8 @@ void updateStopJudgeList(struct gps_fix_t *current, struct gps_fix_t *prev, unsi
         spotMark_t *down = &stop->downline;
 
         if( VALID == up->valid
-            && (judgeRadius >= get_distance(up->lat, up->lng, current->latitude, current->longitude)) 
-            && (judgeRadius < get_distance(up->lat, up->lng, prev->latitude, prev->longitude))
+            && (judgeRadius >= get_distance_in(up->lat, up->lng, current->latitude, current->longitude)) 
+            && (judgeRadius < get_distance_in(up->lat, up->lng, prev->latitude, prev->longitude))
           )//entry up spot
         {
 //            printf("in stop stopId = %d\r\n", stopId);
@@ -328,7 +332,10 @@ void updateStopJudgeList(struct gps_fix_t *current, struct gps_fix_t *prev, unsi
                 stopPend.stopId = stopId;
                 stopPend.upOrDown = UPLINE;
                 
+                
                 enterSpot(&stopPend, 0);
+                printf("-----------------------------------------------distance with current spot when entry up= %u\r\n", 
+                    getDistance2CurrentStop(current));
                 if(stop->type == STOP)
                 {
                     FillArrivedLeaveReportAndSend(current, COMMAND_ARRIVED_STOP_REPORT);
@@ -337,8 +344,8 @@ void updateStopJudgeList(struct gps_fix_t *current, struct gps_fix_t *prev, unsi
             }
         }
         if( VALID == down->valid
-            && (judgeRadius >= get_distance(down->lat, down->lng, current->latitude, current->longitude))
-            && (judgeRadius < get_distance(down->lat, down->lng, prev->latitude, prev->longitude))
+            && (judgeRadius >= get_distance_in(down->lat, down->lng, current->latitude, current->longitude))
+            && (judgeRadius < get_distance_in(down->lat, down->lng, prev->latitude, prev->longitude))
           )//entry down spot
         {
             if(1 == judgeTrendToSpot(current, prev, down->lngAttr, down->latAttr))
@@ -346,7 +353,10 @@ void updateStopJudgeList(struct gps_fix_t *current, struct gps_fix_t *prev, unsi
                 stopPend.stopId = stopId;
                 stopPend.upOrDown = DOWNLINE;
                 
+                
                 enterSpot(&stopPend, 0);
+                printf("-----------------------------------------------distance with current spot when entry down= %u\r\n", 
+                    getDistance2CurrentStop(current));
                 if(stop->type == STOP)
                 {
                     FillArrivedLeaveReportAndSend(current, COMMAND_ARRIVED_STOP_REPORT);
@@ -589,7 +599,32 @@ unsigned short getDistance2NextStop(struct gps_fix_t *current)
     {
         return 0;
     }
-    return 1000*(get_distance(current->latitude, current->longitude, nextSpot->latAttr, nextSpot->lngAttr));
+    return 1000*(get_distance(current->latitude, current->longitude, nextSpot->lat, nextSpot->lng));
+}
+
+busStopMark_t *getCurrentStopAttr()
+{
+    
+    return getStopAttr(lastUpdateStop.stopId);
+}
+
+spotMark_t *getCurrentSpotAttr()
+{
+    printf("last update spot id = %d\r\n", lastUpdateStop.stopId);
+    return getSpotAttr(lastUpdateStop.stopId, lastUpdateStop.upOrDown);
+}
+
+
+
+unsigned short getDistance2CurrentStop(struct gps_fix_t *current)
+{
+    spotMark_t *currentSpot = getCurrentSpotAttr();
+    if(NULL == currentSpot)
+    {
+        return 0;
+    }
+    printf("lat1 = %f lng1 = %f lat2 = %f lng2 = %f\r\n", current->latitude, current->longitude, currentSpot->lat, currentSpot->lng);
+    return 1000*(get_distance(current->latitude, current->longitude, currentSpot->lat, currentSpot->lng));
 }
 
 void* stopAnnounce(int lineId)

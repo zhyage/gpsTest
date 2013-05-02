@@ -44,3 +44,12 @@ double get_distance(double lat1, double lng1, double lat2, double lng2)
     return dst;
 }
 
+double get_distance_in(double lat1, double lng1, double lat2, double lng2)
+{
+    return 0.8 * (get_distance(lat1, lng1, lat2, lng2));
+}
+
+double get_distance_out(double lat1, double lng1, double lat2, double lng2)
+{
+    return 1.2 * (get_distance(lat1, lng1, lat2, lng2));
+}

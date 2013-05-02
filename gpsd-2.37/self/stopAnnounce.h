@@ -71,4 +71,7 @@ int getNextStopId();
 void FillArrivedLeaveReportAndSend(struct gps_fix_t* gpsData, int arriveOrLeave);
 void buildInternetHandShakeReportData(struct gps_fix_t *gpsData,   internetHandShakeReport_t *report,   dataSendReq_t *dataSendReq);
 void FillInternetHandShakeReportAndSend(struct gps_fix_t* gpsData);
+busStopMark_t *getCurrentStopAttr();
+spotMark_t *getCurrentSpotAttr();
+unsigned short getDistance2CurrentStop(struct gps_fix_t *current);
 #endif

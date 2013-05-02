@@ -241,7 +241,8 @@ int i = 0;
   if(1)
   {
       //static unsigned long count = 0;
-      double enhance = 0.00007;
+      //double enhance = 0.00007;
+  	double enhance = 0.00012;
       
       const double startLat = 30.277810;
       const double startLng = 120.332080;
@@ -249,10 +250,11 @@ int i = 0;
       const double endLat = startLat + (enhance * 30 * 5) + enhance;
       const double endLng = startLng + (enhance * 30 * 5) + enhance;
       
-      //static double lat = 30.277810;
-      //static double lng = 120.332080;
-      static double lat = 30.277810 - (0.00007 * 3);
-      static double lng = 120.332080 - (0.00007 * 3);
+
+      //static double lat = 30.277810 - (0.00007 * 10);
+      //static double lng = 120.332080 - (0.00007 * 10);
+      static double lat = 30.277810 - (0.00012 * 10);
+      static double lng = 120.332080 - (0.00012 * 10);
       static int back = 0;
 
       
