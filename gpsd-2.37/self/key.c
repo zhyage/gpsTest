@@ -32,6 +32,8 @@ int main (int argc, char *argv[])
   char name[256] = "Unknown";
   char *device = NULL;
   int i = 0;
+  static int prevValue[64] = {0};
+struct input_id deviceId;
  
   //Setup check
   if (argv[1] == NULL){
@@ -53,6 +55,20 @@ printf("111\r\n");
   //Print Device Name
   ioctl (fd, EVIOCGNAME (sizeof (name)), name);
   printf ("Reading From : %s (%s)n", device, name);
+//  ioctl (fd, EVIOCGID (sizeof (name)), name);
+//  printf ("Reading device id From : %s (%s)n", device, name);
+//  ioctl (fd, EVIOCGKEYCODE (sizeof (name)), name);
+//  printf ("Reading key code id From : %s (%s)n", device, name);
+  ioctl (fd, EVIOCGPHYS (sizeof (name)), name);
+  printf ("Reading physical location id From : %s (%s)n", device, name);
+  ioctl (fd, EVIOCGUNIQ (sizeof (name)), name);
+  printf ("Reading unique identifier id From : %s (%s)n", device, name);
+
+
+  ioctl(fd, EVIOCGID, &deviceId);
+
+printf("-----vendor %04hx product %04hx version %04hx\r\n", deviceId.vendor, deviceId.product, deviceId.version);
+
 printf("112\r\n");
   while (1)
   {
@@ -67,8 +83,21 @@ printf("112\r\n");
           fflush(stdout);
 
         }
-        printf("ev[1].value = %d ev[1].code = %u ev[1].type \r\n", ev[1].value, ev[1].code, ev[1].type);
+        //printf("ev[1].value = %d ev[1].code = %u ev[1].type \r\n", ev[1].value, ev[1].code, ev[1].type);
+        for(i = 0; i < 64; i++)
+        {
+          if(prevValue[i] != ev[i].value)
+          {
+            printf("ev[%d].value = %d ev[%d].code = %u ev[%d].type \r\n", 
+              i, ev[i].value, i, ev[i].code, i, ev[i].type);
+          }
+        }
+
           fflush(stdout);
+          for(i = 0; i < 64; i++)
+          {
+            prevValue[i] = ev[i].value;
+          }
 /*
           for(i = 0; i < 64; i++)
           {
