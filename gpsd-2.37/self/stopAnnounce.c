@@ -427,10 +427,12 @@ void *playTipMedia()
         memset(command, 0, 128);
         
         stopPendAction_t *action = mediaItem->Object;
-        sprintf(command, "madplay ./media/%s", action->mp3Name);
-        printf("%s : play media name = %s\r\n", ctime(&tt), command);
-        system(command);
-        //sleep(3);//block for finish play
+        if(NULL != action->mp3Name)
+        {
+            sprintf(command, "madplay ./media/%s", action->mp3Name);
+            printf("%s : play media name = %s\r\n", ctime(&tt), command);
+            system(command);
+        }
         
         mediaItem->Tag = 1;
       }
