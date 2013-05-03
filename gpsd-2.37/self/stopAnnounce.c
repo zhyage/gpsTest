@@ -429,7 +429,8 @@ void *playTipMedia()
         stopPendAction_t *action = mediaItem->Object;
         if(NULL != action->mp3Name)
         {
-            sprintf(command, "mpg123 /jffs/media/%s", action->mp3Name);
+            //sprintf(command, "mpg123 /jffs/media/%s", action->mp3Name);
+            sprintf(command, "mpg123 ./media/%s", action->mp3Name);
             printf("%s : play media name = %s\r\n", ctime(&tt), command);
             system(command);
         }
