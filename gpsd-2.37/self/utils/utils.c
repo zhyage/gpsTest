@@ -53,3 +53,16 @@ double get_distance_out(double lat1, double lng1, double lat2, double lng2)
 {
     return 1.2 * (get_distance(lat1, lng1, lat2, lng2));
 }
+
+
+unsigned short getCheckSum(unsigned char *start, unsigned short length)
+{
+    unsigned short checkSum = 0;
+    unsigned short i = 0;
+    for(i = 0; i < length; i++)
+    {
+        checkSum ^= start[i];
+    }
+
+    return checkSum;
+}

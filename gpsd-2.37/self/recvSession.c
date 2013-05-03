@@ -6,7 +6,7 @@
 
 
 
-int recvFromRemote(unsigned char *data, unsigned short dataLength, recvData_t *recvData)
+int recvFromRemote(unsigned char *data, unsigned short dataLength, pushCommandData_t *recvData)
 {
 	unsigned char *pos = data;
 	unsigned short strlength = 0;
@@ -82,7 +82,7 @@ int recvFromRemote(unsigned char *data, unsigned short dataLength, recvData_t *r
 		break;
 		case COMMAND_IN_OUT_PUSH:
 		{
-			printf("get COMMAND_SCHEDULE_LINE_PUSH\r\n");
+			printf("get COMMAND_IN_OUT_PUSH\r\n");
 		}
 		break;
 	}

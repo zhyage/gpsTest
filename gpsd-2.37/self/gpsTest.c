@@ -242,7 +242,7 @@ int i = 0;
   {
       //static unsigned long count = 0;
       //double enhance = 0.00007;
-  	double enhance = 0.00012;
+  	double enhance = 0.00007;
       
       const double startLat = 30.277810;
       const double startLng = 120.332080;
@@ -253,9 +253,10 @@ int i = 0;
 
       //static double lat = 30.277810 - (0.00007 * 10);
       //static double lng = 120.332080 - (0.00007 * 10);
-      static double lat = 30.277810 - (0.00012 * 10);
-      static double lng = 120.332080 - (0.00012 * 10);
+      static double lat = 30.277810 - (0.00007 * 10);
+      static double lng = 120.332080 - (0.00007 * 10);
       static int back = 0;
+      static int roundCount = 0;
 
       
       struct gps_fix_t fakeData;
@@ -266,6 +267,11 @@ int i = 0;
       if(lat >= endLat)
       {
         back = 1;
+        roundCount += 1;
+        if(roundCount >= 2)
+        {
+        	exit(1);
+        }
       }
       if(lat <= startLat)
       {

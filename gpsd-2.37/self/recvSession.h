@@ -14,7 +14,18 @@ typedef struct
     U8  commandId;
     U8  data[128];
     U8  checkSum;    
-}recvData_t;
+}pushCommandData_t;
 
+typedef struct 
+{
+    U8 lineName[64];
+    U8 lineId[3]; 
+}scheduleLineCommand_t;
+
+typedef struct
+{
+    U8 inOrOut;
+    U8 confirm;
+}inOutCommand_t;
 
 #endif

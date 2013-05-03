@@ -361,17 +361,7 @@ typedef struct
 */
 
 
-U16 getCheckSum(unsigned char *start, unsigned short length)
-{
-    U16 checkSum = 0;
-    unsigned short i = 0;
-    for(i = 0; i < length; i++)
-    {
-        checkSum ^= start[i];
-    }
 
-    return checkSum;
-}
 
 int buildAndSendUploadData(sendData_t *sendData)
 {
