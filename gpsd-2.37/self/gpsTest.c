@@ -270,7 +270,7 @@ int i = 0;
         roundCount += 1;
         if(roundCount >= 2)
         {
-        	exit(1);
+        	//exit(1);
         }
       }
       if(lat <= startLat)

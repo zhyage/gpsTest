@@ -1,12 +1,13 @@
-CC = mipsel-linux-gcc
+CC=mipsel-linux-gcc
+
 all:gpsTest manager serverDemo
 
 gpsTest:gpsTest.o arrQueue.o positionReport.o stopAnnounce.o dllist.o utils.o sendSession.o identity.o lineMap.o
-	$(CC) -I../ -I. -I./utils/ gpsTest.o arrQueue.o positionReport.o stopAnnounce.o dllist.o sendSession.o utils.o identity.o lineMap.o -g -o gpsTest -lm -lpthread -L../mips -lgps
-manager:manager.o internetConnectCheck.o
-	$(CC) -I../ -I. -I./utils/ manager.o internetConnectCheck.o libcurl.a -g -o manager  -lpthread
-serverDemo:serverDemo.o
-	$(CC) -I../ -I. -I./utils/ serverDemo.o -g -o serverDemo
+	$(CC) -I../ -I. -I./utils/ gpsTest.o arrQueue.o positionReport.o stopAnnounce.o dllist.o sendSession.o utils.o identity.o lineMap.o -g -o gpsTest -lm -lpthread  -L../mips -lgps
+manager:manager.o internetConnectCheck.o recvSession.o
+	$(CC) -I../ -I. -I./utils/ manager.o internetConnectCheck.o recvSession.o libcurl.a -g -o manager -lm -lpthread
+serverDemo:serverDemo.o utils.o
+	$(CC) -I../ -I. -I./utils/ serverDemo.o utils.o -g -o serverDemo -lpthread -lm
 gpsTest.o:gpsTest.c
 	$(CC) -I../ -I. -I./utils/ -g -c gpsTest.c
 arrQueue.o:utils/arrQueue.c
@@ -32,6 +33,8 @@ lineMap.o:lineMap.c
 serverDemo.o:server/serverDemo.c
 	$(CC) -I../ -I. -I./utils/ -g -c server/serverDemo.c
 
+recvSession.o:recvSession.c
+	$(CC) -I../ -I. -I./utils/ -g -c recvSession.c
 
 
 clean:
