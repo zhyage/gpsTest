@@ -34,8 +34,9 @@ int recvFromRemote(unsigned char *data, unsigned short dataLength, pushCommandDa
 
 	memcpy(&recvData->sessionId, pos, sizeof(recvData->sessionId));
 	pos += sizeof(recvData->sessionId);
-	countLength += sizeof(recvData->version);
+	countLength += sizeof(recvData->sessionId);
 
+/*
 	strlength = 0;
 	while((pos[i] != '0x00') && (i <= 14))
 	{
@@ -43,9 +44,17 @@ int recvFromRemote(unsigned char *data, unsigned short dataLength, pushCommandDa
 	}
 	strlength = i + 2;//which '\0'
 
+	printf("strlength = %d\r\n", strlength);
+
 	memcpy(recvData->motoId, pos, strlength);
-	pos += sizeof(strlength);
+	pos += strlength;
 	countLength += strlength;
+*/
+
+	strlength = strlen(pos);
+	strcpy(recvData->motoId, pos);
+	pos += strlength + 1;
+	countLength += strlength + 1;
 
 	memcpy(&recvData->date, pos, sizeof(recvData->date));
 	pos += sizeof(recvData->date);
@@ -60,6 +69,8 @@ int recvFromRemote(unsigned char *data, unsigned short dataLength, pushCommandDa
 	countLength += sizeof(recvData->commandId);
 
 	subDataLength = recvData->length - countLength;
+	printf("subDataLength = %d recvData->length = %d countLength = %d\r\n"
+		, subDataLength, recvData->length, countLength);
 
 	memcpy(recvData->data, pos, subDataLength);
 	pos += subDataLength;
@@ -67,7 +78,7 @@ int recvFromRemote(unsigned char *data, unsigned short dataLength, pushCommandDa
 	memcpy(&recvData->checkSum, pos, sizeof(recvData->checkSum));
 	pos += sizeof(recvData->checkSum);
 
-
+	printf("recvData->commandId = %02x\r\n", recvData->commandId);
 	switch (recvData->commandId)
 	{
 		case COMMAND_TEXT_INFO_PUSH:
@@ -84,6 +95,11 @@ int recvFromRemote(unsigned char *data, unsigned short dataLength, pushCommandDa
 		{
 			printf("get COMMAND_IN_OUT_PUSH\r\n");
 		}
+		break;
+		default:
+		{
+			printf("get UNKNOW remote push command\r\n");
+		}	
 		break;
 	}
 

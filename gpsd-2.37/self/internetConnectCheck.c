@@ -65,7 +65,7 @@ int checkInternetConnect()
 				case CURLE_COULDNT_RESOLVE_HOST:
 		     	case CURLE_COULDNT_RESOLVE_PROXY:
 		     	{
-		     		printf("internet dose not exist\r\n");
+		     		//printf("internet dose not exist\r\n");
 		     		connect = -1;		     		
 		     	}
 		     	break;
@@ -73,7 +73,7 @@ int checkInternetConnect()
   		}
   		else
   		{
-  			printf("internet exist\r\n");
+  			//printf("internet exist\r\n");
   			connect = 1 ;
   		}
   		/* always cleanup */ 

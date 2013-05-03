@@ -29,6 +29,24 @@ typedef struct
     U8  checkSum;    
 }pushCommandData_t;
 */
+
+void pushCommand(unsigned char *data, unsigned short dataLen)
+{
+    static int sockfd=0;
+        struct sockaddr_in servaddr;
+
+        
+        bzero(&servaddr,sizeof(servaddr));
+        servaddr.sin_family = AF_INET;
+        servaddr.sin_port = htons(9998);
+        
+        inet_pton(AF_INET,"127.0.0.1",&servaddr.sin_addr);
+        sockfd=socket(AF_INET,SOCK_DGRAM,0);
+
+        sendto(sockfd, data,dataLen,
+            0,(struct sockaddr *)&servaddr,sizeof(struct sockaddr));
+}
+
 void buildSendCommandPackageAndSend(unsigned int commandId, pushCommandData_t *commandPackage, 
     unsigned char *subData, unsigned short subDataLength)
 {
@@ -117,6 +135,7 @@ void buildSendCommandPackageAndSend(unsigned int commandId, pushCommandData_t *c
         fclose(pushCmdFd);
     }
 
+    pushCommand(sendMsg, sendLen);
 }
 
 
