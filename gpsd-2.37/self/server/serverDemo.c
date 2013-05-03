@@ -156,11 +156,23 @@ void buildSendCommandScheduleLinePackage(unsigned int lineId, unsigned char *lin
 
 }
 
+void buildSendCommandInOutPackage(unsigned char inOrOut, unsigned char confirm)
+{
+    inOutCommand_t inOutCmd;
+    pushCommandData_t pushCmd;
+    unsigned short subCmdLength = 0;
+    
+    subCmdLength = buildInOutCommandPackage(inOrOut, confirm, &inOutCmd);
+    buildSendCommandPackageAndSend(COMMAND_IN_OUT_PUSH, &pushCmd, (unsigned char*)&inOutCmd, subCmdLength);
+
+}
+
 
 void *serverCommandInput()
 {
     char command = 0;
     static int line = 0;
+    static int inOut = 0;
     printf("input '1' for send COMMAND_TEXT_INFO_PUSH\r\n");
     printf("input '2' for send COMMAND_SCHEDULE_LINE_PUSH\r\n");
     printf("input '3' for send COMMAND_IN_OUT_PUSH\r\n");
@@ -187,13 +199,23 @@ void *serverCommandInput()
                 else
                 {
                     buildSendCommandScheduleLinePackage(2, "yan_jiang_da_dao");
-                    line = 1;
+                    line = 0;
                 }
             }
             break;
             case 51:
             {
                 printf("send COMMAND_IN_OUT_PUSH\r\n");
+                if(inOut == 0)
+                {
+                    buildSendCommandInOutPackage(0x00, 0x00);
+                    inOut = 1;
+                }
+                else
+                {
+                    buildSendCommandInOutPackage(0x01, 0x00);
+                    inOut = 0;
+                }
             }
             break;
             default:
