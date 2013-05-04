@@ -16,6 +16,7 @@ void EnQueue(gpsSourceData* queue, void* data, size_t sizeOfData);
 void DeQueue(gpsSourceData* queue);
 int GetQueueNum(gpsSourceData* queue);
 void* GetNewestDataFirst(gpsSourceData* queue);
+void* GetNewestDataSecond(gpsSourceData* queue);
 
 
 

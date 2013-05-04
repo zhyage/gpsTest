@@ -114,8 +114,18 @@ void buildSendCommandPackageAndSend(unsigned int commandId, pushCommandData_t *c
     memcpy(sendMsg + sendLen, &commandPackage->commandId, sizeof(commandPackage->commandId));
     sendLen += sizeof(commandPackage->commandId);
 
-    memcpy(sendMsg + sendLen, commandPackage->data, subDataLength);
+    memcpy(sendMsg + sendLen, subData, subDataLength);
+    if(1)
+    {
+        int i = 0;
+        unsigned char *pp = (sendMsg + sendLen);
+        for(i = 0; i < subDataLength; i++)
+        {
+            printf(" %02x ", pp[i]);
+        }
+    }    
     sendLen += subDataLength;
+    
 
     commandPackage->checkSum = getCheckSum((sendMsg + 
         sizeof(commandPackage->startTag) + 
@@ -138,19 +148,35 @@ void buildSendCommandPackageAndSend(unsigned int commandId, pushCommandData_t *c
     pushCommand(sendMsg, sendLen);
 }
 
-
-unsigned short buildscheduleLineCommand(unsigned int lineId, unsigned char *lineName, 
+/*
+void buildscheduleLineCommand(unsigned int lineId, unsigned char *lineName, 
     scheduleLineCommand_t *scheduleCommandPackage)
 {
-    unsigned short length = 0;
+    
+    int i = 0;
+    memset(scheduleCommandPackage, 0, sizeof(scheduleLineCommand_t));
     strcpy(scheduleCommandPackage->lineName, lineName);
-    length += strlen(lineName) + 1;
-    scheduleCommandPackage->lineId[0] = lineId >> 16;
+    
+    scheduleCommandPackage->lineId[2] = lineId >> 16;
     scheduleCommandPackage->lineId[1] = lineId >> 8;
-    scheduleCommandPackage->lineId[2] = lineId;
-    length += 3;
+    scheduleCommandPackage->lineId[0] = lineId;
+    printf("buildscheduleLineCommand lineId = %d id = %d:%d:%d\r\n", 
+        lineId, scheduleCommandPackage->lineId[2], 
+        scheduleCommandPackage->lineId[1],
+        scheduleCommandPackage->lineId[0]);
+    
 
-    return length;
+    if(1)
+    {
+        unsigned char *pp = scheduleCommandPackage;
+        for(i = 0; i < length; i++)
+        {
+            printf(" %02x ", pp[i]);
+        }
+    }
+    printf("\r\n");
+
+    return;
 
 }
 
@@ -163,25 +189,40 @@ unsigned short buildInOutCommandPackage(unsigned char inOrOut, unsigned char con
     length += 2;
     return length;
 }
-
+*/
 void buildSendCommandScheduleLinePackage(unsigned int lineId, unsigned char *lineName)
 {
-    scheduleLineCommand_t scheduleCmd;
+    //scheduleLineCommand_t scheduleCmd;
+    unsigned char scheduleCmd[64];
     pushCommandData_t pushCmd;
     unsigned short subCmdLength = 0;
-    
-    subCmdLength = buildscheduleLineCommand(lineId, lineName, &scheduleCmd);
-    buildSendCommandPackageAndSend(COMMAND_SCHEDULE_LINE_PUSH, &pushCmd, (unsigned char*)&scheduleCmd, subCmdLength);
+
+    memset(scheduleCmd, 0, 64);
+
+    strcpy(scheduleCmd, lineName);
+    subCmdLength += strlen(lineName) + 1;
+
+    scheduleCmd[subCmdLength] = lineId >> 16;
+    scheduleCmd[subCmdLength + 1] = lineId >> 8;
+    scheduleCmd[subCmdLength + 2] = lineId >> 0;
+    subCmdLength += 3;
+    buildSendCommandPackageAndSend(COMMAND_SCHEDULE_LINE_PUSH, 
+        &pushCmd, (unsigned char*)&scheduleCmd, subCmdLength);
 
 }
 
 void buildSendCommandInOutPackage(unsigned char inOrOut, unsigned char confirm)
 {
-    inOutCommand_t inOutCmd;
+    unsigned char  inOutCmd[64];
     pushCommandData_t pushCmd;
     unsigned short subCmdLength = 0;
+
+    memset(inOutCmd, 0, 64);
+
+    inOutCmd[0] = inOrOut;
+    inOutCmd[1] = confirm;
+    subCmdLength += 2;
     
-    subCmdLength = buildInOutCommandPackage(inOrOut, confirm, &inOutCmd);
     buildSendCommandPackageAndSend(COMMAND_IN_OUT_PUSH, &pushCmd, (unsigned char*)&inOutCmd, subCmdLength);
 
 }

@@ -49,6 +49,7 @@
 char *pollstr = "SPAMDQTV\n";
 char *host = "127.0.0.1";
 char *port = "2947";
+char *defaultLineId = 2;
 unsigned int sl = 1;
 
 struct gps_data_t *gpsdata;
@@ -97,12 +98,13 @@ main(int argc, char **argv){
 	int ch;
 	fd_set fds;
 	int casoc = 0;
+  int lineId = 0;
     pthread_t positionReport_id;
     pthread_t stopAnnounce_id;
 	pthread_t sendSession_id;
 
 	progname = argv[0];
-	while ((ch = getopt(argc, argv, "hVi:j:s:p:")) != -1){
+	while ((ch = getopt(argc, argv, "hVi:j:s:p:l:")) != -1){
 	switch (ch) {
 	case 'i':
 		sl = (unsigned int)atoi(optarg);
@@ -122,6 +124,16 @@ main(int argc, char **argv){
 	case 'p':
 		port = optarg;
 		break;
+  case 'l':
+      lineId = (unsigned int)atoi(optarg);
+      if(lineId <= 0)
+      {
+        printf("ivalid lineId\r\n");
+        exit(0);
+      }
+      printf("now set lineId = %d\r\n", lineId);
+      setLineId(lineId);
+    break;
 	case 'V':
 		(void)fprintf(stderr, "SVN ID: $Id: cgpxlogger.c 4685 2008-02-17 02:57:48Z ckuethe $ \n");
 		exit(0);

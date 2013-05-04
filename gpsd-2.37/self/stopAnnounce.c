@@ -16,6 +16,7 @@
 #include "stopAnnounce.h"
 #include "utils.h"
 #include "manager.h"
+#include "identity.h"
 
 extern gpsSourceData gpsSource;
 
@@ -713,8 +714,8 @@ void* stopAnnounce(int lineId)
         {
 			n=recvfrom(s, &recvCommand,sizeof(int),0,(struct sockaddr *)&cli_addr,&clilen);
             printf("recv command from manager %d\r\n", recvCommand);
-            newestPoint = GetNewestDataFirst(&gpsSource);
-            prevPoint = GetNewestDataSecond(&gpsSource);
+            newestPoint = (struct gps_fix_t *)GetNewestDataFirst(&gpsSource);
+            prevPoint = (struct gps_fix_t *)GetNewestDataSecond(&gpsSource);
             performCommandFromManager(recvCommand, newestPoint);
         }
 		    

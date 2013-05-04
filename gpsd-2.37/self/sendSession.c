@@ -239,14 +239,14 @@ void* sendSession()
     s = socket(AF_INET, SOCK_DGRAM, 0);
 	if (s < 0){
 		printf("error to get socket\n");
-		return -1;
+		return ;
 	}
 	sock_opt = 1;
 
 	if(setsockopt(s,SOL_SOCKET,SO_REUSEADDR,(void *)&sock_opt, sizeof(sock_opt)) == -1)
 	{
 			printf("error to set sock opt reuseaddr\n");
-			return -1;
+			return ;
 
 	}
 
@@ -261,7 +261,7 @@ void* sendSession()
 	{
 		printf("error to binding 9920\n");
 		close(s);
-		return -1;
+		return ;
 	}
 
 

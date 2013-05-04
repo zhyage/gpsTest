@@ -3,22 +3,21 @@
 #include <stdlib.h>
 
 
-const unsigned char *g_motoId = "bus 0001";
+unsigned char *g_motoId = "bus 0001";
 
-const unsigned char *g_softVersion = "0.0001";
+unsigned char *g_softVersion = "0.0001";
 
-const unsigned char *g_deviceId = "00001";
+unsigned char *g_deviceId = "00001";
 
-const unsigned char *g_motoLicense = "A7680G";
+unsigned char *g_motoLicense = "A7680G";
 
-const unsigned char *g_SIMId = "abcdefghijklmnopqrst";
+unsigned char *g_SIMId = "abcdefghijklmnopqrst";
 
 unsigned char *g_basePosition = "3.3, 6.6";
 
 unsigned char *g_baseCell = "6-6";
 
-//unsigned int *g_lineId = 1;
-unsigned int *g_lineId = 2;
+unsigned int g_lineId = 2;
 
 unsigned char *g_driverId = "driver-001";
 

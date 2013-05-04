@@ -3,10 +3,56 @@
 #include <string.h>
 #include "recvSession.h"
 
+int handleScheduleLineCmd(unsigned char *data, unsigned short length)
+{
+	scheduleLineCommand_t scheduleCmd;
+	unsigned char *pos = data;
+  int lineId = 0;
+  char cmd[64];
+  memset(cmd, 0, 64);
+	memset(&scheduleCmd, 0, sizeof(scheduleLineCommand_t));
+	strcpy(scheduleCmd.lineName, pos);
+	pos += strlen(scheduleCmd.lineName) + 1;
+	memcpy(&scheduleCmd.lineId, pos, sizeof(scheduleCmd.lineId));
 
 
+	printf("handleScheduleLineCmd, lineName:%s lineId :%d:%d:%d\r\n", 
+		scheduleCmd.lineName, 
+		scheduleCmd.lineId[0], scheduleCmd.lineId[1], scheduleCmd.lineId[2]);
+/*
+  pos = (unsigned char *)&lineId;
+  pos[1] = scheduleCmd.lineId[0];
+  pos[2] = scheduleCmd.lineId[1];
+  pos[3] = scheduleCmd.lineId[2];
+*/
+  lineId = scheduleCmd.lineId[0] * 256 *256 + scheduleCmd.lineId[1] * 256 + scheduleCmd.lineId[2];
 
-int recvFromRemote(unsigned char *data, unsigned short dataLength, pushCommandData_t *recvData)
+  sprintf(cmd, "killall gpsTest");
+  system(cmd);
+  sleep(5);
+
+  sprintf(cmd, "./gpsTest -l %d ", lineId);
+  printf("restart gpsTest cmd = %s\r\n", cmd);
+
+  system(cmd);
+
+	return 1;
+
+}
+
+int handleInOutCmd(unsigned char *data, unsigned short length)
+{
+	inOutCommand_t inOutCmd;
+	memcpy(&inOutCmd, data, sizeof(inOutCommand_t));
+
+	printf("handleInOutCmd inOrOut = %d confirm = %d\r\n", 
+		inOutCmd.inOrOut, inOutCmd.confirm);
+	return 1;
+}
+
+
+int recvFromRemote(unsigned char *data, unsigned short dataLength, 
+	pushCommandData_t *recvData)
 {
 	unsigned char *pos = data;
 	unsigned short strlength = 0;
@@ -89,11 +135,13 @@ int recvFromRemote(unsigned char *data, unsigned short dataLength, pushCommandDa
 		case COMMAND_SCHEDULE_LINE_PUSH:
 		{
 			printf("get COMMAND_SCHEDULE_LINE_PUSH\r\n");
+			return handleScheduleLineCmd(recvData->data, subDataLength);
 		}
 		break;
 		case COMMAND_IN_OUT_PUSH:
 		{
 			printf("get COMMAND_IN_OUT_PUSH\r\n");
+			handleInOutCmd(recvData->data, subDataLength);
 		}
 		break;
 		default:
