@@ -40,3 +40,4 @@ clean:
 	rm -rf gpsTest
 	rm -rf manager
 	rm -rf serverDemo
+
