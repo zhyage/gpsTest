@@ -487,19 +487,24 @@ void performCommandFromManager(int command, struct gps_fix_t *gpsData)
     {
         case NEXT_STOP_ANNOUNCE:
         {
-            if(getPend.upOrDown == UPLINE)
+            //if(getPend.upOrDown == UPLINE)
+            if(lastUpdateStop.upOrDown == UPLINE)
             {
                 if(-1 != getNextStop(lastUpdateStop.stopId, lastUpdateStop.upOrDown, getLineId(), &getPend))
                 {
-                    //printf("next stop id = %d\r\n", getPend.stopId);
+                    printf("----------------111--------------lastUpdate stopId = %d upOrDown = %d\r\n"
+                        , lastUpdateStop.stopId, lastUpdateStop.upOrDown);
+                    printf("------------------------------next stop id = %d\r\n", getPend.stopId);
                     enterSpot(&getPend, 1);
                 }
             }
             else
             {
-                if(-1 != getPrevStop(lastUpdateStop.stopId, lastUpdateStop.upOrDown, 0, &getPend))
+                if(-1 != getPrevStop(lastUpdateStop.stopId, lastUpdateStop.upOrDown, getLineId(), &getPend))
                 {
-                    //printf("next stop id = %d\r\n", getPend.stopId);
+                    printf("----------------222---------------lastUpdate stopId = %d upOrDown = %d\r\n"
+                        , lastUpdateStop.stopId, lastUpdateStop.upOrDown);
+                    printf("--------------------------------next stop id = %d\r\n", getPend.stopId);
                     enterSpot(&getPend, 1);
                 }
             }
@@ -508,11 +513,14 @@ void performCommandFromManager(int command, struct gps_fix_t *gpsData)
         break;
         case PREV_STOP_ANNOUNCE:
         {
-            if(getPend.upOrDown == UPLINE)
+            //if(getPend.upOrDown == UPLINE)
+            if(lastUpdateStop.upOrDown == UPLINE)
             {
-                if(-1 != getPrevStop(lastUpdateStop.stopId, lastUpdateStop.upOrDown, 0, &getPend))
+                if(-1 != getPrevStop(lastUpdateStop.stopId, lastUpdateStop.upOrDown, getLineId(), &getPend))
                 {
-                    //printf("Prev stop id = %d\r\n", getPend.stopId);
+                    printf("-----------------333---------------lastUpdate stopId = %d upOrDown = %d\r\n"
+                        , lastUpdateStop.stopId, lastUpdateStop.upOrDown);
+                    printf("Prev stop id = %d\r\n", getPend.stopId);
                     enterSpot(&getPend, 1);
                 }
             }
@@ -520,7 +528,9 @@ void performCommandFromManager(int command, struct gps_fix_t *gpsData)
             {
                 if(-1 != getNextStop(lastUpdateStop.stopId, lastUpdateStop.upOrDown, getLineId(), &getPend))
                 {
-                    //printf("prev stop id = %d\r\n", getPend.stopId);
+                    printf("---------------444----------------lastUpdate stopId = %d upOrDown = %d\r\n"
+                        , lastUpdateStop.stopId, lastUpdateStop.upOrDown);
+                    printf("prev stop id = %d\r\n", getPend.stopId);
                     enterSpot(&getPend, 1);
                 }
             }

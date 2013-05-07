@@ -4,8 +4,8 @@ all:gpsTest manager serverDemo
 
 gpsTest:gpsTest.o arrQueue.o positionReport.o stopAnnounce.o dllist.o utils.o sendSession.o identity.o lineMap.o
 	$(CC) -I../ -I. -I./utils/ gpsTest.o arrQueue.o positionReport.o stopAnnounce.o dllist.o sendSession.o utils.o identity.o lineMap.o -g -o gpsTest -lm -lpthread  -L../mips -lgps
-manager:manager.o internetConnectCheck.o recvSession.o
-	$(CC) -I../ -I. -I./utils/ manager.o internetConnectCheck.o recvSession.o libcurl.a -g -o manager -lm -lpthread
+manager:manager.o internetConnectCheck.o recvSession.o key.o
+	$(CC) -I../ -I. -I./utils/ manager.o internetConnectCheck.o recvSession.o key.o libcurl.a -g -o manager -lm -lpthread
 serverDemo:serverDemo.o utils.o
 	$(CC) -I../ -I. -I./utils/ serverDemo.o utils.o -g -o serverDemo -lpthread -lm
 gpsTest.o:gpsTest.c
@@ -32,6 +32,8 @@ lineMap.o:lineMap.c
 	$(CC) -I../ -I. -I./utils/ -g -c lineMap.c
 serverDemo.o:server/serverDemo.c
 	$(CC) -I../ -I. -I./utils/ -g -c server/serverDemo.c
+key.o:key.c
+	$(CC) -I../ -I. -I./utils/ -g -c key.c
 
 recvSession.o:recvSession.c
 	$(CC) -I../ -I. -I./utils/ -g -c recvSession.c
@@ -42,3 +44,4 @@ clean:
 	rm -rf gpsTest
 	rm -rf manager
 	rm -rf serverDemo
+	rm -rf key

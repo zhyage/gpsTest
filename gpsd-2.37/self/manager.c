@@ -14,6 +14,7 @@
 #include "manager.h"
 #include "internetConnectCheck.h"
 #include "recvSession.h"
+#include "key.h"
 
 int mainCommand = 0;
 
@@ -26,16 +27,15 @@ void getMainCommand()
 void disPatchCommand(int command, int port)
 {
 		static int sockfd=0;
-		struct sockaddr_in servaddr;
-
-		
-		bzero(&servaddr,sizeof(servaddr));
-		servaddr.sin_family = AF_INET;
-		servaddr.sin_port = htons(port);
-		
-		inet_pton(AF_INET,"127.0.0.1",&servaddr.sin_addr);
-		sockfd=socket(AF_INET,SOCK_DGRAM,0);
-
+        struct sockaddr_in servaddr;
+        //if(0 == sockfd)
+        //{
+    		servaddr.sin_family = AF_INET;
+    		servaddr.sin_port = htons(port);
+    		
+    		inet_pton(AF_INET,"127.0.0.1",&servaddr.sin_addr);
+    		sockfd=socket(AF_INET,SOCK_DGRAM,0);
+        //}
 		sendto(sockfd, &command,sizeof(int),
 			0,(struct sockaddr *)&servaddr,sizeof(struct sockaddr));
 }
@@ -56,6 +56,7 @@ int main()
     char command[12];
     int i = 0;
     pthread_t internetConnectCheck_id;
+    pthread_t keyBoardCommand_id;
     int s = 0;
     int sock_opt = 1;
     static struct sockaddr_in serv_addr;
@@ -64,7 +65,7 @@ int main()
     char remotePushCommand[128];
 
     pthread_create(&internetConnectCheck_id, NULL, internetConnectCheck, NULL);
-
+    pthread_create(&keyBoardCommand_id, NULL, keyBoardCommand, NULL);
     
   
     s = socket(AF_INET, SOCK_DGRAM, 0);
