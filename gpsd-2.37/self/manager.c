@@ -10,6 +10,8 @@
 #include <sys/stat.h>
 #include <errno.h>
 #include <time.h>
+#include <unistd.h>
+#include <fcntl.h>
 #include "gpsTest.h"
 #include "manager.h"
 #include "internetConnectCheck.h"
@@ -104,8 +106,10 @@ int main()
 		FD_ZERO(&set);
 		FD_SET(0,&set);
         FD_SET(s, &set);
-		timeout.tv_sec=0;
-		timeout.tv_usec=100000;
+		//timeout.tv_sec=0;
+		//timeout.tv_usec=100000;
+		timeout.tv_sec=1;
+		timeout.tv_usec=0;
         memset(command, 0, 12);
         memset(remotePushCommand, 0, 128);
    
@@ -135,13 +139,29 @@ int main()
             }
             
         } 
+        else
+        {
+            int fd = 0;
+            int len = 0;
+            printf("timeout to get push command\r\n");
+            //fd = open("set_line", O_RDONLY);
+            fd = open("oper_on", O_RDONLY);
+            len = read(fd, remotePushCommand, sizeof(remotePushCommand));
 
+            printf("recv remote push command data length =  %d\r\n", len);
+            handleRemoteCommand(remotePushCommand, len);
+            printf("end of handle push command\r\n");
+
+        }
+
+        /*
         if(FD_ISSET(s, &set))
         {
             n=recvfrom(s, remotePushCommand, 128, 0, (struct sockaddr *)&cli_addr, &clilen);
             printf("recv remote push command data length =  %d\r\n", n);
             handleRemoteCommand(remotePushCommand, n);
-        }    
+        } 
+        */
         
     }
 }

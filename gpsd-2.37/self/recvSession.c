@@ -69,10 +69,12 @@ int recvFromRemote(unsigned char *data, unsigned short dataLength,
 
 	memcpy(&recvData->startTag, pos, sizeof(recvData->startTag));
 	pos += sizeof(recvData->startTag);
+    recvData->startTag = htons(recvData->startTag);
 
 
 	memcpy(&recvData->length, pos, sizeof(recvData->length));
 	pos += sizeof(recvData->length);
+    recvData->length = htons(recvData->length);
 
 	memcpy(&recvData->version, pos, sizeof(recvData->version));
 	pos += sizeof(recvData->version);
@@ -141,7 +143,7 @@ int recvFromRemote(unsigned char *data, unsigned short dataLength,
 		case COMMAND_IN_OUT_PUSH:
 		{
 			printf("get COMMAND_IN_OUT_PUSH\r\n");
-			handleInOutCmd(recvData->data, subDataLength);
+			return handleInOutCmd(recvData->data, subDataLength);
 		}
 		break;
 		default:

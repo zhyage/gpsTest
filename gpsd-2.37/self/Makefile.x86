@@ -2,8 +2,8 @@ all:gpsTest manager serverDemo
 
 gpsTest:gpsTest.o arrQueue.o positionReport.o stopAnnounce.o dllist.o utils.o sendSession.o identity.o lineMap.o
 	gcc -I../ -I. -I./utils/ gpsTest.o arrQueue.o positionReport.o stopAnnounce.o dllist.o sendSession.o utils.o identity.o lineMap.o -g -o gpsTest -lm -lpthread -lcurses -L../x86 -lgps
-manager:manager.o internetConnectCheck.o recvSession.o
-	gcc -I../ -I. -I./utils/ manager.o internetConnectCheck.o recvSession.o -g -o manager -lcurl -lm -lpthread
+manager:manager.o internetConnectCheck.o recvSession.o key.o
+	gcc -I../ -I. -I./utils/ manager.o internetConnectCheck.o recvSession.o key.o -g -o manager -lcurl -lm -lpthread
 serverDemo:serverDemo.o utils.o
 	gcc -I../ -I. -I./utils/ serverDemo.o utils.o -g -o serverDemo -lpthread -lm
 gpsTest.o:gpsTest.c
@@ -33,6 +33,10 @@ serverDemo.o:server/serverDemo.c
 
 recvSession.o:recvSession.c
 	gcc -I../ -I. -I./utils/ -g -c recvSession.c
+
+key.o:key.c
+	gcc -I../ -I. -I./utils/ -g -c key.c
+
 
 
 clean:
