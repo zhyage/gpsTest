@@ -159,7 +159,11 @@ int main()
             time1 = time(NULL);
             //sprintf(scpCmd, "%s", "sshpass -p 'acamar' scp -p root@127.0.0.1:/opt/set_line /opt/oper_on .");
             //sprintf(scpCmd, "%s", "sshpass -p 'yqj810828' scp -p -P 2224 yqj@111.13.47.157:/var/www/command/test1/set_line .");
-            sprintf(scpCmd, "%s", "sshpass -p 'yqj810828' scp -p -P 2224 yqj@111.13.47.157:/var/www/command/test1/* .");
+            //sprintf(scpCmd, "%s", "sshpass -p 'yqj810828' scp -p -P 2224 yqj@111.13.47.157:/var/www/command/test1/* .");
+            sprintf(scpCmd, "%s", "curl -R -O --remote-name http://111.13.47.154:8090/command/test1/oper_on");
+            printf("scpCmd = %s\r\n", scpCmd);
+            system(scpCmd);
+            sprintf(scpCmd, "%s", "curl -R -O --remote-name http://111.13.47.154:8090/command/test1/set_line");
             printf("scpCmd = %s\r\n", scpCmd);
             system(scpCmd);
 /*            
