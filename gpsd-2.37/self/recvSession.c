@@ -27,11 +27,11 @@ int handleScheduleLineCmd(unsigned char *data, unsigned short length)
 */
   lineId = scheduleCmd.lineId[0] * 256 *256 + scheduleCmd.lineId[1] * 256 + scheduleCmd.lineId[2];
 
-  sprintf(cmd, "killall gpsTest");
+  sprintf(cmd, "%s", "killall gpsTest");
   system(cmd);
   sleep(5);
 
-  sprintf(cmd, "./gpsTest -l %d ", lineId);
+  sprintf(cmd, "%s", "./gpsTest -l %d &", lineId);
   printf("restart gpsTest cmd = %s\r\n", cmd);
 
   system(cmd);
@@ -43,10 +43,27 @@ int handleScheduleLineCmd(unsigned char *data, unsigned short length)
 int handleInOutCmd(unsigned char *data, unsigned short length)
 {
 	inOutCommand_t inOutCmd;
+    char cmd[64];
+    memset(cmd, 0, 64);
 	memcpy(&inOutCmd, data, sizeof(inOutCommand_t));
 
 	printf("handleInOutCmd inOrOut = %d confirm = %d\r\n", 
 		inOutCmd.inOrOut, inOutCmd.confirm);
+    if(inOutCmd.inOrOut == 0x01)//out
+    {
+        sprintf(cmd, "%s", "killall gpsTest");
+        system(cmd);
+        sleep(5);
+    }
+    if(inOutCmd.inOrOut == 0x00)//in
+    {
+        sprintf(cmd, "%s", "killall gpsTest");
+        system(cmd);
+        sleep(5);
+
+        sprintf(cmd, "%s", "./gpsTest -l 1 &");
+        system(cmd);
+    }
 	return 1;
 }
 

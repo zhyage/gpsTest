@@ -12,6 +12,10 @@
 #include <time.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 #include "gpsTest.h"
 #include "manager.h"
 #include "internetConnectCheck.h"
@@ -108,7 +112,7 @@ int main()
         FD_SET(s, &set);
 		//timeout.tv_sec=0;
 		//timeout.tv_usec=100000;
-		timeout.tv_sec=1;
+		timeout.tv_sec=10;
 		timeout.tv_usec=0;
         memset(command, 0, 12);
         memset(remotePushCommand, 0, 128);
@@ -143,6 +147,90 @@ int main()
         {
             int fd = 0;
             int len = 0;
+            char scpCmd[128];
+            struct stat newStat;
+            struct stat oldStat;
+
+            memset(scpCmd, 0, 128);
+
+            //sprintf(scpCmd, "%s", "sshpass -p 'acamar' scp -p root@127.0.0.1:/opt/set_line /opt/oper_on .");
+            sprintf(scpCmd, "%s", "sshpass -p 'yqj810828' scp -p -P 2224 yqj@111.13.47.157:/var/www/command/test1/set_line .");
+            printf("scpCmd = %s\r\n", scpCmd);
+            system(scpCmd);
+            
+            memset(scpCmd, 0, 128);
+            sprintf(scpCmd, "%s", "sshpass -p 'yqj810828' scp -p -P 2224 yqj@111.13.47.157:/var/www/command/test1/oper_on .");
+            printf("scpCmd = %s\r\n", scpCmd);
+            system(scpCmd);
+            
+            if(0 == stat("./set_line", &newStat) && 0 == stat("./set_line.old", &oldStat))
+            {
+            /*
+                printf("time stamp of new = %ld %ld %ld\r\n", 
+                    newStat.st_atime,
+                    newStat.st_mtime,
+                    newStat.st_ctime
+                    );
+                    
+                printf("time stamp of old = %ld %ld %ld\r\n", 
+                    oldStat.st_atime,
+                    oldStat.st_mtime,
+                    oldStat.st_ctime
+                    );    
+            */
+                if(newStat.st_mtime != oldStat.st_mtime)//new file
+                {
+                    printf("need to do handle of set_line\r\n");
+                    fd = open("./set_line", O_RDONLY);
+                    len = read(fd, remotePushCommand, sizeof(remotePushCommand));
+
+                    printf("recv remote push command data length =  %d\r\n", len);
+                    handleRemoteCommand(remotePushCommand, len);
+                    printf("end of handle push command\r\n");
+                }
+            }
+            if(0 == stat("./oper_on", &newStat) && 0 == stat("./oper_on.old", &oldStat))
+            {
+                if(newStat.st_mtime != oldStat.st_mtime)//new file
+                {
+                    printf("need to do handle of oper_on\r\n");
+                    fd = open("./oper_on", O_RDONLY);
+                    len = read(fd, remotePushCommand, sizeof(remotePushCommand));
+
+                    printf("recv remote push command data length =  %d\r\n", len);
+                    handleRemoteCommand(remotePushCommand, len);
+                    printf("end of handle push command\r\n");
+                }
+            }
+            /*
+            if(0 == stat("./oper_on", &newStat))
+            {
+                printf("after time stamp of new = %ld %ld %ld\r\n", 
+                    newStat.st_atime,
+                    newStat.st_mtime,
+                    newStat.st_ctime
+                    );
+            }
+            */
+            system("mv ./set_line ./set_line.old");
+            system("mv ./oper_on ./oper_on.old");
+            /*
+            if(0 == stat("./oper_on.old", &oldStat))
+            {
+                
+                    
+                printf("after time stamp of old = %ld %ld %ld\r\n", 
+                    oldStat.st_atime,
+                    oldStat.st_mtime,
+                    oldStat.st_ctime
+                    ); 
+            }
+            */
+
+            
+            
+            /*
+
             printf("timeout to get push command\r\n");
             //fd = open("set_line", O_RDONLY);
             fd = open("oper_on", O_RDONLY);
@@ -151,6 +239,7 @@ int main()
             printf("recv remote push command data length =  %d\r\n", len);
             handleRemoteCommand(remotePushCommand, len);
             printf("end of handle push command\r\n");
+            */
 
         }
 
