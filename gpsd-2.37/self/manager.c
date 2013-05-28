@@ -112,7 +112,7 @@ int main()
         FD_SET(s, &set);
 		//timeout.tv_sec=0;
 		//timeout.tv_usec=100000;
-		timeout.tv_sec=10;
+		timeout.tv_sec=2;
 		timeout.tv_usec=0;
         memset(command, 0, 12);
         memset(remotePushCommand, 0, 128);
@@ -150,18 +150,33 @@ int main()
             char scpCmd[128];
             struct stat newStat;
             struct stat oldStat;
+            static int mostTime = 0;
+            time_t time1;
+            time_t time2;
 
             memset(scpCmd, 0, 128);
 
+            time1 = time(NULL);
             //sprintf(scpCmd, "%s", "sshpass -p 'acamar' scp -p root@127.0.0.1:/opt/set_line /opt/oper_on .");
-            sprintf(scpCmd, "%s", "sshpass -p 'yqj810828' scp -p -P 2224 yqj@111.13.47.157:/var/www/command/test1/set_line .");
+            //sprintf(scpCmd, "%s", "sshpass -p 'yqj810828' scp -p -P 2224 yqj@111.13.47.157:/var/www/command/test1/set_line .");
+            sprintf(scpCmd, "%s", "sshpass -p 'yqj810828' scp -p -P 2224 yqj@111.13.47.157:/var/www/command/test1/* .");
             printf("scpCmd = %s\r\n", scpCmd);
             system(scpCmd);
-            
+/*            
             memset(scpCmd, 0, 128);
             sprintf(scpCmd, "%s", "sshpass -p 'yqj810828' scp -p -P 2224 yqj@111.13.47.157:/var/www/command/test1/oper_on .");
             printf("scpCmd = %s\r\n", scpCmd);
             system(scpCmd);
+*/            
+            time2 = time(NULL);
+            
+            printf("using %d sec to get file\r\n", time2-time1);
+            if(time2-time1 > mostTime)
+            {
+                mostTime = time2-time1;
+            }
+            printf("the most long time = %d \r\n", mostTime);
+            
             
             if(0 == stat("./set_line", &newStat) && 0 == stat("./set_line.old", &oldStat))
             {
