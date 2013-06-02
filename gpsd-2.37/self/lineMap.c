@@ -7,8 +7,8 @@
 lineData_t lineData[] = 
 {
 	{INVALID_ID,	NULL,	{0}},
-    {1, "zhi_jiang_dong_lu",       {8, 9, 10, 11, 12}},
-    {2, "yan_jiang_da_dao", {1, 2, 6, 3, 4, 5, 7}},
+    {1, "yan_jiang_da_dao", {1, 2, 6, 3, 4, 5, 7}},
+    {2, "zhi_jiang_dong_lu",       {8, 9, 10, 11, 12}},
 };
 
 #if 0

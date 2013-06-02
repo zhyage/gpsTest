@@ -160,10 +160,10 @@ int main()
             //sprintf(scpCmd, "%s", "sshpass -p 'acamar' scp -p root@127.0.0.1:/opt/set_line /opt/oper_on .");
             //sprintf(scpCmd, "%s", "sshpass -p 'yqj810828' scp -p -P 2224 yqj@111.13.47.157:/var/www/command/test1/set_line .");
             //sprintf(scpCmd, "%s", "sshpass -p 'yqj810828' scp -p -P 2224 yqj@111.13.47.157:/var/www/command/test1/* .");
-            sprintf(scpCmd, "%s", "curl -m 2 -R -O --remote-name http://111.13.47.154:8090/command/test1/oper_on");
+            sprintf(scpCmd, "%s", "curl -m 2 -R -O --remote-name http://111.13.47.154:8090/html/test1/switch_status");
             printf("scpCmd = %s\r\n", scpCmd);
             system(scpCmd);
-            sprintf(scpCmd, "%s", "curl -m 2 -R -O --remote-name http://111.13.47.154:8090/command/test1/set_line");
+            sprintf(scpCmd, "%s", "curl -m 2 -R -O --remote-name http://111.13.47.154:8090/html/test1/set_route");
             printf("scpCmd = %s\r\n", scpCmd);
             system(scpCmd);
 /*            
@@ -182,7 +182,7 @@ int main()
             printf("the most long time = %d \r\n", mostTime);
             
             
-            if(0 == stat("./set_line", &newStat) && 0 == stat("./set_line.old", &oldStat))
+            if(0 == stat("./set_route", &newStat) && 0 == stat("./set_route.old", &oldStat))
             {
             /*
                 printf("time stamp of new = %ld %ld %ld\r\n", 
@@ -199,8 +199,8 @@ int main()
             */
                 if(newStat.st_mtime != oldStat.st_mtime)//new file
                 {
-                    printf("need to do handle of set_line\r\n");
-                    fd = open("./set_line", O_RDONLY);
+                    printf("need to do handle of set_route\r\n");
+                    fd = open("./set_route", O_RDONLY);
                     len = read(fd, remotePushCommand, sizeof(remotePushCommand));
 
                     printf("recv remote push command data length =  %d\r\n", len);
@@ -208,12 +208,12 @@ int main()
                     printf("end of handle push command\r\n");
                 }
             }
-            if(0 == stat("./oper_on", &newStat) && 0 == stat("./oper_on.old", &oldStat))
+            if(0 == stat("./switch_status", &newStat) && 0 == stat("./switch_status.old", &oldStat))
             {
                 if(newStat.st_mtime != oldStat.st_mtime)//new file
                 {
-                    printf("need to do handle of oper_on\r\n");
-                    fd = open("./oper_on", O_RDONLY);
+                    printf("need to do handle of switch_status\r\n");
+                    fd = open("./switch_status", O_RDONLY);
                     len = read(fd, remotePushCommand, sizeof(remotePushCommand));
 
                     printf("recv remote push command data length =  %d\r\n", len);
@@ -231,8 +231,8 @@ int main()
                     );
             }
             */
-            system("mv ./set_line ./set_line.old");
-            system("mv ./oper_on ./oper_on.old");
+            system("mv ./set_route ./set_route.old");
+            system("mv ./switch_status ./switch_status.old");
             /*
             if(0 == stat("./oper_on.old", &oldStat))
             {
