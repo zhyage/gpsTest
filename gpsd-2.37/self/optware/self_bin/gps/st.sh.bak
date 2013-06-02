@@ -1,0 +1,39 @@
+#comgt -d /dev/usb/tts/2
+
+#pppd file /tmp/ppp/options.pppoe
+
+#mount -o bind /jffs/opt /opt
+
+#/opt/sbin/lighttpd -f /opt/etc/lighttpd/lighttpd.conf -m /opt/lib/lighttpd
+
+#mknod -m 660 /dev/airogate c 247 0
+
+
+#insmod /jffs/airogate_module/ip_queue.ko
+#insmod /jffs/airogate_module/kshm.ko
+#insmod /jffs/airogate_module/iptable_airogate.ko
+#insmod /jffs/airogate_module/ipt_airogate_target.ko
+#insmod /jffs/airogate_module/uk_ser.ko
+
+#ln -sf /jffs/www /www/user
+#ln -sf /jffs/cgi-bin /www/user/cgi-bin
+
+
+#/jffs/airo_bin/start &
+
+
+#/jffs/airo_bin/freeaccess  &
+
+#iptables -I INPUT -p tcp --dport 6868 -j ACCEPT
+#iptables -I INPUT -p tcp --sport 6868 -j ACCEPT
+#sleep 1
+
+#/jffs/airo_bin/iptables -t airogate -A INPUT -m multiport -p tcp -s 192.168.1.1 --source-port 80,6868 -j QUEUE
+#rm *.log
+#rm *.cap
+#/jffs/airo_bin/usfwd -d > u.log &
+#/jffs/airo_bin/portald -d > p.log &
+
+#/jffs/airo_bin/usfwd &
+#/jffs/airo_bin/portald &
+

@@ -1,0 +1,173 @@
+<html>
+<head>
+<title>WLAN 用户登陆页面</title>
+</head>
+<SCRIPT language=javascript>
+<!--
+minimizebar="http:///acamarimages/minimize.gif";   
+minimizebar2="http:///acamarimages/minimize2.gif";      
+icon="http:///acamarimages/arrow1.gif";   
+closebar="http:///acamarimages/close.gif";         
+closebar2="http:///acamarimages/close2.gif";             
+
+function noBorderWin2(fileName,w,h,titleBg,moveBg,titleColor,titleWord,scr) {
+var navVersion=window.navigator.appVersion.substring(window.navigator.appVersion.indexOf("MSIE") + 5,window.navigator.appVersion.indexOf ("MSIE") + 8);
+var navPlatformWin= window.navigator.platform.indexOf("Win32");
+var navName=window.navigator.appName;
+var chromelessVersion = 0;
+if(navName=="Microsoft Internet Explorer" && navPlatformWin>=0){
+if (navVersion >= 4.0){
+chromelessVersion = 1;
+if (navVersion >= 5.5){
+chromelessVersion = 1;
+var spVersion = window.navigator.appMinorVersion.indexOf(";SP");
+if (navVersion >= 6.0 && spVersion>=0){
+chromelessVersion = 2;}}}}
+  var contents="<html>"+"<head>"+"<title>"+titleWord+"</title>"+
+"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=gb2312\">"+
+"<object id=hhctrl type='application/x-oleobject' classid='clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11'><param name='Command' value='minimize'></object>"+
+"</head>"+
+"<body topmargin=0 leftmargin=0 scroll=no onselectstart='return false' ondragstart='return false'>"+
+"  <table height=100% width=100% cellpadding=0 cellspacing=1 bgcolor="+titleBg+" id=mainTab>"+
+"    <tr height=18 style=cursor:default; onmousedown='x=event.x;y=event.y;setCapture();mainTab.bgColor=\""+moveBg+"\";' onmouseup='releaseCapture();mainTab.bgColor=\""+titleBg+"\";' onmousemove='if(event.button==1)self.moveTo(screenLeft+event.x-x,screenTop+event.y-y);'>"+
+"      <td width=18 align=center><img height=12 width=12 border=0 src="+icon+"></td>"+
+"      <td width="+w+"><span style=font-size:12px;color:"+titleColor+";font-family:宋体;position:relative;top:1px;>"+titleWord+"</span></td>"+
+"      <td width=14></td>"+
+"      <td width=13><img border=0 width=12 height=12 alt=最小化 src="+minimizebar+" onmousedown=hhctrl.Click(); onmouseover=this.src='"+minimizebar2+"' onmouseout=this.src='"+minimizebar+"'></td>"+
+"    </tr>"+
+"    <tr height=*>"+
+"      <td colspan=4>"+
+"        <iframe name=time src="+fileName+" scrolling="+scr+" width=100% height=100% frameborder=0></iframe>"+
+"      </td>"+
+"    </tr>"+
+"  </table>"+
+"</body>"+
+"</html>";
+if(chromelessVersion == 1){
+pop=window.open("","_blank","fullscreen=yes");
+pop.resizeTo(w,h);
+pop.moveTo((screen.width-w)/2,(screen.height-h)/2);
+pop.document.writeln(contents);
+if(pop.document.body.clientWidth!=w||pop.document.body.clientHeight!=h)  {
+temp=window.open("","w1");
+temp.close();
+window.showModalDialog("about:<"+"script language=javascript>window.open('','w1','fullscreen=yes');windowclose();"+"</"+"script>","","dialogWidth:0px;dialogHeight:0px");
+pop2=window.open("","w1");
+pop2.resizeTo(w,h);
+pop2.moveTo((screen.width-w)/2,(screen.height-h)/2);
+pop2.document.writeln(contents);
+pop.close();
+}}
+if(chromelessVersion == 2){
+pop=window.open("","_blank","fullscreen=0");
+pop.resizeTo(410,250);
+pop.moveTo((screen.width-w)/2,(screen.height-h)/2);
+pop.document.writeln(contents);}}
+
+
+
+function MM_openBrWindow(theURL,winName,features) {
+window.open(theURL,winName,features);
+}
+window.name="airogate";
+function mysubmit(){
+	if (!checkform())
+		return false;
+	noBorderWin2('about:blank','402','220','#99ccff','#f2f8ff','#ffffff','ACAMAR&nbsp;SYSTEMS&nbsp;WLAN&nbsp;计时页面','no');
+	//window.open("","qwer","height=380,width=400,status=no,toolbar=no,menubar=no,location=no,resizable=no");
+	if(document.form1.mac.value.substring(12,13)== "1")
+	{
+	//	alert("it is proxy");
+		setTimeout("proxysubmit()",2000);
+	}
+
+}
+function proxysubmit(){
+//	alert("it is the second submit");
+	document.form1.submit();
+}
+function checkform(){
+	var errMsg="";	
+	if (document.form1.name.value=="" )
+	{
+		alert("请填入用户名！");
+		return false;
+	}
+	if (document.form1.password.value=="")
+	{
+		alert("请填入密码！");
+		return false;
+	}
+	if (document.form1.name.value.length >16 )
+	{
+		alert(document.form1.name.value+"不是正确的用户名！");		
+		return false;
+	}	
+	if (document.form1.password.value.length >16 )
+	{
+		alert("不是正确长度范围的密码！");		
+		return false;
+	}	
+
+
+	return true;
+}
+function aa(){document.form1.name.focus();}
+//-->
+</SCRIPT>
+<BODY topmargin="120" leftmargin="0" bgcolor="#FFFFFF" onload=aa()>
+<center>
+<table border="5" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#00AEEF" id="AutoNumber7" bgcolor="#CCCCFF" width="350" height="299">
+<tr>
+<td width="100%">
+<FORM name="form1" METHOD=POST ACTION="http:///cgi-bin/authweb.htm" onsubmit="return checkform()" target=time> 
+<font color="#FFFFFF"></font>
+<div align="center"><font color="#000000">请先登录，然后访问</font> </div>
+<div align="center">　 </div>
+<table align="center" border="1" bordercolor="#00AEEF" bgcolor="#99CCFF" bordercolorlight="#00AEEF">
+<tr>
+<td colspan="2">
+<div align="center"><font color="#000000"> 用户登录</font></div>
+</TD>
+</TR>
+<TR>
+<TD align="right" width="50%">
+<div align="center"><font color="#000000">用户名：</font></div>
+</TD>
+<TD>
+<div align="center"><font color="#000000">
+<INPUT TYPE="text" NAME="name" size="15">
+</font></div>
+</TD>
+</TR>
+<TR>
+<TD align="right" width="50%">
+<div align="center"><font color="#000000">密  码：</font></div>
+</TD>
+<TD>
+<div align="center"><font color="#000000">
+<INPUT TYPE="password" name="password" size="15">
+<input TYPE="hidden" NAME="address" VALUE="99999999">
+<input TYPE="hidden" NAME="mac" VALUE="6666666666666">
+</font></div>
+</TD>
+</TR>
+<TR>
+<TD colspan="2" align="center">
+<font color="#000000">
+<input type="submit" name="Submit" value="提交" onclick="mysubmit()">
+<input type="reset" name="Submit2" value="重填"> 
+</font>
+</TD>
+</TR>
+<!--
+<TR> 
+<TD colspan="2" align="center" valign="middle"> 
+<A href="javascript:MM_openBrWindow('http:///mobile.htm','','width=300,height=80');"><span style="background-color: #FFFFFF">新用户注册（手机）</span></A>
+</TD>
+</TR>
+-->
+<TR>
+<TD colspan="2" align="center" valign="middle">Acamar airogate2000</TD>  
+</TR>
+</table></form>

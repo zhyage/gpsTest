@@ -1,0 +1,249 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"><HTML><HEAD><TITLE>OCAMAR</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=gb2312"><LINK href="/acamarimages/style.css" rel=stylesheet>
+<script type="text/javascript" language=javascript>
+var w_width = 506;
+var w_height = 430;
+var first888 = 1;
+var NeedRefresh = 0;
+function minify() {
+if(first888 != 0)
+{
+window.focus();
+var w_position = (screen.availWidth/2) - (w_width/2);
+var h_position = (screen.availHeight/2) - (w_height/2);
+window.moveTo(w_position,h_position);
+window.resizeTo(w_width,w_height);
+mini.Click();
+}
+}
+var refresh = 0;
+var flag = 0;
+var timerID=null
+function showtime(seed){
+if (seed>=0){ 
+seed++; 
+mod=seed%3600; 
+hours=(seed-mod)/3600 
+seconds=mod%60 
+minutes=(seed-3600*hours-seconds)/60; 
+var timeValue=""+((hours < 10)?"0":"")+hours 
+timeValue+=((minutes < 10)?":0":":")+minutes 
+timeValue+=((seconds < 10)?":0":":")+seconds 
+document.clock.face.value=timeValue; 
+var cmd="showtime("+seed+")";
+timeID=window.setTimeout(cmd,1000);
+if(seed%50 == 2)	GoRefresh(seed); 
+}}
+
+function GoRefresh(seed) {
+if(NeedRefresh == 0)	return;
+refresh = 1;
+document.page1.target="_self";
+document.page1.action="../cgi-bin/authweb.htm?"+seed;
+document.page1.submit();
+}
+function GoDown() {
+if(refresh != 1) {
+flag = 1;
+document.page1.target="_self";
+document.page1.action="../cgi-bin/reqlogout.htm";
+document.page1.submit();
+}
+}
+
+function GoCreate() {
+refresh = 1;
+if (document.page1.password.value=="")
+{
+alert("Please input your password！");
+return false;
+}
+
+document.page1.target="_self";
+document.page1.groupop.value="101";
+document.page1.action="../cgi-bin/reqshare.htm";
+document.page1.submit();
+}
+
+function GoAdd() {
+refresh = 1;
+if (document.page1.name.value=="")
+{
+alert("Please input your group ID！");
+return false;
+}
+if (document.page1.password.value=="")
+{
+alert("Please input  your password！");
+return false;
+}
+document.page1.target="_self";
+document.page1.groupop.value="102";
+document.page1.action="../cgi-bin/reqshare.htm";
+document.page1.submit();
+}
+
+function GoExit() {
+refresh = 1;
+document.page1.target="_self";
+document.page1.groupop.value="103";
+document.page1.action="../cgi-bin/reqshare.htm";
+document.page1.submit();
+}
+
+function GoVPN() {
+if(NeedRefresh == 0){
+alert("you need not to operate on this in current circumstance!");
+return;
+}
+refresh = 1;
+document.page1.target="_self";
+document.page1.action="../cgi-bin/reqvpn.htm";
+document.page1.submit();
+}
+
+//-->
+</SCRIPT>
+
+<script type="text/javascript" language=javascript>
+
+function window.onbeforeunload() { 
+if( (refresh != 1)&&(flag != 1) ){
+var msg;
+if(NeedRefresh == 1)
+    msg="CAUTION!!! If close this window, wirless service will be stopped.";
+else
+    msg="";
+
+    return msg;
+}
+
+}
+</SCRIPT>
+</HEAD>
+
+<BODY bgColor="#ffffff" onload="showtime(0);minify()">
+<object id=mini classid="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11">
+<param name="Command" value="Minimize"></object>
+<TABLE  width="100%" border=0>
+  
+  <TR>
+    <TD height="287">
+      <TABLE cellSpacing=0  width=442 align=center  bgColor="#e0e0e0"  border=0 >
+        <TR> 
+          <TD width="464" height="228"> 
+            <TABLE cellSpacing=0 cellPadding=2 width=463 bgColor="#C0D2E5"
+            border=0>
+              <TBODY> 
+              <TR> 
+                <TD width=435 background="/acamarimages/logon-top-bk.jpg"><FONT face=Wingdings color="#ffffff">1</FONT><font color="#FFFFFF" size="2" face="Arial, Helvetica, sans-serif">Connecting</font><font color="#ffffff" size="2" face="Arial, Helvetica, sans-serif"></font></TD>
+              </TR>
+              </TBODY>
+            </TABLE>
+            <table  cellspacing=0 width=463 bgcolor="#ffffff" 
+              border=0>
+              <tr valign=top> 
+                <td width="461" height="156"> 
+                  <table  cellspacing=0  
+                  cellpadding=5 width="449" bgcolor="#CBDAEA"
+                   border=0>
+                    <tr valign=middle> 
+                      <td height="152" width="451"> 
+                        <table width="451" border=0  cellspacing="0" style="border-collapse: collapse"  cellpadding="0">
+                          <tr> 
+                            <td align=center width="163" height="76"> <div align="left">
+                                <p><br>
+                                  <br>
+                                  <img alt="" src="/acamarimages/logo-1.jpg" width="158" height="36"></p>
+                                <p align="center"><font color="#336699"><font size="2" face="Arial, Helvetica, sans-serif"><font color="#000000" style='font-size:9pt;font-family: 宋体'>Login Successfully!</font></font><br>
+　</font></p>
+                              </div>
+                              </td>
+                            <td width="270" height="91" align=center rowspan="2"> 
+							<table cellpadding=5 align=center border=0>
+                                <tbody>
+                                  <tr align=center> 
+                                    <td><font color="#336699" style='font-size:9pt;font-family: 宋体'>
+                                    <br><b>
+                                    Welcome 
+                                      to OCAMAR SYSTEMS</b>&nbsp; </font></td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                             
+                                <form name="clock" action="" onSubmit="0" >
+                                  <font style='font-size:9pt;font-family: 宋体' color="#336699" >Online：
+                                  </font> 
+                                  <input type="text" size="9" name="face">
+                                </form> 
+                               <br>
+                              <font style='font-size:9pt;font-family: 宋体' color="#336699" ><a href="?logon_name=" target="_blank"><font color="#0000CC" style='font-size:9pt;font-family: 宋体'>User Service</font></a></font> 
+                            </td>
+                            <td width="4" height="1" rowspan="2">&nbsp;</td>
+                          </tr>
+                          <tr> 
+                            <td align=center width="163" height="15"> 
+                              <p align="justify">&nbsp;<font color="#336699" face="Arial, Helvetica, sans-serif" size="2"> 
+                                </font>
+                            </td>
+                          </tr>
+                          <tr> 
+                            <td height="81" colspan="2" align=center width="460"><form name="page1" action="" method="POST">
+                                <div align="justify" style="width: 437; height: 81"> 
+                                  <div align="center">
+                                    <center>
+                                      <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse"  width="55%" id="AutoNumber1" align="center">
+                                        <tr> 
+                                          <td width="92" height="20" valign="bottom"> 
+                                            <div align="left"><font color="#336699" style='font-size:9pt;font-family: 宋体'> 
+                                              User&nbsp; ID: </font> </div>
+                                          </td>
+                                          <td width="166" height="20" valign="bottom">
+<div align="left"><font color="#336699" style='font-size:9pt;font-family: 宋体'> 
+                                              <!-55555->
+                                              </font></div>
+                                          </td>
+                                        </tr>
+                                        <tr> 
+                                          <td width="92" height="20" valign="bottom"> 
+                                            <div align="left"><font color="#336699" style='font-size:9pt;font-family: 宋体'> 
+                                              User Type: </font></div>
+                                          </td>
+                                          <td width="166" height="20" valign="bottom"> 
+                                            <div align="left"><font color="#336699" style='font-size:9pt;font-family: 宋体'> 
+                                              <!-55556->
+                                              <font face="Arial"> 
+                                              <input name=reqflag type=hidden value="refr">
+                                              <input type="hidden" name="address" value="99999999">
+                                              <input type="hidden" name="acaddress" value="88888888">
+                                              <input type="hidden" name="mac" value="666666666666">
+                                              <input type="hidden" name="groupop" value="000">
+                                              </font></font></div>
+                                          </td>
+                                        </tr>
+                                      </table>
+                                    </center>
+                                  </div>
+                                  <p align="center">&nbsp;
+                                    <input tabindex=6 type=button value="Disconnect" name=out onClick="GoDown();" style="font-family: arial, sans-serif; font-style:normal; font-variant:normal; font-weight:normal; width:81;height:22; font-size:8pt;">
+                                    &nbsp;<input type="button" value="VPN switch" name="usevpn" onClick="GoVPN()" style="font-family: Arial; font-size: 9pt; width:62;height:22">
+                                    &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; </p>
+                                </div>
+                              </form></td>
+                          </tr>
+                        </table>
+
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </TD>
+        </TR>
+      </TABLE>
+            
+    </TD>
+  </TR>
+  </TABLE>
+</BODY></HTML>

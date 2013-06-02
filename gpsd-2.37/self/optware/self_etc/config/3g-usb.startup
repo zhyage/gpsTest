@@ -1,0 +1,30 @@
+#!/bin/sh
+
+ACMDRIVER=/jffs/lib/cdc-acm.ko
+
+echo "ACM 3G Startup script" > /tmp/3g.out
+
+#Driver into the kernel
+echo "Loading ACM Driver from $ACMDRIVER" >> /tmp/3g.out
+insmod $ACMDRIVER
+
+if [ $? -ne 0 ]; then
+	echo "Could not load kernel module" >> /tmp/3g.out
+	exit 1
+else
+	echo "Done loading kernel driver" >> /tmp/3g.out
+fi
+
+#symlink the acm directory in /dev/usb to /dev/usb/tts
+echo "Symlinking /dev/usb/acm to /dev/usb/tts" >> /tmp/3g.out
+ln -s /dev/usb/acm /dev/usb/tts
+
+if [ $? -ne 0 ]; then
+	echo "Could not create symlink" >> /tmp/3g.out
+	exit 1
+else
+	echo "Done symlinking" >> /tmp/3g.out
+fi
+
+echo "Done" >> /tmp/3g.out
+
