@@ -319,10 +319,11 @@ int send2Remote(unsigned char *data, unsigned short length )
         
         bzero(&servaddr,sizeof(servaddr));
         servaddr.sin_family = AF_INET;
-        servaddr.sin_port = htons(9999);
+        //servaddr.sin_port = htons(31200);
+        servaddr.sin_port = htons(31200);
         
-        //inet_pton(AF_INET,"111.13.47.157",&servaddr.sin_addr);
-        inet_pton(AF_INET,"127.0.0.1",&servaddr.sin_addr);
+        inet_pton(AF_INET,"111.13.47.154",&servaddr.sin_addr);
+        //inet_pton(AF_INET,"127.0.0.1",&servaddr.sin_addr);
         if(0 == sockfd)
         {
             sockfd=socket(AF_INET,SOCK_DGRAM,0);
