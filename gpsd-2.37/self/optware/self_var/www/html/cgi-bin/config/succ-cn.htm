@@ -1,0 +1,219 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"><HTML><HEAD><TITLE>OCAMAR</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=gb2312"><LINK href="/acamarimages/style.css" rel=stylesheet>
+<script type="text/javascript" language=javascript>
+var w_width = 506;
+var w_height = 430;
+var first888 = 1;
+var NeedRefresh = 0;
+function minify() {
+if(first888 != 0)
+{
+window.focus();
+var w_position = (screen.availWidth/2) - (w_width/2);
+var h_position = (screen.availHeight/2) - (w_height/2);
+window.moveTo(w_position,h_position);
+window.resizeTo(w_width,w_height);
+mini.Click();
+}
+}
+
+var flag = 0;
+var timerID=null
+function showtime(seed){
+if (seed>=0){ 
+seed++; 
+mod=seed%3600; 
+hours=(seed-mod)/3600 
+seconds=mod%60 
+minutes=(seed-3600*hours-seconds)/60; 
+var timeValue=""+((hours < 10)?"0":"")+hours 
+timeValue+=((minutes < 10)?":0":":")+minutes 
+timeValue+=((seconds < 10)?":0":":")+seconds 
+document.clock.face.value=timeValue; 
+var cmd="showtime("+seed+")";
+timeID=window.setTimeout(cmd,1000); 
+if(seed%50 == 2) GoRefresh(seed);
+}}
+
+var refresh = 0;
+function GoRefresh(seed) {
+if(NeedRefresh == 0) return;
+refresh = 1;
+document.page1.target="_self";
+document.page1.action="../cgi-bin/authweb.htm?"+seed;
+document.page1.submit();
+}
+
+function GoDown() {
+if(refresh != 1) {
+flag = 1;
+document.page1.target="_self";
+document.page1.action="../cgi-bin/reqlogout.htm";
+document.page1.submit();
+}
+}
+
+function GoCreate() {
+refresh = 1;
+if (document.page1.password.value=="")
+{
+alert("请填入密码！");
+return false;
+}
+document.page1.target="_self";
+document.page1.groupop.value="101";
+document.page1.action="../cgi-bin/reqshare.htm";
+document.page1.submit();
+}
+
+function GoAdd() {
+refresh = 1;
+if (document.page1.name.value=="")
+{
+alert("请填入组号！");
+return false;
+}
+if (document.page1.password.value=="")
+{
+alert("请填入密码！");
+return false;
+}
+document.page1.target="_self";
+document.page1.groupop.value="102";
+document.page1.action="../cgi-bin/reqshare.htm";
+document.page1.submit();
+}
+
+function GoExit() {
+refresh = 1;
+document.page1.target="_self";
+document.page1.groupop.value="103";
+document.page1.action="../cgi-bin/reqshare.htm";
+document.page1.submit();
+}
+
+function GoVPN() {
+if(NeedRefresh == 0){
+alert("当前状态下无需设置VPN!");
+return;
+}
+refresh = 1;
+document.page1.target="_self";
+document.page1.action="../cgi-bin/reqvpn.htm";
+document.page1.submit();
+}
+
+setInterval("GoRefresh()",51000);
+</SCRIPT>
+
+<script type="text/javascript" language=javascript>
+
+function window.onbeforeunload() {
+if( (refresh != 1)&&(flag != 1) ){
+var msg;
+if(NeedRefresh == 1)
+    msg="如果关闭本页面，连接将在1分半钟后自动断开！请注意！！";
+else
+    msg="";
+
+return msg;
+}
+}
+
+</SCRIPT>
+</HEAD>
+
+<BODY  bgColor="#ffffff" onload="showtime(0);minify()">
+<object id=mini classid="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11">
+<param name="Command" value="Minimize"></object>
+<TABLE  width="100%" border=0>
+  <TR>
+    <TD height="438"> 
+    <table cellspacing=0  width=392 align=center 
+      bgcolor="#e0e0e0"  border=0 >
+        <tr> 
+          <td width="452" height="131"> <table cellspacing=0 cellpadding=2 width=450 bgcolor="#C0D2E5"
+            border=0>
+              <tbody>
+                <tr> 
+                  <td width=482 ><font color="#FFFFFF" size="2" face="Arial, Helvetica, sans-serif">连接</font><font color="#ffffff" size="2" face="Arial, Helvetica, sans-serif">窗口</font></td>
+                </tr>
+              </tbody>
+            </table>
+            <table  cellspacing=0 width=392 bgcolor="#ffffff" 
+              border=0>
+              <tr valign=top> 
+                <td width="450" height="127"> 
+                <table  cellspacing=0  
+                  cellpadding=5 width="448" bgcolor="#CBDAEA"
+                   border=0>
+                    <tr valign=middle> 
+                      <td height="1" width="471"> 
+                        <table width="446" border=0 height="299" >
+                          <tr> 
+                            <td align=center width="158" height="89"><br>
+                              <img alt="" src="/acamarimages/logo-1.jpg" width="158" height="36"><font style='font-size:9pt;font-family: 宋体'> 
+                              你已经登录成功!<font color="#336699"><br>
+                              </font><font color="#336699" size="2"> &nbsp;&nbsp;</font></font></td>
+                            <td align=center width="275" height="108" rowspan="2"> 
+                              <div align="center" style="width: 267; height: 22">
+                                  <form name="clock" action="" onSubmit="0" >
+                                    <font style='font-size:9pt;font-family: 宋体'>开始计时：</font> 
+                                    <input type="text" size="9" name="face">
+									</form>
+                                <font color="#336699" style='font-size:9pt;font-family: 宋体'>共享网络设置:<br>
+                                <br>
+                                (创建组时只需填写密码，组号由系统分配) </font> </div></td>
+                          </tr>
+                          <tr> 
+                            <td align=center width="158" height="50" vlagin="head" valign="top"> 
+       <a href="?logon_name=" target="_blank"><font color="#02398C" style='font-size:9pt;font-family: 宋体'>用户自服务</font></a> 
+                            </td>
+                          </tr>
+                          <tr> 
+                            <td align=center colspan="2" height="98"> 
+                              <form name="page1" action="" method="POST">
+                                <table width="430" border="0"  cellspacing="0" style="border-collapse: collapse"  cellpadding="0">
+                                  <tr> 
+                                    <td width="110" height="1" valign="top" align="left"> 
+                                      <font color="#336699" style='font-size:9pt;font-family: 宋体'> 
+                                      &nbsp;用户名<span lang="zh-cn">：</span> 
+                                      <!-55555->
+                                      </font> <br>
+									<font color="#336699" style='font-size:9pt;font-family: 宋体'>&nbsp;用户类型：<!-55556-></font>
+									</td>
+                                    <td width="318" height="1"><font color="#336699" size="2"> 
+                                      <input name=reqflag type=hidden value="refr">
+                                      <input type="hidden" name="address" value="99999999">
+                                      <input type="hidden" name="acaddress" value="88888888">
+                                      <input type="hidden" name="mac" value="666666666666">
+                                      <input type="hidden" name="groupop" value="000">
+                                      &nbsp;&nbsp;&nbsp; <font color="#336699" style='font-size:9pt;font-family: 宋体'>组号: </font>
+                                      <input type="text" name="name" class="kuang1" size=9>
+                                      <span lang="zh-cn">&nbsp; </span><font color="#336699" style='font-size:9pt;font-family: 宋体'>密码:</font><span lang="zh-cn"> 
+                                      </span> 
+                                      <input type="password" name="password" class="kuang1" size=9>
+                                      &nbsp; </font>　</td>
+                                  </tr>
+                                </table>
+                                <p align="left"><font color="#336699" style='font-size:9pt;font-family: 宋体'>
+								<input tabindex=6 type=button value="断开连接" name=out onClick="GoDown();">
+                                  <input name="usevpn" type="button" value="VPN状态切换" onClick="GoVPN()">
+                                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                                  <input type="button" name="create" value="创建组" onClick="GoCreate()">
+                                  <input type="button" name="add" value="加入组" onClick="GoAdd()">
+                                  <input type="button" name="exit" value="退出组" onClick="GoExit()">
+                                  &nbsp; </font> 
+                                <p></p>
+                              </form></td>
+                          </tr>
+                        </table></td>
+                    </tr>
+                  </table></td>
+              </tr>
+            </table></td>
+        </tr>
+    </table></TD>
+  </TR>
+</TABLE>
+</BODY></HTML>

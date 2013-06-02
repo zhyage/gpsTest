@@ -1,0 +1,187 @@
+<HTML><HEAD><TITLE>OCAMAR</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=gb2312"><LINK 
+href="http:///acamarimages/style.css" rel=stylesheet>
+<META content="Microsoft FrontPage 5.0" name=GENERATOR>
+<script>
+function checkform(){
+		
+	if (document.form1.name.value=="" )
+	{
+		alert("Please input user ID！");
+		return false;
+	}
+	if (document.form1.password.value=="")
+	{
+		alert("Please input password！");
+		return false;
+	}
+	if (document.form1.name.value.length >64 )
+	{
+		alert(document.form1.name.value+"Incorrect User ID！");		
+		return false;
+	}	
+	if (document.form1.password.value.length >64 )
+	{
+		alert("Invalid Password!");		
+		return false;
+	}	
+
+
+	return true;
+}
+//-->
+</SCRIPT>
+</HEAD>
+<BODY oncontextmenu=self.event.returnValue=false bgColor=#ffffff 
+ onload="document.form1.name.focus()">
+<TABLE height="100%" width="100%" border=0>
+  <TBODY>
+  <TR>
+    <TD> 
+      <table cellspacing=0 bordercolordark=#ffffff width=450 align=center 
+      bgcolor=#e0e0e0 bordercolorlight=#000000 border=0 height="218">
+        <form onSubmit="return checkform()" name=form1 action=https:///cgi-bin/authweb.htm method=post>
+          <tr> 
+            <td height="225"> 
+              <table cellspacing=0 cellpadding=2 width=485 bgcolor=#C0D2E5
+            border=0>
+                <tbody> 
+                <tr> 
+                      
+                  <td width=459 background="http:///acamarimages/logon-top-bk.jpg" bgcolor="#CCCCCC"><font face=Wingdings color=#ffffff>1</font><font color="#ffffff" face="Arial, Helvetica, sans-serif" size="2">Logon</font></td>
+                  <td width=18> 
+                    <table cellspacing=0 bordercolordark=#ffffff cellpadding=0 
+                  width=18 bgcolor=#D6DBE7 bordercolorlight=#666666 border=0>
+                      <tbody> 
+                      <tr> 
+                        <td width=16> <b><a 
+                        onMouseOver="window.status='';return true" title=EXIT 
+                        onMouseOut="window.status='';return true" 
+                        href="#"><font 
+                        color=#000000>×</font></a></b></td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+              <table height=192 cellspacing=0 width=448 bgcolor=#ffffff 
+              border=0>
+                <tbody> 
+                <tr valign=top> 
+                  <td height="197" width="446"> 
+                    <table height=180 cellspacing=0 bordercolordark=#ffffff 
+                  cellpadding=5 width="447" bgcolor=CBDAEA
+                  bordercolorlight=#000000 border=0>
+                      <tbody> 
+                      <tr valign=center> 
+                        <td height="196" width="437"> 
+                          <p>
+                             <img src="http:///acamarimages/acamarhead.gif" width="474" height="83"></p>
+                          <table width="96%" border=0>
+				<tbody> 
+                            <tr> 
+                              <td align=middle width="42%"> 
+                                <div align="center"><br>
+                                  <img src="http:///acamarimages/logo-1.jpg" width="158" height="36"> 
+                                </div>
+                                <p align="center"><font color=#4A75A5><strong><a href="http://www.ocamar.com/en/home/" target="_blank"><img src="http:///acamarimages/logo-tongpu-1.jpg" width="111" height="52" border="0"></a></strong></font></p>
+                                        <p>&nbsp;</p>
+                                <p>　</p>
+                              </td>
+                              <td align=middle width="58%"> 
+                                <table cellpadding=5 align=center border=0 width="217">
+                                  <tbody> 
+                                  <tr align=middle> 
+				     <td><font color="FF8E39" face="Arial, Helvetica, sans-serif" size="2">
+                                </br>   
+                <A href="tips-url" target="_blank">tips-info</a></font><br><font style='font-size:9pt; font-family: 宋体'><br>
+                 </font><font color=#009900 style='font-size:9pt;font-family: 宋体'>         
+<script language=JavaScript>
+ today=new Date();
+ function initArray(){
+   this.length=initArray.arguments.length
+   for(var I=0;I<this.length;I++)
+   this[I+1]=initArray.arguments[I]  }
+   var d=new initArray(
+     "Sunday",
+     "Monday",
+     "Tuesday",
+     "Wednesday",
+     "Thursday",
+     "Friday",
+     "Saturday");
+document.write(
+     "<font color=##000000 style='font-size:9pt;font-family: Arial'> ",
+     today.getFullYear(),"-",
+     today.getMonth()+1,"-",
+     today.getDate()," ",
+     d[today.getDay()+1],
+     "</font>" ); 
+                                    </script>
+                                      </font></td>
+                                  </tr>
+                                  </tbody> 
+                                </table>
+                                <table cellspacing=0 cellpadding=3 border=0 width="261">
+                                  <tbody> 
+                                  <tr align=middle bgcolor=#CBDAEA> 
+                                  <td colspan="3"><div align="center"><font color="FF0000" size="2"><strong><!-1234567-></strong></font></div></td>
+                                  </tr>
+                                  <tr> 
+                                      <input name=reqflag type=hidden value="auth">
+                                    <td width="98"> 
+                                      <div align="right"><font color="4A75A5" size="2" face="Arial, Helvetica, sans-serif"> 
+                                        User &nbsp ID</font><font color="4A75A5" size="2"> 
+                                        :</font></div>
+                                    </td>
+                                    <td width="90"> 
+                                      <input style="BACKGROUND-COLOR: #FFFFFF" 
+                                tabindex=1 maxlength=64 size=12 name=name>
+				<!--domainfont      <font color="4A75A5" size="2">@</font>-->
+                                <!--domain      <select name=domain style="BACKGROUND-COLOR: #FFFFFF" ></select> -->
+                                    </td>
+                                    <td width="44"> </td>
+                                  </tr>
+                                  <tr> 
+                                              
+                                    <td width="98"> 
+                                      <div align="right"><font color="4A75A5" size="2" face="Arial, Helvetica, sans-serif">Password</font><font color="4A75A5" size="2">:</font></div>
+                                    </td>
+                                    <td width="90"> 
+                                      <input style="BACKGROUND-COLOR: #FFFFFF" 
+                                tabindex=2 type=password maxlength=64 size=12 
+                                name=password>
+                                      <input name=address type=hidden value=99999999>
+                                    </td>
+                                    <td width="44"> 
+                                      <input name=acaddress type=hidden value=88888888>
+                                      <input name=requrl type=hidden value=999888>
+                                      <input name=portaladdr type=hidden value=888999>
+                                      <input name=mac type=hidden value=666666666666>
+                                    <td width="4"> </td>
+                                  </tr>
+                                  </tbody> 
+                                </table>
+                                <input tabindex=6 type=submit value="Submit" name=enter>
+                                <input tabindex=6 type=reset value="Reset" name=reset>
+                              </td>
+                            </tr>
+                            </tbody> 
+                          </table>
+                          <div align="center"></div>
+                        </td>
+                      </tr>
+                      </tbody> 
+                    </table>
+                  </td>
+                </tr>
+                </tbody> 
+              </table>
+            </td>
+          </tr>
+        </form>
+      </table>
+      <p>&nbsp;</p></TD></TR></TBODY></TABLE>
+</BODY></HTML>

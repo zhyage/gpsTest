@@ -319,7 +319,6 @@ int send2Remote(unsigned char *data, unsigned short length )
         
         bzero(&servaddr,sizeof(servaddr));
         servaddr.sin_family = AF_INET;
-        //servaddr.sin_port = htons(9999);
         servaddr.sin_port = htons(31200);
         
         inet_pton(AF_INET,"111.13.47.154",&servaddr.sin_addr);

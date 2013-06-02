@@ -1,0 +1,16 @@
+<html>
+
+<body>
+<form name=form1 action=https:///cgi-bin/reqportal.htm method=post>
+<input name=address type=hidden value=99999999>
+<input name=acaddress type=hidden value=88888888>
+<input name=requrl type=hidden value=999888>
+<input name=portaladdr type=hidden value=888999>
+<input name=mac type=hidden value=666666666666>
+</form>
+<script>
+document.form1.submit();
+</script>
+</body>
+
+</html>

@@ -1,0 +1,2 @@
+RSYNC_URL="rsync://111.13.47.154:8730/tdfi"
+BUNDLE_VER="0.1"

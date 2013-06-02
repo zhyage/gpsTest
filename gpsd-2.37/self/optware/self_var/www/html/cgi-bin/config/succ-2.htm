@@ -1,0 +1,124 @@
+<HTML><HEAD><TITLE>OCAMAR</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=gb2312"><LINK 
+href="/acamarimages/style.css" rel=stylesheet>
+<META content="MSHTML 6.00.2722.900" name=GENERATOR>
+<script>
+var flag = 0;
+NeedRefresh = 1;
+setTimeout("showself()",200);
+function showself(){
+}
+var first888 = 1;
+function minify() {
+if(first888 != 0)
+{
+mini.Click();
+GoRefresh();
+}
+}
+var refresh = 0;
+function GoRefresh() {
+if(NeedRefresh == 0)	return;
+refresh = 1;
+document.page1.target="_self";
+document.page1.action="../cgi-bin/authweb.htm";
+document.page1.submit();
+}
+function GoDown() {
+if(refresh != 1) {
+flag = 1;
+document.page1.target="_self";
+document.page1.action="../cgi-bin/reqlogout.htm";
+document.page1.submit();
+}
+}
+function window.onbeforeunload() {
+if( (refresh != 1)&&(flag != 1) ){
+var msg="如果关闭本页面，连接将自动断开！请注意！！";
+
+return msg;
+}
+}
+function window.onunload() { 
+if( (refresh != 1)&&(flag != 1) ){
+window.open ("", "qwerty", "height=300, width=400, toolbar=no,menubar=no, scrollbars=no, resizable=no, location=no, status=no");
+document.page1.target="qwerty";
+document.page1.action="../cgi-bin/reqlogout.htm";
+document.page1.submit();
+}
+}
+setInterval("GoRefresh()",51000);
+//-->
+</SCRIPT>
+</HEAD>
+<BODY oncontextmenu=self.event.returnValue=false bgColor=#ffffff 
+onload="minify()">
+<object id=mini classid="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11">
+<param name="Command" value="Minimize"></object>
+<TABLE height="100%" width="100%" border=0>
+  
+  <TR>
+    <TD>
+      <TABLE width=292 height="213" border=0 align=center cellSpacing=0 borderColorLight=#000000 borderColorDark=#ffffff 
+      bgColor=#FFFFFF>
+        <TR> 
+          <TD height="214"> 
+            <TABLE cellSpacing=0 cellPadding=2 width=285 bgColor=#FFCC66
+            border=0>
+              <TBODY> 
+              <TR> 
+                <TD><FONT face=Wingdings color=#ffffff>1</FONT><font color="#FFFFFF" size="2" face="Arial, Helvetica, sans-serif">连接</font><font color="#ffffff" size="2" face="Arial, Helvetica, sans-serif">窗口</font></TD>
+
+              </TR>
+              </TBODY>
+            </TABLE>
+            <table height=136 cellspacing=0 width=288 bgcolor=#ffffff 
+              border=0>
+              <tr valign=top> 
+                <td> 
+                  <table width="100%" height=178 border=2 
+                  cellpadding=5 cellspacing=0 bordercolor="#FFCC66"
+                  bordercolorlight=#FFFF99 bordercolordark=#FF9933 bgcolor=#FFCC66>
+                    <tr valign=center> 
+                      <td height="180"> 
+                        <table width="100%" border=0 height="150">
+                          <tr> 
+                            <td align=middle width="55%" height="143"> 
+                              <table cellpadding=5 align=center border=0>
+                                <tbody> 
+                                <tr align=middle> 
+                                  <td><font color="#336699"><b><font size="2" face="Arial, Helvetica, sans-serif">Welcome 
+                                    to OCAMAR SYSTEMS</font></b>&nbsp; </font></td>
+                                </tr>
+                                </tbody> 
+                              </table>
+					          <font size="2">
+				<br>
+                              <font color="#336699"></font></font> 
+                              <form name="page1" method="POST">
+                                <div align="center">
+                                  <input name=reqflag type=hidden value="500">
+                                  <input type="hidden" name="address" value="99999999">
+                                  <input type="hidden" name="acaddress" value="88888888">
+                                  <input type="hidden" name="mac" value="666666666666">
+                                  <input tabindex=6 type=button value="断开连接" name=out onClick="GoDown();">
+                                </div>
+                              </form>
+                            </td>
+                          </tr>
+                        </table>
+
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </TD>
+        </TR>
+      </TABLE>
+            
+    </TD>
+  </TR>
+  </TABLE>
+</BODY></HTML>

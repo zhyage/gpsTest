@@ -31,7 +31,8 @@ int handleScheduleLineCmd(unsigned char *data, unsigned short length)
   system(cmd);
   sleep(5);
 
-  sprintf(cmd, "%s", "./gpsTest -l %d &", lineId);
+//  sprintf(cmd, "%s", "./gpsTest -l %d &", lineId);
+  sprintf(cmd, "./gpsTest -l %d &", lineId);
   printf("restart gpsTest cmd = %s\r\n", cmd);
 
   system(cmd);
@@ -87,11 +88,13 @@ int recvFromRemote(unsigned char *data, unsigned short dataLength,
 	memcpy(&recvData->startTag, pos, sizeof(recvData->startTag));
 	pos += sizeof(recvData->startTag);
     recvData->startTag = htons(recvData->startTag);
+//    recvData->startTag = (recvData->startTag);
 
 
 	memcpy(&recvData->length, pos, sizeof(recvData->length));
 	pos += sizeof(recvData->length);
     recvData->length = htons(recvData->length);
+//    recvData->length = (recvData->length);
 
 	memcpy(&recvData->version, pos, sizeof(recvData->version));
 	pos += sizeof(recvData->version);

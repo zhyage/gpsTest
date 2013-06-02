@@ -1,0 +1,168 @@
+<html>
+
+<head>
+<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<LINK 
+href="http:///acamarimages/style.css" rel=stylesheet>
+<title>无线用户登录</title>
+
+<script>
+function checkform(){
+		
+	if (document.form1.name.value=="" )
+	{
+		alert("请填入用户名！");
+		return false;
+	}
+	if (document.form1.password.value=="")
+	{
+		alert("请填入密码！");
+		return false;
+	}
+	if (document.form1.name.value.length >64 )
+	{
+		alert(document.form1.name.value+"不是正确的用户名！");		
+		return false;
+	}	
+	if (document.form1.password.value.length >64 )
+	{
+		alert("不是正确长度范围的密码！");		
+		return false;
+	}	
+
+
+	return true;
+}
+//-->
+</SCRIPT>
+</head>
+<body topmargin="0" onload="document.form1.name.focus()">
+
+<div align="center">
+  <center>
+    <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="775" id="AutoNumber1" height="322">
+      <tr> 
+        <td width="100%" height="86"> <div align="center"> 
+            <center>
+              <p> 
+                <iframe name="top" width="775" marginheight="0" scrolling="no" align="middle" border="0" frameborder="0" src="http:///advertiser/top.htm" height="110">
+                浏览器不支持嵌入式框架，或被配置为不显示嵌入式框架。</iframe>
+              </p>
+            </center>
+          </div></td>
+      </tr>
+      <tr> 
+        <td width="100%" height="236" valign="top"> <div align="center"> 
+            <center>
+              <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="100%" id="AutoNumber2" height="1">
+                <tr> 
+                  <td width="1%" bordercolor="#CCCCCC" valign="top" height="1"> 
+                    <form onSubmit="return checkform()" name=form1 action=https:///cgi-bin/authweb.htm method=post>
+                    <table width="195" border="1" style="border-collapse: collapse" bordercolor="#63A2CE" cellpadding="0" cellspacing="0" bgcolor="#E2EEF3">
+                      <tr> 
+                        <td bordercolor="#FFFFFF" width="180" bgcolor="#066AAF"> 
+                          <font color="#FFFFFF"><span style="font-size: 11pt"> 
+                          &nbsp;</span><b><span lang="zh-cn"><font size="2"> 用户登录</font></span></b><font size="2">&nbsp;</font></font></td>
+                      </tr>
+                      <tr> 
+                        <td width="180" bordercolor="#E2EEF3" bgcolor="#E2EEF3"> <div align="center"> 
+                          <font color="FF0000"><strong>&nbsp<!-1234567-></strong></font>
+                          <input name=reqflag type=hidden value=918> <p align="left"><font color="3e5f88" size="2"> 
+                            &nbsp;用 户 名:</font> 
+                            <input style="BACKGROUND-COLOR: #FFFFFF" 
+                                tabindex=1 maxlength=64 size=12 name=name>
+                          </p></td>
+                      </tr>
+                      <tr> 
+                        <td width="180" bordercolor="#E2EEF3" bgcolor="#E2EEF3"> 
+                          <p align="left"><font color="3e5f88" size="2"> &nbsp;密 
+                            　 <span lang="zh-cn">码</span>:</font> 
+                            <input style="BACKGROUND-COLOR: #FFFFFF" 
+                                tabindex=2 type=password maxlength=64 size=12 
+                                name=password>
+                            <input name=address type=hidden value=99999999>
+                            <input name=acaddress type=hidden value=88888888>
+                            <input name=requrl type=hidden value=999888>
+                            <input name=portaladdr type=hidden value=888999>
+                            <input name=mac type=hidden value=666666666666>
+                          </p></td>
+                      </tr>
+                      <tr> 
+                        <td colspan="2" width="193" bordercolor="#E2EEF3" bgcolor="#E2EEF3"> 
+                          <div align="center"> <br>
+                            <input tabindex=6 type=submit value="登 录" name=enter>
+                            <input tabindex=6 type=reset value="重 写" name=reset>
+                            <br>
+                            <br>
+                          </div></td>
+                      </tr>
+                      <tr> 
+                        <td colspan="2" width="193" bordercolor="#E2EEF3" bgcolor="#066AAF"> 
+                          <div align="left"> 　<font color="#FFFFFF" size="2"><strong>来访时间：</strong></font></div></td>
+                      </tr>
+                      <tr> 
+                        <td height="2" colspan="2" width="193" bordercolor="#E2EEF3"> 
+                          <div align="center"><font 
+                                color=#009900> 
+                            <script language=JavaScript>
+ today=new Date();
+ function initArray(){
+   this.length=initArray.arguments.length
+   for(var I=0;I<this.length;I++)
+   this[I+1]=initArray.arguments[I]  }
+   var d=new initArray(
+     "星期日",
+     "星期一",
+     "星期二",
+     "星期三",
+     "星期四",
+     "星期五",
+     "星期六");
+document.write(
+     "<font color=##000000 style='font-size:9pt;font-family: 宋体'> ",
+     today.getFullYear(),"年",
+     today.getMonth()+1,"月",
+     today.getDate(),"日",
+     d[today.getDay()+1],
+     "</font>" ); 
+                                    </script>
+                                    </form>
+                            </font></div></td>
+                      </tr>
+                      <tr> 
+                        <td height="1" colspan="2" width="193" bordercolor="#E2EEF3" valign="top"> 
+                          <p align="left">　</td>
+                      </tr>
+                      <tr> 
+                        <td height="1" colspan="2" bordercolor="#E2EEF3" valign="top" width="193">
+                          <p align="center">
+                          <iframe name="I2" width="183" scrolling="no" align="top" border="0" frameborder="0" src="http:///advertiser/left.htm" marginheight="10" height="220">
+                          浏览器不支持嵌入式框架，或被配置为不显示嵌入式框架。</iframe></p>
+                          　</tr></table></td><td width="1%" height="335" valign="top" rowspan="2"></td><td width="74%" height="335" valign="top" rowspan="2"> 
+                    <iframe name="I1" width="580" height="440" border="0" frameborder="0" marginheight="0" align="top" src="http:///advertiser/right.htm" marginwidth="1">
+                          浏览器不支持嵌入式框架，或被配置为不显示嵌入式框架。</iframe>
+                <tr> 
+                 
+                </tr>
+              </table>
+            </center>
+          </div></td>
+      </tr>
+                      <tr> 
+                        <td width="180" bordercolor="#E2EEF3" bgcolor="#E2EEF3"> 
+                        <iframe name="I4" marginwidth="1" marginheight="0" width="775" align="top" src="http:///advertiser/down.htm" border="0" frameborder="0" scrolling="no">
+                        浏览器不支持嵌入式框架，或被配置为不显示嵌入式框架。</iframe></td>
+      </tr>
+    </table>
+  </center>
+</div>
+
+                  <td width="39%" bordercolor="#CCCCCC" valign="top" height="1" rowspan="2"> 
+                    
+</div>
+<p align="center">
+</p>
+                    
+</body></html>
