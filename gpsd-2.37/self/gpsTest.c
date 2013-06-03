@@ -39,6 +39,7 @@
 #include "stopAnnounce.h"
 #include "utils.h"
 #include "sendSession.h"
+#include "demoLineData.h"
 
 
 #define BS 512
@@ -252,6 +253,8 @@ int i = 0;
 #ifdef SIMULATOR
   if(1)
   {
+#if 0
+
       //static unsigned long count = 0;
       //double enhance = 0.00007;
   	double enhance = 0.00007;
@@ -308,7 +311,30 @@ int i = 0;
 //      printf("iiiiistance = %f\r\n", get_distance(fakeData.latitude, fakeData.longitude, lat, lng));
 
       EnQueue(&gpsSource, &fakeData, sizeof(struct gps_fix_t));
-	
+#endif	
+
+        static unsigned long tickCount = 0;
+        long demoDataNum = 0;
+        demoData_t * demoData = NULL;
+        struct gps_fix_t fakeData;
+
+      if(1 == getLineId())
+      {
+          demoDataNum = getNumOfLine1DemoData();
+          demoData = getLine1DemoData(tickCount % demoDataNum);
+      }
+      if(2 == getLineId())
+      {
+          demoDataNum = getNumOfLine44DemoData();
+          demoData = getLine44DemoData(tickCount % demoDataNum);
+      }
+
+      printf(" %f , %f \r\n", demoData->lat, demoData->lng);
+
+      fakeData.latitude = demoData->lat;
+      fakeData.longitude = demoData->lng;
+      EnQueue(&gpsSource, &fakeData, sizeof(struct gps_fix_t));
+
 	
   }
 #else

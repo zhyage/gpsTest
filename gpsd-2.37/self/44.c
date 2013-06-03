@@ -1,3 +1,11 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "demoLineData.h"
+
+demoData_t demoDataLine44[] = 
+{
 { 39.947918 ,  116.424974 },
 { 39.947918 ,  116.424974 },
 { 39.947918 ,  116.424974 },
@@ -4687,4 +4695,16 @@
 { 39.948071 ,  116.423121 },
 { 39.948071 ,  116.423121 },
 { 39.948071 ,  116.423113 },
-{ 39.948071 ,  116.423113 },
+{ 39.948071 ,  116.423113 }
+};
+
+
+demoData_t *getLine44DemoData(long i)
+{
+    return &demoDataLine44[i];
+}
+
+long getNumOfLine44DemoData()
+{
+    return sizeof(demoDataLine44);
+}
