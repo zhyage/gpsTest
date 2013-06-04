@@ -1,0 +1,7 @@
+# This is a comment in the config file.
+--id sip:yaoqiujie@ekiga.net
+--registrar sip:ekiga.net
+--realm *
+--username yaoqiujie
+--password yqj810828
+--app-log-level 5
