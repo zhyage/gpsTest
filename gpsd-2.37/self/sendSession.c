@@ -183,7 +183,8 @@ void sendSendList(SendList_t *sList, int needRes)
         }
         else
         {
-            item->Tag = SENDERR;//send fail
+            //item->Tag = SENDERR;//send fail //don't need retry in demo
+            item->Tag = SENDOK;
         }
         sendData->retryTimes = sendData->retryTimes + 1;
     }
