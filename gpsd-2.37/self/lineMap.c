@@ -7,8 +7,10 @@
 lineData_t lineData[] = 
 {
 	{INVALID_ID,	NULL,	{0}},
-    {1, "yan_jiang_da_dao", {1, 2, 6, 3, 4, 5, 7}},
-    {2, "zhi_jiang_dong_lu",       {8, 9, 10, 11, 12}},
+    {1, "bei_jing_1_lu", {13, 14, 15, 16}},  
+    {2, "bei_jing_44_lu", {17, 18, 19, 20}},     
+    {3, "yan_jiang_da_dao", {1, 2, 6, 3, 4, 5, 7}},
+    {4, "zhi_jiang_dong_lu",       {8, 9, 10, 11, 12}},
 };
 
 #if 0
@@ -192,6 +194,67 @@ busStopMark_t allBusStop[] =
         {VALID, 120.338672,    30.270879,  REDUCE,    UNKNOW,    "fengfan_road_in.mp3",     "fengfan_road_out.mp3"},
         {VALID, 120.338009,    30.271021,  ADD,    UNKNOW,    "fengfan_road_in.mp3",     "fengfan_road_out.mp3"},
     },
+    {
+        13,
+        "bawangfengxi",
+        STOP,
+        {VALID, 116.469106,    39.907206,  REDUCE,    UNKNOW,    "stop1_in.mp3",     "stop1_out.mp3"},
+        {VALID, 116.469106,    39.907206,  ADD,    UNKNOW,    "stop1_in.mp3",     "stop1_out.mp3"},
+    },
+    {
+        14,
+        "langjiayuan",
+        STOP,
+        {VALID, 116.463941,    39.907113,  REDUCE,    UNKNOW,    "stop2_in.mp3",     "stop2_out.mp3"},
+        {VALID, 116.463941,    39.907113,  ADD,    UNKNOW,    "stop2_in.mp3",     "stop2_out.mp3"},
+    },
+    {
+        15,
+        "dabeiyaodong",
+        STOP,
+        {VALID, 116.458715,    39.907325,  REDUCE,    UNKNOW,    "stop3_in.mp3",     "stop3_out.mp3"},
+        {VALID, 116.458715,    39.907325,  ADD,    UNKNOW,    "stop3_in.mp3",     "stop3_out.mp3"},
+    },
+    {
+        16,
+        "yonganlilukouxi",
+        STOP,
+        {VALID, 116.442295,    39.907275,  REDUCE,    UNKNOW,    "stop4_in.mp3",     "stop4_out.mp3"},
+        {VALID, 116.442295,    39.907275,  ADD,    UNKNOW,    "stop4_in.mp3",     "stop4_out.mp3"},
+    },
+    
+    {
+        17,
+        "beiguanting",
+        STOP,
+        {VALID, 116.424974,    39.947918,  ADD,    UNKNOW,    "stop1_in.mp3",     "stop1_out.mp3"},
+        {VALID, 116.424974,    39.947918,  REDUCE,    UNKNOW,    "stop1_in.mp3",     "stop1_out.mp3"},
+    },
+    {
+        18,
+        "dongzhimengbei",
+        STOP,
+        {VALID, 116.427183,    39.942491,  UNKNOW,    REDUCE,    "stop2_in.mp3",     "stop2_out.mp3"},
+        {VALID, 116.427183,    39.942491,  UNKNOW,    ADD,    "stop2_in.mp3",     "stop2_out.mp3"},
+    },
+    {
+        19,
+        "dongsishiqiao",
+        STOP,
+        {VALID, 116.427783,    39.929886,  UNKNOW,    REDUCE,    "stop3_in.mp3",     "stop3_out.mp3"},
+        {VALID, 116.427783,    39.929886,  UNKNOW,    ADD,    "stop3_in.mp3",     "stop3_out.mp3"},
+    },
+    {
+        20,
+        "chaoyangnanmen",
+        STOP,
+        {VALID, 116.428175,    39.920665,  UNKNOW,    REDUCE,    "stop4_in.mp3",     "stop4_out.mp3"},
+        {VALID, 116.428175,    39.920665,  UNKNOW,    ADD,    "stop4_in.mp3",     "stop4_out.mp3"},
+    },
+
+
+
+
     {
         INVALID_ID,
         NULL,

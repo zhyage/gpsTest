@@ -334,6 +334,7 @@ int i = 0;
       fakeData.latitude = demoData->lat;
       fakeData.longitude = demoData->lng;
       EnQueue(&gpsSource, &fakeData, sizeof(struct gps_fix_t));
+      tickCount = tickCount + 1;
 
 	
   }
