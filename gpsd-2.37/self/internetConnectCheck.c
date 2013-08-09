@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <curl/curl.h>
+//#include <curl/curl.h>
 #if 1
 #include "internetConnectCheck.h"
 #include "manager.h"
@@ -48,6 +48,7 @@ int main()
 
 int checkInternetConnect()
 {
+#if 0
 	CURL *curl;
 	CURLcode res;
 	int connect = -1;
@@ -81,4 +82,6 @@ int checkInternetConnect()
 	}
 	curl_easy_cleanup(curl);
 	return connect;
+#endif
+    return 1;
 }

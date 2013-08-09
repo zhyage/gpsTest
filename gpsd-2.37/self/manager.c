@@ -70,8 +70,8 @@ int main()
     socklen_t clilen;
     char remotePushCommand[128];
 
-    pthread_create(&internetConnectCheck_id, NULL, internetConnectCheck, NULL);
-    pthread_create(&keyBoardCommand_id, NULL, keyBoardCommand, NULL);
+//    pthread_create(&internetConnectCheck_id, NULL, internetConnectCheck, NULL);
+//    pthread_create(&keyBoardCommand_id, NULL, keyBoardCommand, NULL);
     
   
     s = socket(AF_INET, SOCK_DGRAM, 0);
@@ -108,7 +108,7 @@ int main()
 	{
         int n = 0;
 		FD_ZERO(&set);
-		FD_SET(0,&set);
+//		FD_SET(0,&set);
         FD_SET(s, &set);
 		//timeout.tv_sec=0;
 		//timeout.tv_usec=100000;
@@ -120,7 +120,7 @@ int main()
        
         select(FD_SETSIZE,&set,NULL,NULL,&timeout);
 		
-
+/*
         if (FD_ISSET(0, &set)) 
         {
             //command = gets(stdin);
@@ -144,6 +144,7 @@ int main()
             
         } 
         else
+*/        
         {
             int fd = 0;
             int len = 0;

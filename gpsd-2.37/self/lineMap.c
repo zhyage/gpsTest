@@ -199,7 +199,7 @@ busStopMark_t allBusStop[] =
         "bawangfengxi",
         STOP,
         {VALID, 116.469106,    39.907206,  REDUCE,    UNKNOW,    "bawangfengxi_in.mp3",     "bawangfengxi_out.mp3"},
-        {VALID, 116.469106,    39.907206,  ADD,    UNKNOW,    "bawangfengxi_in.mp3",     "fawangfengxi_out.mp3"},
+        {VALID, 116.469106,    39.907206,  ADD,    UNKNOW,    "bawangfengxi_in.mp3",     "bawangfengxi_out.mp3"},
     },
     {
         14,
