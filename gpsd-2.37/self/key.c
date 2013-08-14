@@ -14,87 +14,140 @@
 #include <signal.h>
 #include "manager.h"
  
-void handler (int sig)
-{
-  printf ("nexiting...(%d)n", sig);
-  exit (0);
-}
- 
-void perror_exit (char *error)
-{
-  perror (error);
-  handler (9);
-}
+/*
+button 0 : PREV_STOP_ANNOUNCE
+button 1 : NEXT_STOP_ANNOUNCE
+button 2: START_MPLAYER
+button 3: STOP_MPLAYER
+button 4: SWITCH_DVR_CHANNEL
+button 5: MAKE_CALL
+*/ 
+
+const char *startMplayerCommandLine = "/self_bin/mplayer/mplayer rtsp://admin:acamar@192.168.3.3/mpeg4/ch1/main/av_stream </dev/null >/dev/null 2>&1 &";
+const char *startMplayerCommandLineChannel2 = "/self_bin/mplayer/mplayer rtsp://admin:acamar@192.168.3.3/mpeg4/ch2/main/av_stream </dev/null >/dev/null 2>&1 &";
+const char *startMplayerCommandLineChannel3 = "/self_bin/mplayer/mplayer rtsp://admin:acamar@192.168.3.3/mpeg4/ch3/main/av_stream </dev/null >/dev/null 2>&1 &";
+const char *startMplayerCommandLineChannel4 = "/self_bin/mplayer/mplayer rtsp://admin:acamar@192.168.3.3/mpeg4/ch4/main/av_stream </dev/null >/dev/null 2>&1 &";
+const char *stopMplayerCommandLine = "killall mplayer";
  
 void* keyBoardCommand ()
 {
-  struct input_event ev[64];
-  int fd, rd, value, size = sizeof (struct input_event);
-  char name[256] = "Unknown";
-  char *device = NULL;
-  int i = 0;
-  static int prevValue[64] = {0};
-  struct input_id deviceId;
- 
- 
-  if ((getuid ()) != 0)
-    printf ("You are not root! This may not work...n");
- 
-  //Open Device
-  if ((fd = open ("/dev/input/event1", O_RDONLY)) == -1)
-    printf ("%s is not a vaild device.n", device);
 
-#if 0 
-  //Print Device Name
-  ioctl (fd, EVIOCGNAME (sizeof (name)), name);
-  printf ("Reading From : %s (%s)n", device, name);
-  ioctl (fd, EVIOCGPHYS (sizeof (name)), name);
-  printf ("Reading physical location id From : %s (%s)n", device, name);
-  ioctl (fd, EVIOCGUNIQ (sizeof (name)), name);
-  printf ("Reading unique identifier id From : %s (%s)n", device, name);
-  ioctl(fd, EVIOCGID, &deviceId);
-  printf("-----vendor %04hx product %04hx version %04hx\r\n", deviceId.vendor, deviceId.product, deviceId.version);
-#endif
+    int buttons_fd;
+    char buttons[8] = {'0', '0', '0', '0', '0', '0', '0', '0'};
+    int current_dvr_channel = 1;
 
-  while (1)
-  {      
-      rd = read(fd, (char *)&ev, sizeof(struct input_event)*64);
-      if(rd > 0)
-      {
-        if(ev[0].value == 1 && ev[0].type == 1)
+    buttons_fd = open("/dev/buttons", 0);
+    if (buttons_fd < 0) 
+    {
+        printf("error to open device buttons\r\n");
+        exit(1);
+    }
+
+
+    for (;;) 
+    {
+        char current_buttons[8];
+        int count_of_changed_key;
+        int i;
+        if (read(buttons_fd, current_buttons, sizeof(current_buttons)) != sizeof(current_buttons)) 
         {
-          if(ev[0].code == 77)
-          {
-            printf(" get the key of next stop\r\n");
-            disPatchCommand(NEXT_STOP_ANNOUNCE, PORT_ANNOUNCE);
-      
-          }
-          if(ev[0].code == 75)
-          {
-            printf(" get the key of prev stop\r\n");
-            disPatchCommand(PREV_STOP_ANNOUNCE, PORT_ANNOUNCE);
-          }
-
-        }
-        fflush(stdout);
-#if 0
-        for(i = 0; i < 64; i++)
-        {
-          if(prevValue[i] != ev[i].value)
-          {
-            printf("ev[%d].value = %d ev[%d].code = %u ev[%d].type = %d \r\n", 
-              i, ev[i].value, i, ev[i].code, i, ev[i].type);
-          }
+            printf("error to read buttons:");
+            exit(1);
         }
 
-          fflush(stdout);
-          for(i = 0; i < 64; i++)
-          {
-            prevValue[i] = ev[i].value;
-          }
-#endif
-      }
-  }
- 
+
+        for (i = 0, count_of_changed_key = 0; i < sizeof(buttons) / sizeof (buttons[0]); i++) 
+        {
+            if (buttons[i] != current_buttons[i]) 
+            {
+                //buttons[i] = current_buttons[i];
+                if(buttons[i] == '0')
+                {
+                    printf("iiiiiiiiiiiii = %d\r\n", i);
+                    switch (i)
+                    {
+                    case 0:
+                        {
+                            printf("button : PREV_STOP_ANNOUNCE\r\n");
+                            //disPatchCommand(PREV_STOP_ANNOUNCE, PORT_ANNOUNCE);
+                        }
+                        break;
+                    case 1:
+                        {
+                            printf("button : NEXT_STOP_ANNOUNCE\r\n");
+                            //disPatchCommand(NEXT_STOP_ANNOUNCE, PORT_ANNOUNCE);
+                        }
+                        break;
+                    case 2:
+                        {
+                            printf("button : START_MPLAYER\r\n");
+                            system(stopMplayerCommandLine);
+                            system(startMplayerCommandLine);
+                            //sleep(10);
+                        }
+                        break;
+                    case 3:
+                        {
+                            printf("button : STOP_MPLAYER\r\n");
+                            system(stopMplayerCommandLine);
+                        }
+                        break;
+                    case 4:
+                        {
+                            printf("button : SWITCH_DVR_CHANNEL current channel = %d\r\n", current_dvr_channel);
+                            if(current_dvr_channel >= 4)
+                            {
+                                current_dvr_channel = 1;
+                            }
+                            else
+                            {
+                                current_dvr_channel = current_dvr_channel + 1;
+                            }
+                            system(stopMplayerCommandLine);
+                            if(current_dvr_channel == 1)
+                            {
+                                printf("mplayer commandline = %s\r\n", startMplayerCommandLine);
+                                system(startMplayerCommandLine);
+                                //sleep(10);
+                            }
+                            if(current_dvr_channel == 2)
+                            {
+                                printf("mplayer commandline = %s\r\n", startMplayerCommandLineChannel2);
+                                system(startMplayerCommandLineChannel2);
+                                //sleep(10);
+                            }
+                            if(current_dvr_channel == 3)
+                            {
+                                printf("mplayer commandline = %s\r\n", startMplayerCommandLineChannel3);
+                                system(startMplayerCommandLineChannel3);
+                                //sleep(10);
+                            }
+                            if(current_dvr_channel == 4)
+                            {
+                                printf("mplayer commandline = %s\r\n", startMplayerCommandLineChannel4);
+                                system(startMplayerCommandLineChannel4);
+                                //sleep(10);
+                            }
+                        }
+                        break;
+                    case 5:
+                        {
+                            printf("button : MAKE_CALL\r\n");
+                        }
+                        break;
+                    default:
+                        {
+                            printf("button : unknow button\r\n");
+                        }
+                        break;
+                    }
+                }
+                buttons[i] = current_buttons[i];
+            }
+        }
+
+    }
+
+    close(buttons_fd);
   return 0;
 } 

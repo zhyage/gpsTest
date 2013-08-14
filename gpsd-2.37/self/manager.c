@@ -71,7 +71,7 @@ int main()
     char remotePushCommand[128];
 
 //    pthread_create(&internetConnectCheck_id, NULL, internetConnectCheck, NULL);
-//    pthread_create(&keyBoardCommand_id, NULL, keyBoardCommand, NULL);
+    pthread_create(&keyBoardCommand_id, NULL, keyBoardCommand, NULL);
     
   
     s = socket(AF_INET, SOCK_DGRAM, 0);
